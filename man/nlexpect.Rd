@@ -5,7 +5,8 @@
 \title{Compute expectation of a function of the coefficients.}
 \usage{
 nlexpect(est, fun, coefs, ..., tol = getOption("lfe.etol"), lhs = NULL, cv,
-  istats = FALSE, flags = list(verbose = 0), max.eval = 200000L)
+  istats = FALSE, flags = list(verbose = 0), max.eval = 200000L,
+  method = c("hcubature", "pcubature", "cuhre", "suave"), vectorize = FALSE)
 }
 \arguments{
 \item{est}{object of class \code{"felm"}, a result of a call to
@@ -19,7 +20,7 @@ nlexpect(est, fun, coefs, ..., tol = getOption("lfe.etol"), lhs = NULL, cv,
 
 \item{...}{other arguments passed to fun or the integration routine.}
 
-\item{tol}{numeric. Tolerance for the computed probability.}
+\item{tol}{numeric. Tolerance for the computed integral.}
 
 \item{lhs}{character. Name of the left hand side, if \code{est} has more
 than one.}
@@ -29,17 +30,22 @@ than one.}
 \item{istats}{logical. Should convergence information from the integration
 routine be included as attributes?}
 
-\item{flags}{list. Additional flags for the underlying integration routine.}
+\item{flags}{list. Additional flags for the underlying integration routine. Not used after the
+package \pkg{R2Cuba} disappeared.}
 
 \item{max.eval}{integer. Maximum number of integral evaluations.}
+
+\item{method}{character. Either \code{"hcubature"} (default) or \code{"pcubature"} from package \pkg{cubature}. 
+The documentation there says that \code{"pcubature"} is good for smooth integrands of low dimensions.}
+
+\item{vectorize}{logical. Use vectorized function evaluation from package \pkg{cubature}. This can speed
+up integration significantly.}
 }
 \value{
 The function \code{nlexpect} computes and returns the expectation of
 the function \code{fun(beta)}, with \code{beta} a vector of coefficients.
 I.e., if the coefficients \code{beta} are bootstrapped a large number of
 times, \code{nlexpect(est, fun)} should be equal to \code{mean(fun(beta))}.
-Additional diagnostic output from \code{\link[R2Cuba]{cuhre}} is returned in
-attributes if \code{istats=TRUE}.
 }
 \description{
 Use integration of the joint distribution of the coefficients to compute the
@@ -65,7 +71,8 @@ expression which are also names of coefficients.
 expectations is computed, like \code{quote(c(a*b, a^3-b))}. However, if the
 expressions contain different variables, like \code{quote(c(a*b, d*e))}, a
 quite compute intensive 4-dimensional integral will be computed, compared to
-two cheap 2-dimensional integrals if you do them separately.
+two cheap 2-dimensional integrals if you do them separately. There is nothing to gain
+from using vector-valued functions compared to multiple calls to \code{nlexpect()}.
 
 You may of course also integrate inequalites like \code{quote(abs(x1-0.2) >
 0.2)} to simulate the probability from t-tests or Wald-tests. See the
@@ -75,7 +82,15 @@ The function you provide will get an argument \code{...} if it does not have
 one already.  It will also be passed an argument \code{.z} which contains
 the actual coefficients in normalized coordinates, i.e. if \code{ch} is the
 Cholesky decomposition of the covariance matrix, and \code{pt} are the point
-estimates, the coefficients will be \code{pt + ch \%*\% .s}
+estimates, the coefficients will be \code{pt + ch \%*\% .s}. The first argument
+is a vector with names corresponding to the coefficients.
+
+If you specify \code{vectorized=TRUE}, your function will be passed a list with vectors
+in its first argument. The function must
+be able to handle a list, and must return a vector of the same length as the vectors
+in the list.  If you pass an expression like \code{x < y}, each variable will be a vector.
+If your function is vector valued, it must return a matrix where each
+column is the values.
 
 The \code{tol} argument specifies both the relative tolerance and the
 absolute tolerance. If these should not be the same, specify \code{tol} as a
@@ -84,14 +99,11 @@ the absolute tolerance. Termination occurs when at least one of the
 tolerances is met.
 
 The \code{...} can be used for passing other arguments to the integration
-routine \code{\link[R2Cuba]{cuhre}}.
+routine.
 }
 \note{
 An alternative to this method is to use the \code{bootexpr} argument
 with \code{\link{felm}}, to do a Monte Carlo integration.
-
-This function requires the package \pkg{R2Cuba}, and will fail if it is not
-available.
 }
 \examples{
 
@@ -114,26 +126,21 @@ nlexpect(est, tcrossprod(as.matrix(c(x1-pt1,x2-pt2))))
 waldtest(est, ~x1)['p.F']
 # the same with nlexpect, i.e. probability for observing abs(x1)>abs(pt1) conditional
 # on E(x1) = 0.
-nlexpect(est, (x1-pt1)^2 > pt1^2)
-# which of course is the same as
-2*nlexpect(est, x1 < 0)
+nlexpect(est, (x1-pt1)^2 > pt1^2, tol=1e-7, vectorize=TRUE)
+# which is the same as
+2*nlexpect(est, x1*sign(pt1) < 0)
 
+# Here's a multivalued, vectorized example
+nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorized=TRUE)
 \donttest{
-# then a joint test. Here we find the probability that
-# we are further from origo than the point estimates, measured
-# in a variance normalized coordinate system.
-waldtest(est, ~ x1 | x2)['p.F']
-#inverse cholesky
-ich <- solve(t(chol(vcov(est)[c('x1','x2'), c('x1','x2')])))
-# convert to normalized coordinates
-nz <- sum((ich \%*\% c(pt1,pt2))^2)
-# find probability that we're further away
-nlexpect(est, sum((ich \%*\% c(x1-pt1,x2-pt2))^2) > nz)
-# or use the .z argument provided automatically
-nlexpect(est, sum(.z^2) > nz, coefs=c('x1','x2'))
 
 # Non-linear test:
+
+# A simple one, what's the probability that product x1*x2 is between 0 and |E(x1)|?
+nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorized=TRUE)
+# Then a more complicated one with the expected value of a polynomal in the coefficients
 f <- function(x) c(poly=x[['x1']]*(6*x[['x1']]-x[['x2']]^2))
+# This is the linearized test:
 waldtest(est, f)['p.F']
 # In general, for a function f, the non-linear Wald test is something like
 # the following:
@@ -141,16 +148,15 @@ waldtest(est, f)['p.F']
 Ef <- nlexpect(est, f, coefs=c('x1','x2'))
 # point value of function
 Pf <- f(c(pt1,pt2))
-# similar to a Wald test:
-nlexpect(est, function(x) (f(x)-Ef)^2 > Pf^2, c('x1','x2'))
+# similar to a Wald test, but non-linear:
+nlexpect(est, function(x) (f(x)-Ef)^2 > Pf^2, c('x1','x2'), vectorize=TRUE)
 # one-sided
-nlexpect(est, function(x) f(x)-Ef > abs(Pf), c('x1','x2'))
+nlexpect(est, function(x) f(x)-Ef > abs(Pf), c('x1','x2'), vectorize=TRUE)
 # other sided
-nlexpect(est, function(x) f(x)-Ef < -abs(Pf), c('x1','x2'))
+nlexpect(est, function(x) f(x)-Ef < -abs(Pf), c('x1','x2'), vectorize=TRUE)
 }
 
 }
 \seealso{
 \code{\link{waldtest}}
 }
-

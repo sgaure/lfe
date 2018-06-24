@@ -106,12 +106,12 @@ btrap <- function(alpha,obj,N=100,ef=NULL,eps=getOption('lfe.eps'),
   }
 
   if(is.null(lhs)) {
-      R <- obj$r.residuals-obj$residuals
-      smpdraw <- as.vector(obj$residuals)
+    R <- obj$r.residuals-obj$residuals
+    smpdraw <- as.vector(obj$residuals)
   } else {
-      R <- obj$r.residuals[,lhs]-obj$residuals[,lhs]
-      smpdraw <- as.vector(obj$residuals[,lhs])
-    }
+    R <- obj$r.residuals[,lhs]-obj$residuals[,lhs]
+    smpdraw <- as.vector(obj$residuals[,lhs])
+  }
 
   w <- obj$weights
   # if there are weights, smpdraw should be weighted
@@ -211,7 +211,7 @@ btrap <- function(alpha,obj,N=100,ef=NULL,eps=getOption('lfe.eps'),
   fSEname <- SEname <- 'se'
   fsename <- sename
   if(!is.null(lhs)) {fsename <- paste(sename,lhs,sep='.'); fSEname <- paste(SEname,lhs,sep='.');}
-  alpha[,sename] <- sqrt(vsq/newN - (vsum/newN)**2)/(1-0.75/newN-7/32/newN**2-9/128/newN**3)
+  alpha[,fsename] <- sqrt(vsq/newN - (vsum/newN)**2)/(1-0.75/newN-7/32/newN**2-9/128/newN**3)
   if(sename != 'se') alpha[,fSEname] <- alpha[,fsename]
   return(structure(alpha,sename=sename))
 }

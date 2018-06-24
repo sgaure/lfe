@@ -7,7 +7,7 @@
 demeanlist(mtx, fl, icpt = 0L, eps = getOption("lfe.eps"),
   threads = getOption("lfe.threads"), progress = getOption("lfe.pint"),
   accel = getOption("lfe.accel"), randfact = TRUE, means = FALSE,
-  weights = NULL, scale = TRUE)
+  weights = NULL, scale = TRUE, na.rm = FALSE, attrs = NULL)
 }
 \arguments{
 \item{mtx}{matrix whose columns form vectors to be group-centred. mtx
@@ -37,6 +37,14 @@ but without the extra copy.}
 \item{weights}{numeric. For weighted demeaning.}
 
 \item{scale}{logical. Specify scaling for weighted demeaning.}
+
+\item{na.rm}{logical which indicates what should happen when the data 
+contain \code{NA}s. If TRUE, rows in the input \code{mtx} are removed
+prior to centering. If FALSE, they are kept, leading to entire groups becoming NA
+in the output.}
+
+\item{attrs}{list. List of attributes which should be attached to the output. 
+Used internally.}
 }
 \value{
 If \code{mtx} is a matrix, a matrix of the same shape, possibly with 
@@ -48,12 +56,19 @@ matrices have the column \code{icpt} deleted.
 
 If \code{mtx} is a \code{'data.frame'}, a \code{'data.frame'} 
 with the same names is returned; the \code{icpt} argument is ignored.
+
+If \code{na.rm} is specified, the return value has an attribute \code{'na.rm'} with a vector of
+row numbers which has been removed. In case the input is a matrix or list, the same rows
+are removed from all of them. Note that removing NAs incurs a copy of the input, so if
+memory usage is an issue and many runs are done, one might consider removing NAs from the data set entirely.
 }
 \description{
 Uses the method of alternating projections to centre
  a (model) matrix on multiple groups, as specified by a list of factors.
  This function is called by \code{\link{felm}}, but it has been
- made available as standalone in case it's needed.
+ made available as standalone in case it's needed. In particular, if
+one does not need transformations provided by R-formulas but have the covariates present
+as a matrix or a data.frame, a substantial amount of time can be saved in the centering.
 }
 \details{
 For each column \code{y} in \code{mtx}, the equivalent of the
@@ -118,7 +133,9 @@ Trans. Amer. Math. Soc. 355 pp 3433-3461 (2003).
 \code{demeanlist} will use an in place transform to save memory, provided the \code{mtx}
 argument is unnamed. Thus, as always in R, you shouldn't use temporary variables
 like \code{tmp <- fun(x[v,]); bar <- demeanlist(tmp,...); rm(tmp)}, it will be much better to
-do \code{bar <- demeanlist(fun(x[v,]),...)}
+do \code{bar <- demeanlist(fun(x[v,]),...)}. However, demeanlist allows a construction like
+\code{bar <- demeanlist(unnamed(tmp),...)} which will use an in place transformation, i.e. tmp
+will be modified, quite contrary to the usual semantics of R.
 }
 \examples{
 oldopts <- options(lfe.threads=1)
@@ -135,4 +152,3 @@ head(data.frame(mtx0,fl))
 lapply(fl, function(f) apply(mtx0,2,tapply,f,mean))
 options(oldopts)
 }
-

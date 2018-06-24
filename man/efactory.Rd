@@ -77,4 +77,3 @@ head(evalq(nm,environment(ef)))
 options(oldopts)
 
 }
-

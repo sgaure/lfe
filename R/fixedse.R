@@ -8,7 +8,7 @@
 #' is run with keepX=TRUE.
 #' @name fixedse
 #' @param est 'felm' object. The result of a call to \code{\link{felm}}.
-#' @param E Matrix. Estimable function.
+#' @param E Matrix. Estimable function. Not used at the moment.
 #' @param lhs character. Name of the left hand side, if more than one.
 #' @return numeric. Vector of standard errors.
 #' @examples
@@ -17,17 +17,16 @@
 #' y <- x + (1:5)[f] + rnorm(1000)
 #' est <- felm(y ~ x | f, keepX=TRUE)
 #' #both bootstrap and computed se:
-#' cbind(getfe(est,se=TRUE), fse=fixedse(est))
+#' cbind(getfe(est,ef=efactory(est,'ref'),se=TRUE), fse=fixedse(est))
 #' #compare with lm:
 #' summary(lm(y ~x+f-1))
-# ' @export
+#' @export
 #' @keywords internal
 #' @importFrom Matrix colSums rowSums solve
-NULL
-fixedse <- function(est, E, eps=0.1, lhs=NULL) {
+fixedse <- function(est, lhs=NULL, E) {
   if(length(est$fe) == 0) return(numeric())
   if(!is.null(est$clustervar)) 
-    stop('fixedse() doesn not work with clustered standard errors')
+    stop('fixedse() does not work with clustered standard errors')
   s2 <- sum(residuals(est,lhs=lhs)^2)/df.residual(est)
   
   if(length(est$fe) != 1) {
@@ -49,8 +48,12 @@ fixedse <- function(est, E, eps=0.1, lhs=NULL) {
   # Use the Woodbury identity on (D' M_X D)^{-1} = (D' (I-X(X'X)^{-1}X')) D)^{-1}
   # to obtain (D'D)^{-1}(D'D + D'X(X' M_D X)^{-1})X'D) (D'D)^{-1}
   # where (X' M_D X)^{-1} is the unscaled vcov(est)
-  sqrt(s2/as.vector(table(f)) + colSums(tcrossprod(chol(vcov(est,lhs=lhs)),
-                                                   Crowsum(est$X,f,mean=TRUE))^2))
+  if(is.null(est$X) || ncol(est$X) == 0) {
+    sqrt(s2/as.vector(table(f)))
+  } else {
+    sqrt(s2/as.vector(table(f)) + colSums(tcrossprod(chol(vcov(est,lhs=lhs)),
+                                                     Crowsum(est$X,f,mean=TRUE))^2))
+  }
 }
 
 sampdiag <- function(A, eps=0.01, K) {

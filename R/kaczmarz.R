@@ -76,6 +76,7 @@ kaczmarz <- function(fl,R,eps=getOption('lfe.eps'),init=NULL,
 
 getfe.kaczmarz <- function(obj,se=FALSE,eps=getOption('lfe.eps'),ef='ref',bN=100,
                            robust=FALSE, cluster=NULL, lhs=NULL) {
+  inef <- ef
   if(is.character(ef)) {
     ef <- efactory(obj,opt=ef)
   }
@@ -109,7 +110,15 @@ getfe.kaczmarz <- function(obj,se=FALSE,eps=getOption('lfe.eps'),ef='ref',bN=100
   attr(res,'ef') <- ef
 
   if(se) {
-    if(multlhs) {
+    if(identical(inef, 'ref') && length(obj$fe) == 1 && robust == FALSE) {
+      if(multlhs) {
+        for(lh in colnames(R)) {
+          res[[paste('se',lh,sep='.')]] <- fixedse(obj,lhs=lh)
+        }
+      } else {
+        res[['se']] <- fixedse(obj)
+      }
+    } else if(multlhs) {
       for(lh in colnames(R)) {
         res <- btrap(res,obj,bN,eps=eps, robust=robust, cluster=cluster, lhs=lh)        
       }

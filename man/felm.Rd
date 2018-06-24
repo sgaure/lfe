@@ -310,4 +310,3 @@ of Business & Economic Statistics (to appear).
 \code{\link{getfe}} \code{\link{summary.felm}}
 \code{\link{condfstat}} \code{\link{waldtest}}
 }
-

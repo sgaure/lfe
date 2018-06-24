@@ -95,4 +95,3 @@ head(btrap(alpha,est,ef=ef))
 options(oldopts)
 
 }
-

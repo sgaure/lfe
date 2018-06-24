@@ -48,4 +48,3 @@ fr <- data.frame(f1,f2,cf)
 fr[cf==3,]
 
 }
-

@@ -119,4 +119,3 @@ fixed-effects linear regression}, Stat 3(1):379-390, 2014.
 \seealso{
 \code{\link{varvars}} \code{\link{bccorr}}
 }
-

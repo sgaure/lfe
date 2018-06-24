@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2016-04-03 r70416) -- "Unsuffered Consequences"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R Under development (unstable) (2018-06-19 r74917) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -34,19 +34,19 @@ Loading required package: Matrix
 > y <- x + 0.25*x2 + 0.5*x3 + id.eff[id] + rnorm(length(x))
 > 
 > ## estimate
-> est <- felm(y ~ x+x2 + x3 |id)
+> est <- felm(y ~ x+x2 + x3 |id,keepX=TRUE)
 > 
 > ## extract the group fixed effects
 > fe <- getfe(est, se=TRUE)
 > ## merge back
 > head(fe)
      effect obs comp fe idx    se
-id.1  1.686   1    1 id   1 0.775
-id.2 -0.998   2    1 id   2 0.505
-id.3 -0.830   1    1 id   3 0.690
-id.4 -0.562   1    1 id   4 0.668
-id.5 -1.546   2    1 id   5 0.496
-id.8 -1.814   1    1 id   8 0.724
+id.1  1.686   1    1 id   1 1.025
+id.2 -0.998   2    1 id   2 0.724
+id.3 -0.830   1    1 id   3 1.024
+id.4 -0.562   1    1 id   4 1.028
+id.5 -1.546   2    1 id   5 0.725
+id.8 -1.814   1    1 id   8 1.025
 > ideff <- fe[paste('id',id,sep='.'),'effect']
 > 
 > ## verify that id and firm coefficients are 1
@@ -67,17 +67,17 @@ Coefficients:
      0.0447      0.9669      0.2145      0.5351 
 > 
 > # no covariate
-> est <- felm(y ~ 0|id)
+> est <- felm(y ~ 0|id,keepX=TRUE)
 > head(getfe(est, se=TRUE))
-      effect obs comp fe idx    se
-id.1  0.0434   1    1 id   1 0.909
-id.2 -1.1396   2    1 id   2 0.784
-id.3 -0.1782   1    1 id   3 0.971
-id.4 -3.4786   1    1 id   4 1.118
-id.5 -0.5694   2    1 id   5 0.785
-id.8 -1.7134   1    1 id   8 1.047
+      effect obs comp fe idx   se
+id.1  0.0434   1    1 id   1 1.57
+id.2 -1.1396   2    1 id   2 1.11
+id.3 -0.1782   1    1 id   3 1.57
+id.4 -3.4786   1    1 id   4 1.57
+id.5 -0.5694   2    1 id   5 1.11
+id.8 -1.7134   1    1 id   8 1.57
 > 
 > 
 > proc.time()
    user  system elapsed 
-  2.782   0.703   2.797 
+  3.137   0.594   3.315 

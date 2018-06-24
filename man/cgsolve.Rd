@@ -79,4 +79,3 @@ for the conjugate gradient method}, BIT Numerical Mathematics,
 \seealso{
 \code{\link{kaczmarz}}
 }
-

@@ -69,4 +69,3 @@ gradient method of \code{\link{cgsolve}}.  This may or may not be faster.
 \seealso{
 \code{\link{cgsolve}}
 }
-

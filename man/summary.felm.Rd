@@ -77,4 +77,3 @@ excluded instruments is also computed.
 \seealso{
 \code{\link{waldtest}}
 }
-

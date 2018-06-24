@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2016-04-18 r70507) -- "Unsuffered Consequences"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R Under development (unstable) (2018-06-19 r74917) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -312,7 +312,7 @@ idvar 1.774 firmvar 0.9845 cov -0.0891 cor -0.0674
 > varvars(est)
 [1] 0.29396 0.06226
 > varvars(est,biascorrect=TRUE)
-[1] 0.27216 0.04127
+[1] -0.1602 -0.4399
 Warning messages:
 1: In varvar(index, fe, est$X, effs[[index]], resvar, tol[index], biascorrect,  :
   bias corrected varvars with weights not tested
@@ -321,4 +321,4 @@ Warning messages:
 > 
 > proc.time()
    user  system elapsed 
-  5.971   1.170   6.031 
+  7.163   1.311   7.358 

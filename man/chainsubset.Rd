@@ -25,24 +25,26 @@ A set of logical conditions are chained, not and'ed. That is, each argument to
 argument filters further.
 For independent conditions this will be the same as and'ing them. I.e.
 \code{chainsubset(x < 0 , y < 0)} will yield  the same subset as \code{(x < 0) & (y < 0)}.
-However, for e.g. aggregate filters like \code{chainsubset(x < mean(x), y < mean(y))}
-we first find all the observations with \code{x < mean(x)}, then among these we
-find the ones with \code{y < mean(y)}.  The \code{mean(y)} is now conditional on
-\code{x < mean(x)}.
+However, for aggregate filters like \code{chainsubset(x < mean(y), x > mean(y))}
+we first find all the observations with \code{x < mean(y)}, then among these we
+find the ones with \code{x > mean(y)}.  The last \code{mean(y)} is now conditional on
+\code{x < mean(y)}.
+}
+\note{
+Some trickery is done to make this work directly in the subset argument of functions like
+\code{felm()} and \code{lm()}. It might possibly fail with an error message in some situations.
+If this happens, it should be done in two steps: \code{ss <- eval(chainsubset(...),data); 
+lm(...,data=data, subset=ss)}. In particular, the arguments are taken literally, 
+constructions like \code{function(...) {chainsubset(...)}} or \code{a <- quote(x < y); chainsubset(a)} do
+not work, but \code{do.call(chainsubset,list(a))} does.
 }
 \examples{
+set.seed(48)
 N <- 10000
-dat <- data.frame(y=rnorm(N), x=rnorm(N),id=factor(sample(N/100,N,replace=TRUE)))
+dat <- data.frame(y=rnorm(N), x=rnorm(N))
 # It's not the same as and'ing the conditions:
-ss <- chainsubset(x < mean(y), y < 3*mean(x))
-sum(eval(ss,dat))
-sum(evalq(x < mean(y) & y < 3*mean(x), dat))
-ss2 <- chainsubset(x < mean(y), y < a*mean(x), out.vars='a')
-a <- 3; sum(eval(ss2, dat))
-a <- 2; sum(eval(ss2, dat))
-# Among observations with x < y, find entire id's with more than
-# one fifth of their x's larger than 1/2
-ss3 <- chainsubset( x < y, tapply(x,id,function(.xx) {sum(.xx > 1/2) > length(.xx)/5} )[id])
- sum(eval(ss3,dat))
+felm(y ~ x,data=dat,subset=chainsubset(x < mean(y), y < 2*mean(x)))
+felm(y ~ x,data=dat,subset=chainsubset(y < 2*mean(x), x < mean(y)))
+felm(y ~ x,data=dat,subset=(x < mean(y)) & (y < 2*mean(x)))
+lm(y ~ x, data=dat, subset=chainsubset(x < mean(y), x > mean(y)))
 }
-

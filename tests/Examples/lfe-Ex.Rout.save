@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2018-06-11 r74889) -- "Unsuffered Consequences"
+R Under development (unstable) (2018-06-19 r74917) -- "Unsuffered Consequences"
 Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -59,9 +59,9 @@ Loading required package: Matrix
 > # find bias corrections
 > bccorr(est)
         corr           v1           v2          cov           d1           d2 
--0.030728526  0.950001416  1.370274827 -0.035059660  0.091768924  0.088489551 
+-0.032262721  0.952892562  1.376031164 -0.036943420  0.088877778  0.082733214 
          d12 
--0.006345166 
+-0.004461406 
 > 
 > 
 > 
@@ -434,8 +434,8 @@ function (v, addnames)
     }
     v
 }
-<bytecode: 0x5625019886c0>
-<environment: 0x5625013bc948>
+<bytecode: 0x556e19773ee0>
+<environment: 0x556e1772d320>
 > is.estimable(ef,fl)
 Warning in is.estimable(ef, fl) :
   non-estimable function, largest error 0.006 in coordinate 4013 ("id.4013")
@@ -457,8 +457,8 @@ function (v, addnames)
     }
     v
 }
-<bytecode: 0x562501185d88>
-<environment: 0x562501b32ad8>
+<bytecode: 0x556e18fe2758>
+<environment: 0x556e19253d08>
 attr(,"verified")
 [1] TRUE
 > is.estimable(ef,fl)
@@ -625,22 +625,75 @@ attr(,"df1")
 > # find bias corrections, there's little bias in this example
 > print(yv <- fevcov(est, lhs='y'))
               id         firm          foo
-id    0.92025530 -0.011069589 -0.019794399
-firm -0.01106959  0.964082331 -0.009815829
-foo  -0.01979440 -0.009815829  1.035318331
+id    0.92015755 -0.011173022 -0.019789538
+firm -0.01117302  0.963808718 -0.009781304
+foo  -0.01978954 -0.009781304  1.035240984
 attr(,"bias")
                 id          firm           foo
-id    3.185035e-02 -3.086703e-04 -9.744607e-05
-firm -3.086703e-04  2.159692e-02 -1.275526e-05
-foo  -9.744607e-05 -1.275526e-05  1.552533e-02
+id    0.0319481064 -2.052376e-04 -1.023073e-04
+firm -0.0002052376  2.187053e-02 -4.728025e-05
+foo  -0.0001023073 -4.728025e-05  1.560268e-02
 > ## Here's how to compute the unbiased correlation matrix:
 > cm <- cov2cor(yv)
 > structure(cm,bias=NULL)
               id         firm          foo
-id    1.00000000 -0.011752230 -0.020279218
-firm -0.01175223  1.000000000 -0.009825009
-foo  -0.02027922 -0.009825009  1.000000000
+id    1.00000000 -0.011864355 -0.020276072
+firm -0.01186435  1.000000000 -0.009792208
+foo  -0.02027607 -0.009792208  1.000000000
 > 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("fixedse")
+> ### * fixedse
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: fixedse
+> ### Title: Compute standard errors for fixed effects
+> ### Aliases: fixedse
+> ### Keywords: internal
+> 
+> ### ** Examples
+> 
+> x <- rnorm(1000)
+> f <- factor(sample(5,1000,replace=TRUE))
+> y <- x + (1:5)[f] + rnorm(1000)
+> est <- felm(y ~ x | f, keepX=TRUE)
+> #both bootstrap and computed se:
+> cbind(getfe(est,ef=efactory(est,'ref'),se=TRUE), fse=fixedse(est))
+       effect obs comp fe idx         se        fse
+f.1 0.9354485 212    1  f   1 0.06876413 0.07239479
+f.2 1.9504291 208    1  f   2 0.07263999 0.07311460
+f.3 3.0979605 206    1  f   3 0.07552078 0.07351750
+f.4 3.9299698 180    1  f   4 0.07603677 0.07872855
+f.5 5.0332818 194    1  f   5 0.07149293 0.07567327
+> #compare with lm:
+> summary(lm(y ~x+f-1))
+
+Call:
+lm(formula = y ~ x + f - 1)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4260 -0.6562 -0.0168  0.7455  3.0437 
+
+Coefficients:
+   Estimate Std. Error t value Pr(>|t|)    
+x   1.02191    0.03234   31.60   <2e-16 ***
+f1  0.93545    0.07239   12.92   <2e-16 ***
+f2  1.95043    0.07311   26.68   <2e-16 ***
+f3  3.09796    0.07352   42.14   <2e-16 ***
+f4  3.92997    0.07873   49.92   <2e-16 ***
+f5  5.03328    0.07567   66.51   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.054 on 994 degrees of freedom
+Multiple R-squared:  0.9145,	Adjusted R-squared:  0.914 
+F-statistic:  1772 on 6 and 994 DF,  p-value: < 2.2e-16
+
 > 
 > 
 > 
@@ -1007,24 +1060,24 @@ Levels: 1 2 3
 [1] 0.6807816+0i
 >   # mctrace is not really useful for small problems.
 >   mctrace(fun,ncol(A),tol=0.05)
-[1] 0.6539472
+[1] 0.6560292
 attr(,"sd")
-[1] 0.03255193
+[1] 0.03258954
 attr(,"iterations")
-[1] 10892
+[1] 10868
 >   # try a larger problem (3000x3000):
 >   f1 <- factor(sample(1500,3000,replace=TRUE))
 >   f2 <- factor(sample(1500,3000,replace=TRUE))
 >   fl <- list(f1,f2)
 >   mctrace(fl,tol=-5)
-[1] 512.6789
+[1] 512.4893
 attr(,"sd")
-[1] 4.309791
+[1] 4.026014
 attr(,"iterations")
-[1] 42
+[1] 44
 >   # exact:
 >   length(f1) - nlevels(f1) - nlevels(f2) + nlevels(compfactor(fl))
-[1] 509
+[1] 507
 > 
 > 
 > 
@@ -1177,14 +1230,14 @@ b 0.5324968
 > # estimate the covariance matrix of the fixed effects
 > fevcov(est, alpha)
               id        firm         foo
-id    0.95000141 -0.04658861  0.03880143
-firm -0.04658861  5.53028926 -0.01080117
-foo   0.03880143 -0.01080117  9.15858839
+id    0.95289256 -0.04488015  0.03963543
+firm -0.04488015  5.53609420 -0.01160888
+foo   0.03963543 -0.01160888  9.15619224
 attr(,"bias")
                id         firm          foo
-id    0.091768924 -0.004231931 -0.003282517
-firm -0.004231931  0.088102140 -0.002394416
-foo  -0.003282517 -0.002394416  0.049109103
+id    0.088877778 -0.005940383 -0.004116515
+firm -0.005940383  0.082297201 -0.001586703
+foo  -0.004116515 -0.001586703  0.051505257
 > # estimate variances of the diagonal
 > varvars(est, alpha)
 [1] 0.01018015 0.05503299 0.09774750
@@ -1236,7 +1289,7 @@ F-statistic:  5219 on 2 and 9997 DF,  p-value: < 2.2e-16
    0.9019639    0.5757362    3.0000000    0.9019611    0.1919121 9997.0000000 
 attr(,"formula")
 ~x - 1 | x2 + 0.2 | `(Intercept)`
-<environment: 0x5624fe434e70>
+<environment: 0x556e19d899e8>
 > # The Delta-method coincides when the function is linear:
 > waldtest(est, function(x) x - c(0, 1, -0.2))
            p         chi2          df1          p.F            F          df2 
@@ -1244,7 +1297,7 @@ attr(,"formula")
 attr(,"formula")
 function (x) 
 x - c(0, 1, -0.2)
-<bytecode: 0x5625014941c8>
+<bytecode: 0x556e18a54880>
 > 
 > 
 > 
@@ -1254,7 +1307,7 @@ x - c(0, 1, -0.2)
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  16.359 4.836 13.237 0 0 
+Time elapsed:  27.778 3.532 26.254 0 0 
 > grDevices::dev.off()
 null device 
           1 

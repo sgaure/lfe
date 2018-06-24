@@ -82,4 +82,3 @@ current estimate of the trace (i.e. the current sample mean).
   length(f1) - nlevels(f1) - nlevels(f2) + nlevels(compfactor(fl))
 
 }
-

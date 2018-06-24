@@ -86,4 +86,3 @@ waldtest(est, function(x) x - c(0, 1, -0.2))
 \seealso{
 \code{\link{nlexpect}}
 }
-

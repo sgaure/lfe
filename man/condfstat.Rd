@@ -100,4 +100,3 @@ IV regression}, \url{http://ssrn.com/abstract=1734933} in
 \cite{Identification and inference for econometric models: Essays in honor
 of Thomas Rothenberg}, 2005.
 }
-

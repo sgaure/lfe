@@ -73,4 +73,3 @@ options(oldopts)
 \seealso{
 \code{\link{getfe}}
 }
-

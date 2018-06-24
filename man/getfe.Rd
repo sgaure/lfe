@@ -137,4 +137,3 @@ summary(lm(y ~ x+x2+id+firm-1))
 }
 \keyword{models}
 \keyword{regression}
-

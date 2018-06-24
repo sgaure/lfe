@@ -15,7 +15,7 @@ id.eff <- rnorm(nlevels(id))
 y <- x + 0.25*x2 + 0.5*x3 + id.eff[id] + rnorm(length(x))
 
 ## estimate
-est <- felm(y ~ x+x2 + x3 |id)
+est <- felm(y ~ x+x2 + x3 |id,keepX=TRUE)
 
 ## extract the group fixed effects
 fe <- getfe(est, se=TRUE)
@@ -31,6 +31,6 @@ lm(y ~ x + x2 + x3 + ideff -1)
 felm(y ~ x + x2 + x3)
 
 # no covariate
-est <- felm(y ~ 0|id)
+est <- felm(y ~ 0|id,keepX=TRUE)
 head(getfe(est, se=TRUE))
 
