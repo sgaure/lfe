@@ -19,5 +19,5 @@ License: Artistic-2.0
 Classification/JEL: C13, C23, C60
 Classification/MSC: 62J05, 65F10, 65F50
 URL: https://github.com/sgaure/lfe
-Issues: https://github.com/sgaure/lfe/issues
+BugReports: https://github.com/sgaure/lfe/issues
 RoxygenNote: 6.0.1

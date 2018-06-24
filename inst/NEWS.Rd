@@ -1,5 +1,11 @@
 \name{NEWS}
 \title{lfe news}
+\section{Changes in version 2.8}{
+  \itemize{
+    \item Added functionality for closed form standard errors on the fixed
+    effects if standard normal and only one fixed effect.
+  }
+}
 \section{Changes in version 2.7}{
   \itemize{
     \item Added a \code{na.rm} argument to \code{demeanlist} to remove

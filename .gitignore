@@ -9,5 +9,6 @@
 *.tar.gz
 *.build
 *.Rcheck
+*.cache
 # emacs backup
 *~
