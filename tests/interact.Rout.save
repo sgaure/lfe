@@ -1,0 +1,930 @@
+
+R Under development (unstable) (2015-09-22 r69418) -- "Unsuffered Consequences"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> options(lfe.threads=2,digits=3,warn=1)
+> set.seed(42)
+> x <- rnorm(5000,mean=2)
+> x2 <- rnorm(length(x))
+> x3 <- rexp(length(x))
+> #ix <- rep(2.0,length(x))
+> ## create individual and firm
+> id <- factor(sample(150,length(x),replace=TRUE))
+> ix <- matrix(rnorm(2*length(x)),length(x),2)*sqrt(as.numeric(id)/nlevels(id))
+> colnames(ix) <- c('col1','col2')
+> firm <- factor(sample(130,length(x),replace=TRUE))
+> fx <- rnorm(length(x))*sqrt(as.numeric(id)/nlevels(firm))
+> shoe <- factor(sample(10,length(x),replace=TRUE))
+> shirt <- factor(sample(10,length(x),replace=TRUE))
+> ## effects
+> id.eff <- rnorm(nlevels(id))
+> firm.eff <- rnorm(nlevels(firm))
+> shoe.eff <- rnorm(nlevels(shoe))
+> shirt.eff <- rnorm(nlevels(shirt))
+> ## left hand side
+> y <- x + 0.25*x2 + 0.5*x3 + rowSums(ix*id.eff[id]) + id.eff[id] + fx*firm.eff[firm] + firm.eff[firm] + shoe.eff[shoe] + shirt.eff[shirt] + rnorm(length(x))
+> 
+> ## estimate
+> summary(est <- felm(y ~ x+x2+x3 | ix:id+id+fx:firm+firm+shoe+shirt, exactDOF=T))
+
+Call:
+   felm(formula = y ~ x + x2 + x3 | ix:id + id + fx:firm + firm +      shoe + shirt, exactDOF = T) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.525 -0.630 -0.013  0.628  3.542 
+
+Coefficients:
+   Estimate Std. Error t value Pr(>|t|)    
+x    0.9975     0.0153    65.3   <2e-16 ***
+x2   0.2636     0.0152    17.3   <2e-16 ***
+x3   0.4956     0.0149    33.3   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1 on 4270 degrees of freedom
+Multiple R-squared(full model): 0.898   Adjusted R-squared: 0.881 
+Multiple R-squared(proj model): 0.572   Adjusted R-squared: 0.499 
+F-statistic(full model):51.7 on 729 and 4270 DF, p-value: <2e-16 
+F-statistic(proj model): 1.9e+03 on 3 and 4270 DF, p-value: <2e-16 
+
+
+> getfe(est)
+                effect obs comp        fe idx
+id.1           1.47179  43    1        id   1
+id.2          -1.00281  26    1        id   2
+id.3           0.80496  41    1        id   3
+id.4           1.76359  34    1        id   4
+id.5           0.18652  32    1        id   5
+id.6          -2.10901  33    1        id   6
+id.7           2.22936  31    1        id   7
+id.8          -1.44739  37    1        id   8
+id.9           1.59250  42    1        id   9
+id.10          1.25494  32    1        id  10
+id.11          2.13496  29    1        id  11
+id.12          0.99705  43    1        id  12
+id.13         -0.18984  34    1        id  13
+id.14          0.73134  33    1        id  14
+id.15          2.35321  34    1        id  15
+id.16          0.01578  27    1        id  16
+id.17          2.33320  35    1        id  17
+id.18         -1.32030  29    1        id  18
+id.19         -0.10818  44    1        id  19
+id.20         -0.61974  36    1        id  20
+id.21          1.27625  34    1        id  21
+id.22          1.17786  48    1        id  22
+id.23          0.57087  32    1        id  23
+id.24          0.68275  26    1        id  24
+id.25          2.35663  30    1        id  25
+id.26          0.21026  29    1        id  26
+id.27          0.12452  34    1        id  27
+id.28          1.14551  16    1        id  28
+id.29          0.54208  41    1        id  29
+id.30         -0.15442  20    1        id  30
+id.31          0.52951  32    1        id  31
+id.32          0.52783  35    1        id  32
+id.33         -0.61534  40    1        id  33
+id.34         -0.92970  34    1        id  34
+id.35          0.18757  38    1        id  35
+id.36          1.99218  29    1        id  36
+id.37         -0.47961  36    1        id  37
+id.38          1.54842  34    1        id  38
+id.39          0.67151  36    1        id  39
+id.40         -0.23350  24    1        id  40
+id.41          1.54851  34    1        id  41
+id.42          1.60994  29    1        id  42
+id.43          0.48679  23    1        id  43
+id.44          0.09970  28    1        id  44
+id.45         -0.34453  38    1        id  45
+id.46          0.99170  22    1        id  46
+id.47         -0.32885  29    1        id  47
+id.48          2.21777  36    1        id  48
+id.49          0.99072  46    1        id  49
+id.50         -0.08358  36    1        id  50
+id.51          1.29858  34    1        id  51
+id.52          0.83559  36    1        id  52
+id.53         -0.88061  29    1        id  53
+id.54          0.27110  33    1        id  54
+id.55         -0.07953  39    1        id  55
+id.56          1.83541  34    1        id  56
+id.57          1.78059  29    1        id  57
+id.58         -0.95749  32    1        id  58
+id.59          2.00851  42    1        id  59
+id.60          0.14177  34    1        id  60
+id.61          1.13089  33    1        id  61
+id.62         -1.20328  26    1        id  62
+id.63         -0.71586  44    1        id  63
+id.64          0.89428  28    1        id  64
+id.65          1.10599  33    1        id  65
+id.66          1.24273  22    1        id  66
+id.67          1.35794  29    1        id  67
+id.68         -0.58282  34    1        id  68
+id.69          1.22908  25    1        id  69
+id.70          2.01181  33    1        id  70
+id.71          1.14420  26    1        id  71
+id.72          0.24105  38    1        id  72
+id.73          1.44829  37    1        id  73
+id.74          2.36095  35    1        id  74
+id.75          2.16419  27    1        id  75
+id.76          1.05052  28    1        id  76
+id.77          1.01074  22    1        id  77
+id.78          3.38852  38    1        id  78
+id.79          1.38773  40    1        id  79
+id.80          0.62270  38    1        id  80
+id.81          1.13714  31    1        id  81
+id.82         -0.01647  30    1        id  82
+id.83          0.05999  45    1        id  83
+id.84          0.77550  28    1        id  84
+id.85          3.44057  38    1        id  85
+id.86         -0.05591  29    1        id  86
+id.87          1.56624  38    1        id  87
+id.88         -0.55183  34    1        id  88
+id.89          0.82273  30    1        id  89
+id.90          1.69923  30    1        id  90
+id.91          1.70102  29    1        id  91
+id.92          3.09549  28    1        id  92
+id.93         -0.97998  32    1        id  93
+id.94          0.50321  34    1        id  94
+id.95          0.36520  37    1        id  95
+id.96         -0.28221  38    1        id  96
+id.97          1.00919  31    1        id  97
+id.98          1.12994  39    1        id  98
+id.99         -0.34478  25    1        id  99
+id.100         1.18579  35    1        id 100
+id.101         1.85058  27    1        id 101
+id.102         0.52858  25    1        id 102
+id.103         1.37065  34    1        id 103
+id.104         2.03406  34    1        id 104
+id.105         0.18740  34    1        id 105
+id.106         0.43616  38    1        id 106
+id.107         0.44453  36    1        id 107
+id.108         0.61123  40    1        id 108
+id.109         0.74331  45    1        id 109
+id.110        -1.06751  22    1        id 110
+id.111         0.71370  27    1        id 111
+id.112         2.48410  35    1        id 112
+id.113         1.80874  45    1        id 113
+id.114         0.19340  32    1        id 114
+id.115         2.52583  36    1        id 115
+id.116         1.10658  39    1        id 116
+id.117         1.46075  35    1        id 117
+id.118        -0.81413  31    1        id 118
+id.119         1.56673  31    1        id 119
+id.120         0.01884  20    1        id 120
+id.121         0.15257  30    1        id 121
+id.122         1.82610  38    1        id 122
+id.123         1.75174  29    1        id 123
+id.124         0.24622  32    1        id 124
+id.125         1.57185  29    1        id 125
+id.126         0.35776  41    1        id 126
+id.127         0.55052  32    1        id 127
+id.128         0.45536  45    1        id 128
+id.129         0.15275  38    1        id 129
+id.130         1.94722  29    1        id 130
+id.131         1.14674  32    1        id 131
+id.132         0.49212  31    1        id 132
+id.133         1.44908  46    1        id 133
+id.134        -0.42978  32    1        id 134
+id.135         1.72534  31    1        id 135
+id.136         2.33286  36    1        id 136
+id.137        -0.58222  28    1        id 137
+id.138         1.60560  26    1        id 138
+id.139        -2.17254  24    1        id 139
+id.140        -0.09192  38    1        id 140
+id.141         0.98342  27    1        id 141
+id.142        -1.15057  33    1        id 142
+id.143         2.19389  34    1        id 143
+id.144        -0.23718  30    1        id 144
+id.145         1.72024  38    1        id 145
+id.146         1.10343  44    1        id 146
+id.147        -0.16568  47    1        id 147
+id.148         2.50554  30    1        id 148
+id.149         0.98840  37    1        id 149
+id.150         2.12842  44    1        id 150
+firm.1        -2.19822  33    1      firm   1
+firm.2        -0.17280  33    1      firm   2
+firm.3        -2.64297  47    1      firm   3
+firm.4         0.23726  33    1      firm   4
+firm.5        -1.34906  41    1      firm   5
+firm.6        -2.10394  33    1      firm   6
+firm.7        -2.07523  53    1      firm   7
+firm.8        -1.04578  48    1      firm   8
+firm.9        -1.52205  29    1      firm   9
+firm.10       -0.91381  34    1      firm  10
+firm.11       -0.88963  30    1      firm  11
+firm.12       -0.95277  37    1      firm  12
+firm.13       -1.88471  41    1      firm  13
+firm.14       -0.80585  42    1      firm  14
+firm.15       -1.25984  29    1      firm  15
+firm.16       -0.81611  49    1      firm  16
+firm.17       -3.19457  48    1      firm  17
+firm.18       -0.34070  49    1      firm  18
+firm.19       -3.26256  37    1      firm  19
+firm.20       -0.51220  34    1      firm  20
+firm.21       -1.26276  36    1      firm  21
+firm.22       -2.58610  42    1      firm  22
+firm.23       -1.97651  39    1      firm  23
+firm.24       -1.63641  49    1      firm  24
+firm.25       -1.23188  28    1      firm  25
+firm.26       -2.56254  39    1      firm  26
+firm.27       -2.56576  30    1      firm  27
+firm.28       -2.28778  41    1      firm  28
+firm.29       -2.77703  38    1      firm  29
+firm.30       -1.07370  41    1      firm  30
+firm.31       -2.07027  41    1      firm  31
+firm.32       -2.43567  35    1      firm  32
+firm.33       -2.19821  38    1      firm  33
+firm.34       -2.55502  38    1      firm  34
+firm.35       -0.87479  29    1      firm  35
+firm.36       -1.37933  31    1      firm  36
+firm.37       -2.14234  46    1      firm  37
+firm.38       -1.77034  50    1      firm  38
+firm.39       -0.10514  43    1      firm  39
+firm.40       -0.26372  34    1      firm  40
+firm.41       -2.33625  30    1      firm  41
+firm.42       -1.84192  32    1      firm  42
+firm.43       -0.28481  38    1      firm  43
+firm.44       -1.36214  36    1      firm  44
+firm.45       -2.62754  45    1      firm  45
+firm.46       -0.53880  39    1      firm  46
+firm.47       -1.60578  41    1      firm  47
+firm.48       -2.33873  34    1      firm  48
+firm.49       -3.58597  28    1      firm  49
+firm.50       -1.07450  36    1      firm  50
+firm.51       -2.53539  49    1      firm  51
+firm.52       -3.21773  36    1      firm  52
+firm.53       -0.23528  35    1      firm  53
+firm.54       -4.14075  32    1      firm  54
+firm.55       -0.42864  29    1      firm  55
+firm.56       -1.32723  42    1      firm  56
+firm.57       -0.92043  30    1      firm  57
+firm.58       -1.32508  34    1      firm  58
+firm.59       -2.33677  41    1      firm  59
+firm.60       -1.64019  42    1      firm  60
+firm.61       -1.38962  53    1      firm  61
+firm.62       -0.78877  37    1      firm  62
+firm.63       -1.01977  37    1      firm  63
+firm.64       -1.99704  38    1      firm  64
+firm.65       -1.38109  41    1      firm  65
+firm.66       -0.29579  39    1      firm  66
+firm.67       -1.98922  33    1      firm  67
+firm.68       -0.93569  42    1      firm  68
+firm.69       -2.50575  42    1      firm  69
+firm.70       -1.33456  42    1      firm  70
+firm.71       -1.75143  26    1      firm  71
+firm.72       -0.95454  40    1      firm  72
+firm.73       -2.01669  39    1      firm  73
+firm.74        0.00000  56    1      firm  74
+firm.75       -3.08728  38    1      firm  75
+firm.76       -2.18165  48    1      firm  76
+firm.77       -2.52061  35    1      firm  77
+firm.78       -0.52612  32    1      firm  78
+firm.79       -2.54098  32    1      firm  79
+firm.80       -3.41929  44    1      firm  80
+firm.81       -2.53604  36    1      firm  81
+firm.82       -2.00320  32    1      firm  82
+firm.83       -0.75382  55    1      firm  83
+firm.84       -1.65923  37    1      firm  84
+firm.85       -2.02617  33    1      firm  85
+firm.86       -2.69306  36    1      firm  86
+firm.87       -4.36971  36    1      firm  87
+firm.88       -2.04557  35    1      firm  88
+firm.89       -2.05732  39    1      firm  89
+firm.90       -1.95606  26    1      firm  90
+firm.91       -2.73367  37    1      firm  91
+firm.92       -1.37748  31    1      firm  92
+firm.93       -0.39293  47    1      firm  93
+firm.94       -2.93109  50    1      firm  94
+firm.95       -1.36640  39    1      firm  95
+firm.96       -1.41888  52    1      firm  96
+firm.97       -1.95137  31    1      firm  97
+firm.98       -0.68206  37    1      firm  98
+firm.99       -1.93258  43    1      firm  99
+firm.100      -3.27087  33    1      firm 100
+firm.101      -1.41327  40    1      firm 101
+firm.102      -2.78551  36    1      firm 102
+firm.103      -0.26882  39    1      firm 103
+firm.104       0.30834  41    1      firm 104
+firm.105      -2.17193  31    1      firm 105
+firm.106      -1.14828  23    1      firm 106
+firm.107      -0.58522  43    1      firm 107
+firm.108      -0.80528  30    1      firm 108
+firm.109      -4.67170  46    1      firm 109
+firm.110      -1.49380  34    1      firm 110
+firm.111      -1.08722  32    1      firm 111
+firm.112      -0.94046  52    1      firm 112
+firm.113      -2.12782  35    1      firm 113
+firm.114      -1.44709  34    1      firm 114
+firm.115      -1.43584  49    1      firm 115
+firm.116      -1.64701  42    1      firm 116
+firm.117      -1.27284  42    1      firm 117
+firm.118      -1.97101  41    1      firm 118
+firm.119      -2.90463  32    1      firm 119
+firm.120      -2.76115  35    1      firm 120
+firm.121      -1.09744  45    1      firm 121
+firm.122      -1.93929  34    1      firm 122
+firm.123      -2.79727  34    1      firm 123
+firm.124      -0.61699  39    1      firm 124
+firm.125      -2.35060  42    1      firm 125
+firm.126      -1.26786  36    1      firm 126
+firm.127      -1.02573  35    1      firm 127
+firm.128      -2.71963  48    1      firm 128
+firm.129       0.73812  43    1      firm 129
+firm.130      -1.28490  51    1      firm 130
+shoe.1        -0.05547 519    2      shoe   1
+shoe.2        -1.05490 484    2      shoe   2
+shoe.3         0.09053 481    2      shoe   3
+shoe.4        -0.47010 490    2      shoe   4
+shoe.5         0.00000 522    2      shoe   5
+shoe.6         0.32214 517    2      shoe   6
+shoe.7         0.76546 477    2      shoe   7
+shoe.8         0.41222 501    2      shoe   8
+shoe.9         2.01928 505    2      shoe   9
+shoe.10        1.13572 504    2      shoe  10
+shirt.1        1.39692 519    3     shirt   1
+shirt.2        2.44611 500    3     shirt   2
+shirt.3        1.84964 478    3     shirt   3
+shirt.4        1.90952 495    3     shirt   4
+shirt.5        1.97828 475    3     shirt   5
+shirt.6        2.33322 477    3     shirt   6
+shirt.7        2.43142 489    3     shirt   7
+shirt.8        0.00000 536    3     shirt   8
+shirt.9       -1.76896 514    3     shirt   9
+shirt.10       1.74993 517    3     shirt  10
+ixcol1:id.1    1.66889  43    0 ixcol1:id   1
+ixcol1:id.2    1.78968  26    0 ixcol1:id   2
+ixcol1:id.3    1.27705  41    0 ixcol1:id   3
+ixcol1:id.4    0.77511  34    0 ixcol1:id   4
+ixcol1:id.5   -0.80200  32    0 ixcol1:id   5
+ixcol1:id.6   -2.41478  33    0 ixcol1:id   6
+ixcol1:id.7    2.72466  31    0 ixcol1:id   7
+ixcol1:id.8   -1.26294  37    0 ixcol1:id   8
+ixcol1:id.9    0.14322  42    0 ixcol1:id   9
+ixcol1:id.10   2.15166  32    0 ixcol1:id  10
+ixcol1:id.11   0.58030  29    0 ixcol1:id  11
+ixcol1:id.12   1.37232  43    0 ixcol1:id  12
+ixcol1:id.13  -0.24987  34    0 ixcol1:id  13
+ixcol1:id.14   0.04089  33    0 ixcol1:id  14
+ixcol1:id.15   2.76092  34    0 ixcol1:id  15
+ixcol1:id.16  -1.03067  27    0 ixcol1:id  16
+ixcol1:id.17   1.38432  35    0 ixcol1:id  17
+ixcol1:id.18  -2.06605  29    0 ixcol1:id  18
+ixcol1:id.19  -1.25706  44    0 ixcol1:id  19
+ixcol1:id.20  -1.43600  36    0 ixcol1:id  20
+ixcol1:id.21   0.98563  34    0 ixcol1:id  21
+ixcol1:id.22   0.38450  48    0 ixcol1:id  22
+ixcol1:id.23   0.27774  32    0 ixcol1:id  23
+ixcol1:id.24   0.16875  26    0 ixcol1:id  24
+ixcol1:id.25   1.25222  30    0 ixcol1:id  25
+ixcol1:id.26  -0.24085  29    0 ixcol1:id  26
+ixcol1:id.27  -0.44527  34    0 ixcol1:id  27
+ixcol1:id.28   0.37780  16    0 ixcol1:id  28
+ixcol1:id.29   0.32514  41    0 ixcol1:id  29
+ixcol1:id.30  -0.86882  20    0 ixcol1:id  30
+ixcol1:id.31  -0.63299  32    0 ixcol1:id  31
+ixcol1:id.32   0.58114  35    0 ixcol1:id  32
+ixcol1:id.33  -0.80213  40    0 ixcol1:id  33
+ixcol1:id.34  -2.63410  34    0 ixcol1:id  34
+ixcol1:id.35  -0.09098  38    0 ixcol1:id  35
+ixcol1:id.36   1.30916  29    0 ixcol1:id  36
+ixcol1:id.37  -1.42130  36    0 ixcol1:id  37
+ixcol1:id.38   0.77552  34    0 ixcol1:id  38
+ixcol1:id.39  -0.49927  36    0 ixcol1:id  39
+ixcol1:id.40  -1.30016  24    0 ixcol1:id  40
+ixcol1:id.41   0.61427  34    0 ixcol1:id  41
+ixcol1:id.42   0.78553  29    0 ixcol1:id  42
+ixcol1:id.43  -0.06465  23    0 ixcol1:id  43
+ixcol1:id.44  -1.12691  28    0 ixcol1:id  44
+ixcol1:id.45  -1.55057  38    0 ixcol1:id  45
+ixcol1:id.46   0.68991  22    0 ixcol1:id  46
+ixcol1:id.47  -1.69086  29    0 ixcol1:id  47
+ixcol1:id.48   1.52548  36    0 ixcol1:id  48
+ixcol1:id.49   0.41976  46    0 ixcol1:id  49
+ixcol1:id.50  -0.82536  36    0 ixcol1:id  50
+ixcol1:id.51   0.92872  34    0 ixcol1:id  51
+ixcol1:id.52   0.80530  36    0 ixcol1:id  52
+ixcol1:id.53  -1.87032  29    0 ixcol1:id  53
+ixcol1:id.54  -0.74271  33    0 ixcol1:id  54
+ixcol1:id.55  -0.39754  39    0 ixcol1:id  55
+ixcol1:id.56   1.64480  34    0 ixcol1:id  56
+ixcol1:id.57   1.33107  29    0 ixcol1:id  57
+ixcol1:id.58  -1.54941  32    0 ixcol1:id  58
+ixcol1:id.59   1.62972  42    0 ixcol1:id  59
+ixcol1:id.60  -0.66153  34    0 ixcol1:id  60
+ixcol1:id.61   1.38945  33    0 ixcol1:id  61
+ixcol1:id.62  -1.87597  26    0 ixcol1:id  62
+ixcol1:id.63  -1.17322  44    0 ixcol1:id  63
+ixcol1:id.64   0.55205  28    0 ixcol1:id  64
+ixcol1:id.65   0.60811  33    0 ixcol1:id  65
+ixcol1:id.66   0.73866  22    0 ixcol1:id  66
+ixcol1:id.67   0.76400  29    0 ixcol1:id  67
+ixcol1:id.68  -0.46653  34    0 ixcol1:id  68
+ixcol1:id.69   0.78229  25    0 ixcol1:id  69
+ixcol1:id.70   1.17421  33    0 ixcol1:id  70
+ixcol1:id.71   0.85408  26    0 ixcol1:id  71
+ixcol1:id.72  -0.49433  38    0 ixcol1:id  72
+ixcol1:id.73   0.63085  37    0 ixcol1:id  73
+ixcol1:id.74   1.76768  35    0 ixcol1:id  74
+ixcol1:id.75   1.53106  27    0 ixcol1:id  75
+ixcol1:id.76   0.56514  28    0 ixcol1:id  76
+ixcol1:id.77   0.25148  22    0 ixcol1:id  77
+ixcol1:id.78   2.83633  38    0 ixcol1:id  78
+ixcol1:id.79   0.30985  40    0 ixcol1:id  79
+ixcol1:id.80   0.74376  38    0 ixcol1:id  80
+ixcol1:id.81   0.08362  31    0 ixcol1:id  81
+ixcol1:id.82  -0.69307  30    0 ixcol1:id  82
+ixcol1:id.83  -0.64366  45    0 ixcol1:id  83
+ixcol1:id.84  -0.23709  28    0 ixcol1:id  84
+ixcol1:id.85   2.92791  38    0 ixcol1:id  85
+ixcol1:id.86  -0.23416  29    0 ixcol1:id  86
+ixcol1:id.87   1.24490  38    0 ixcol1:id  87
+ixcol1:id.88  -1.08679  34    0 ixcol1:id  88
+ixcol1:id.89   0.07154  30    0 ixcol1:id  89
+ixcol1:id.90   1.09459  30    0 ixcol1:id  90
+ixcol1:id.91   0.99205  29    0 ixcol1:id  91
+ixcol1:id.92   2.07610  28    0 ixcol1:id  92
+ixcol1:id.93  -1.06290  32    0 ixcol1:id  93
+ixcol1:id.94   0.24004  34    0 ixcol1:id  94
+ixcol1:id.95  -0.09176  37    0 ixcol1:id  95
+ixcol1:id.96  -0.73876  38    0 ixcol1:id  96
+ixcol1:id.97   0.64515  31    0 ixcol1:id  97
+ixcol1:id.98   0.83612  39    0 ixcol1:id  98
+ixcol1:id.99  -1.31270  25    0 ixcol1:id  99
+ixcol1:id.100  0.70569  35    0 ixcol1:id 100
+ixcol1:id.101  1.26630  27    0 ixcol1:id 101
+ixcol1:id.102 -0.03785  25    0 ixcol1:id 102
+ixcol1:id.103  0.73635  34    0 ixcol1:id 103
+ixcol1:id.104  1.46164  34    0 ixcol1:id 104
+ixcol1:id.105 -0.21537  34    0 ixcol1:id 105
+ixcol1:id.106 -0.57822  38    0 ixcol1:id 106
+ixcol1:id.107  0.29742  36    0 ixcol1:id 107
+ixcol1:id.108 -0.24605  40    0 ixcol1:id 108
+ixcol1:id.109  0.30908  45    0 ixcol1:id 109
+ixcol1:id.110 -1.32223  22    0 ixcol1:id 110
+ixcol1:id.111 -0.21023  27    0 ixcol1:id 111
+ixcol1:id.112  1.33608  35    0 ixcol1:id 112
+ixcol1:id.113  0.90147  45    0 ixcol1:id 113
+ixcol1:id.114 -0.53156  32    0 ixcol1:id 114
+ixcol1:id.115  1.96268  36    0 ixcol1:id 115
+ixcol1:id.116  0.41982  39    0 ixcol1:id 116
+ixcol1:id.117  0.73981  35    0 ixcol1:id 117
+ixcol1:id.118 -1.28356  31    0 ixcol1:id 118
+ixcol1:id.119  0.80319  31    0 ixcol1:id 119
+ixcol1:id.120 -0.45191  20    0 ixcol1:id 120
+ixcol1:id.121 -0.61995  30    0 ixcol1:id 121
+ixcol1:id.122  1.24086  38    0 ixcol1:id 122
+ixcol1:id.123  1.60132  29    0 ixcol1:id 123
+ixcol1:id.124 -0.26141  32    0 ixcol1:id 124
+ixcol1:id.125  1.05164  29    0 ixcol1:id 125
+ixcol1:id.126 -0.48998  41    0 ixcol1:id 126
+ixcol1:id.127 -0.06614  32    0 ixcol1:id 127
+ixcol1:id.128 -0.10708  45    0 ixcol1:id 128
+ixcol1:id.129 -0.79089  38    0 ixcol1:id 129
+ixcol1:id.130  1.17818  29    0 ixcol1:id 130
+ixcol1:id.131  0.74795  32    0 ixcol1:id 131
+ixcol1:id.132 -0.12312  31    0 ixcol1:id 132
+ixcol1:id.133  0.74448  46    0 ixcol1:id 133
+ixcol1:id.134 -1.00828  32    0 ixcol1:id 134
+ixcol1:id.135  1.26495  31    0 ixcol1:id 135
+ixcol1:id.136  2.09853  36    0 ixcol1:id 136
+ixcol1:id.137 -1.20606  28    0 ixcol1:id 137
+ixcol1:id.138  1.67099  26    0 ixcol1:id 138
+ixcol1:id.139 -2.55840  24    0 ixcol1:id 139
+ixcol1:id.140 -0.45292  38    0 ixcol1:id 140
+ixcol1:id.141  0.21345  27    0 ixcol1:id 141
+ixcol1:id.142 -1.67574  33    0 ixcol1:id 142
+ixcol1:id.143  1.72045  34    0 ixcol1:id 143
+ixcol1:id.144 -1.16736  30    0 ixcol1:id 144
+ixcol1:id.145  1.09460  38    0 ixcol1:id 145
+ixcol1:id.146  0.75787  44    0 ixcol1:id 146
+ixcol1:id.147 -0.53585  47    0 ixcol1:id 147
+ixcol1:id.148  1.61831  30    0 ixcol1:id 148
+ixcol1:id.149  0.47439  37    0 ixcol1:id 149
+ixcol1:id.150  1.17623  44    0 ixcol1:id 150
+ixcol2:id.1   -1.46251  43    0 ixcol2:id   1
+ixcol2:id.2   -2.11272  26    0 ixcol2:id   2
+ixcol2:id.3   -0.04454  41    0 ixcol2:id   3
+ixcol2:id.4   -0.58942  34    0 ixcol2:id   4
+ixcol2:id.5   -0.57299  32    0 ixcol2:id   5
+ixcol2:id.6   -3.61346  33    0 ixcol2:id   6
+ixcol2:id.7    1.94694  31    0 ixcol2:id   7
+ixcol2:id.8   -1.72617  37    0 ixcol2:id   8
+ixcol2:id.9    0.61627  42    0 ixcol2:id   9
+ixcol2:id.10   1.58185  32    0 ixcol2:id  10
+ixcol2:id.11   2.20948  29    0 ixcol2:id  11
+ixcol2:id.12   0.09923  43    0 ixcol2:id  12
+ixcol2:id.13  -1.12203  34    0 ixcol2:id  13
+ixcol2:id.14   0.60394  33    0 ixcol2:id  14
+ixcol2:id.15   1.05377  34    0 ixcol2:id  15
+ixcol2:id.16  -0.58763  27    0 ixcol2:id  16
+ixcol2:id.17   0.82915  35    0 ixcol2:id  17
+ixcol2:id.18  -2.51693  29    0 ixcol2:id  18
+ixcol2:id.19   0.24674  44    0 ixcol2:id  19
+ixcol2:id.20  -1.28553  36    0 ixcol2:id  20
+ixcol2:id.21   0.94807  34    0 ixcol2:id  21
+ixcol2:id.22   1.86595  48    0 ixcol2:id  22
+ixcol2:id.23  -1.07250  32    0 ixcol2:id  23
+ixcol2:id.24   0.52433  26    0 ixcol2:id  24
+ixcol2:id.25   1.82684  30    0 ixcol2:id  25
+ixcol2:id.26   0.03498  29    0 ixcol2:id  26
+ixcol2:id.27  -1.85324  34    0 ixcol2:id  27
+ixcol2:id.28   0.83756  16    0 ixcol2:id  28
+ixcol2:id.29  -0.27299  41    0 ixcol2:id  29
+ixcol2:id.30  -0.78555  20    0 ixcol2:id  30
+ixcol2:id.31   0.14664  32    0 ixcol2:id  31
+ixcol2:id.32   0.25306  35    0 ixcol2:id  32
+ixcol2:id.33  -0.78559  40    0 ixcol2:id  33
+ixcol2:id.34  -2.72992  34    0 ixcol2:id  34
+ixcol2:id.35   0.06232  38    0 ixcol2:id  35
+ixcol2:id.36   1.59216  29    0 ixcol2:id  36
+ixcol2:id.37  -1.52416  36    0 ixcol2:id  37
+ixcol2:id.38   0.56144  34    0 ixcol2:id  38
+ixcol2:id.39   0.13119  36    0 ixcol2:id  39
+ixcol2:id.40  -0.24632  24    0 ixcol2:id  40
+ixcol2:id.41   0.76010  34    0 ixcol2:id  41
+ixcol2:id.42   1.42264  29    0 ixcol2:id  42
+ixcol2:id.43  -0.19465  23    0 ixcol2:id  43
+ixcol2:id.44  -0.77321  28    0 ixcol2:id  44
+ixcol2:id.45  -1.26051  38    0 ixcol2:id  45
+ixcol2:id.46   0.63704  22    0 ixcol2:id  46
+ixcol2:id.47  -1.12245  29    0 ixcol2:id  47
+ixcol2:id.48   1.34688  36    0 ixcol2:id  48
+ixcol2:id.49   0.45875  46    0 ixcol2:id  49
+ixcol2:id.50  -0.06995  36    0 ixcol2:id  50
+ixcol2:id.51   0.74961  34    0 ixcol2:id  51
+ixcol2:id.52   0.52770  36    0 ixcol2:id  52
+ixcol2:id.53  -1.11355  29    0 ixcol2:id  53
+ixcol2:id.54  -0.26973  33    0 ixcol2:id  54
+ixcol2:id.55  -0.40068  39    0 ixcol2:id  55
+ixcol2:id.56   1.43049  34    0 ixcol2:id  56
+ixcol2:id.57   1.33714  29    0 ixcol2:id  57
+ixcol2:id.58  -1.34302  32    0 ixcol2:id  58
+ixcol2:id.59   2.19499  42    0 ixcol2:id  59
+ixcol2:id.60  -0.41103  34    0 ixcol2:id  60
+ixcol2:id.61   1.03908  33    0 ixcol2:id  61
+ixcol2:id.62  -1.06339  26    0 ixcol2:id  62
+ixcol2:id.63  -1.39804  44    0 ixcol2:id  63
+ixcol2:id.64   0.49415  28    0 ixcol2:id  64
+ixcol2:id.65   1.21507  33    0 ixcol2:id  65
+ixcol2:id.66   1.18346  22    0 ixcol2:id  66
+ixcol2:id.67   0.95124  29    0 ixcol2:id  67
+ixcol2:id.68  -1.34368  34    0 ixcol2:id  68
+ixcol2:id.69   0.59656  25    0 ixcol2:id  69
+ixcol2:id.70   1.02892  33    0 ixcol2:id  70
+ixcol2:id.71   0.64524  26    0 ixcol2:id  71
+ixcol2:id.72  -0.42271  38    0 ixcol2:id  72
+ixcol2:id.73   1.27723  37    0 ixcol2:id  73
+ixcol2:id.74   1.50164  35    0 ixcol2:id  74
+ixcol2:id.75   1.25825  27    0 ixcol2:id  75
+ixcol2:id.76   0.38018  28    0 ixcol2:id  76
+ixcol2:id.77  -0.05804  22    0 ixcol2:id  77
+ixcol2:id.78   3.12395  38    0 ixcol2:id  78
+ixcol2:id.79   0.73129  40    0 ixcol2:id  79
+ixcol2:id.80   0.07019  38    0 ixcol2:id  80
+ixcol2:id.81   0.79489  31    0 ixcol2:id  81
+ixcol2:id.82  -0.14883  30    0 ixcol2:id  82
+ixcol2:id.83  -0.56799  45    0 ixcol2:id  83
+ixcol2:id.84   0.06495  28    0 ixcol2:id  84
+ixcol2:id.85   2.83885  38    0 ixcol2:id  85
+ixcol2:id.86  -1.07546  29    0 ixcol2:id  86
+ixcol2:id.87   1.27837  38    0 ixcol2:id  87
+ixcol2:id.88  -0.91602  34    0 ixcol2:id  88
+ixcol2:id.89   0.18018  30    0 ixcol2:id  89
+ixcol2:id.90   0.52700  30    0 ixcol2:id  90
+ixcol2:id.91   1.27926  29    0 ixcol2:id  91
+ixcol2:id.92   2.34614  28    0 ixcol2:id  92
+ixcol2:id.93  -1.62106  32    0 ixcol2:id  93
+ixcol2:id.94  -0.31158  34    0 ixcol2:id  94
+ixcol2:id.95   0.11448  37    0 ixcol2:id  95
+ixcol2:id.96  -0.83686  38    0 ixcol2:id  96
+ixcol2:id.97   0.70618  31    0 ixcol2:id  97
+ixcol2:id.98   0.61970  39    0 ixcol2:id  98
+ixcol2:id.99  -0.33896  25    0 ixcol2:id  99
+ixcol2:id.100  0.64315  35    0 ixcol2:id 100
+ixcol2:id.101  1.00101  27    0 ixcol2:id 101
+ixcol2:id.102  0.67402  25    0 ixcol2:id 102
+ixcol2:id.103  0.67811  34    0 ixcol2:id 103
+ixcol2:id.104  1.51204  34    0 ixcol2:id 104
+ixcol2:id.105 -0.40955  34    0 ixcol2:id 105
+ixcol2:id.106 -0.94872  38    0 ixcol2:id 106
+ixcol2:id.107 -0.02774  36    0 ixcol2:id 107
+ixcol2:id.108 -0.45797  40    0 ixcol2:id 108
+ixcol2:id.109  0.13142  45    0 ixcol2:id 109
+ixcol2:id.110 -1.35222  22    0 ixcol2:id 110
+ixcol2:id.111  0.52093  27    0 ixcol2:id 111
+ixcol2:id.112  1.65703  35    0 ixcol2:id 112
+ixcol2:id.113  1.14779  45    0 ixcol2:id 113
+ixcol2:id.114 -0.34672  32    0 ixcol2:id 114
+ixcol2:id.115  1.63605  36    0 ixcol2:id 115
+ixcol2:id.116  0.77160  39    0 ixcol2:id 116
+ixcol2:id.117  0.56643  35    0 ixcol2:id 117
+ixcol2:id.118 -1.02222  31    0 ixcol2:id 118
+ixcol2:id.119  0.81253  31    0 ixcol2:id 119
+ixcol2:id.120 -0.41953  20    0 ixcol2:id 120
+ixcol2:id.121 -0.38241  30    0 ixcol2:id 121
+ixcol2:id.122  1.37106  38    0 ixcol2:id 122
+ixcol2:id.123  1.08282  29    0 ixcol2:id 123
+ixcol2:id.124 -0.50790  32    0 ixcol2:id 124
+ixcol2:id.125  0.97721  29    0 ixcol2:id 125
+ixcol2:id.126 -0.14694  41    0 ixcol2:id 126
+ixcol2:id.127  0.09863  32    0 ixcol2:id 127
+ixcol2:id.128  0.02199  45    0 ixcol2:id 128
+ixcol2:id.129 -0.71965  38    0 ixcol2:id 129
+ixcol2:id.130  1.56405  29    0 ixcol2:id 130
+ixcol2:id.131  0.32881  32    0 ixcol2:id 131
+ixcol2:id.132 -0.30143  31    0 ixcol2:id 132
+ixcol2:id.133  0.65487  46    0 ixcol2:id 133
+ixcol2:id.134 -1.07570  32    0 ixcol2:id 134
+ixcol2:id.135  1.21025  31    0 ixcol2:id 135
+ixcol2:id.136  1.74932  36    0 ixcol2:id 136
+ixcol2:id.137 -1.07689  28    0 ixcol2:id 137
+ixcol2:id.138  1.87753  26    0 ixcol2:id 138
+ixcol2:id.139 -3.25655  24    0 ixcol2:id 139
+ixcol2:id.140 -0.57165  38    0 ixcol2:id 140
+ixcol2:id.141  0.62245  27    0 ixcol2:id 141
+ixcol2:id.142 -1.53164  33    0 ixcol2:id 142
+ixcol2:id.143  1.90317  34    0 ixcol2:id 143
+ixcol2:id.144 -0.78819  30    0 ixcol2:id 144
+ixcol2:id.145  1.49451  38    0 ixcol2:id 145
+ixcol2:id.146  0.48055  44    0 ixcol2:id 146
+ixcol2:id.147 -1.02712  47    0 ixcol2:id 147
+ixcol2:id.148  1.86021  30    0 ixcol2:id 148
+ixcol2:id.149  0.49541  37    0 ixcol2:id 149
+ixcol2:id.150  1.32894  44    0 ixcol2:id 150
+fx:firm.1     -0.59974  33    0   fx:firm   1
+fx:firm.2      1.65366  33    0   fx:firm   2
+fx:firm.3     -0.89027  47    0   fx:firm   3
+fx:firm.4      1.79825  33    0   fx:firm   4
+fx:firm.5     -0.00803  41    0   fx:firm   5
+fx:firm.6     -0.30198  33    0   fx:firm   6
+fx:firm.7     -0.90985  53    0   fx:firm   7
+fx:firm.8      0.61364  48    0   fx:firm   8
+fx:firm.9     -0.17438  29    0   fx:firm   9
+fx:firm.10     0.19727  34    0   fx:firm  10
+fx:firm.11     0.50259  30    0   fx:firm  11
+fx:firm.12     0.73218  37    0   fx:firm  12
+fx:firm.13    -0.46421  41    0   fx:firm  13
+fx:firm.14     1.33473  42    0   fx:firm  14
+fx:firm.15     0.14117  29    0   fx:firm  15
+fx:firm.16     1.21049  49    0   fx:firm  16
+fx:firm.17    -1.50645  48    0   fx:firm  17
+fx:firm.18     1.08148  49    0   fx:firm  18
+fx:firm.19    -1.89108  37    0   fx:firm  19
+fx:firm.20     0.97751  34    0   fx:firm  20
+fx:firm.21    -0.09491  36    0   fx:firm  21
+fx:firm.22    -0.53436  42    0   fx:firm  22
+fx:firm.23    -0.21743  39    0   fx:firm  23
+fx:firm.24     0.04672  49    0   fx:firm  24
+fx:firm.25     0.18584  28    0   fx:firm  25
+fx:firm.26    -1.02431  39    0   fx:firm  26
+fx:firm.27    -1.50963  30    0   fx:firm  27
+fx:firm.28    -0.55082  41    0   fx:firm  28
+fx:firm.29    -1.12333  38    0   fx:firm  29
+fx:firm.30     0.43378  41    0   fx:firm  30
+fx:firm.31    -0.31231  41    0   fx:firm  31
+fx:firm.32    -0.27946  35    0   fx:firm  32
+fx:firm.33    -0.34322  38    0   fx:firm  33
+fx:firm.34    -0.69473  38    0   fx:firm  34
+fx:firm.35     0.58403  29    0   fx:firm  35
+fx:firm.36    -0.18995  31    0   fx:firm  36
+fx:firm.37    -0.65601  46    0   fx:firm  37
+fx:firm.38    -0.26629  50    0   fx:firm  38
+fx:firm.39     1.46925  43    0   fx:firm  39
+fx:firm.40     1.23522  34    0   fx:firm  40
+fx:firm.41    -0.32461  30    0   fx:firm  41
+fx:firm.42    -0.61815  32    0   fx:firm  42
+fx:firm.43     1.00870  38    0   fx:firm  43
+fx:firm.44    -0.10333  36    0   fx:firm  44
+fx:firm.45    -1.19974  45    0   fx:firm  45
+fx:firm.46     0.90627  39    0   fx:firm  46
+fx:firm.47     0.56682  41    0   fx:firm  47
+fx:firm.48    -0.64755  34    0   fx:firm  48
+fx:firm.49    -2.15129  28    0   fx:firm  49
+fx:firm.50     0.97894  36    0   fx:firm  50
+fx:firm.51    -0.92724  49    0   fx:firm  51
+fx:firm.52    -1.63872  36    0   fx:firm  52
+fx:firm.53     1.71526  35    0   fx:firm  53
+fx:firm.54    -2.33727  32    0   fx:firm  54
+fx:firm.55     1.34448  29    0   fx:firm  55
+fx:firm.56     0.33964  42    0   fx:firm  56
+fx:firm.57     0.15136  30    0   fx:firm  57
+fx:firm.58    -0.04949  34    0   fx:firm  58
+fx:firm.59    -0.84123  41    0   fx:firm  59
+fx:firm.60    -0.57298  42    0   fx:firm  60
+fx:firm.61     0.43616  53    0   fx:firm  61
+fx:firm.62     0.39465  37    0   fx:firm  62
+fx:firm.63     0.76065  37    0   fx:firm  63
+fx:firm.64    -0.18378  38    0   fx:firm  64
+fx:firm.65     0.04194  41    0   fx:firm  65
+fx:firm.66     1.51109  39    0   fx:firm  66
+fx:firm.67     0.37635  33    0   fx:firm  67
+fx:firm.68     0.89058  42    0   fx:firm  68
+fx:firm.69    -0.93111  42    0   fx:firm  69
+fx:firm.70     0.66424  42    0   fx:firm  70
+fx:firm.71     0.59451  26    0   fx:firm  71
+fx:firm.72     0.83094  40    0   fx:firm  72
+fx:firm.73    -0.10248  39    0   fx:firm  73
+fx:firm.74     1.64109  56    0   fx:firm  74
+fx:firm.75    -1.29259  38    0   fx:firm  75
+fx:firm.76    -0.78939  48    0   fx:firm  76
+fx:firm.77    -0.71103  35    0   fx:firm  77
+fx:firm.78     1.29020  32    0   fx:firm  78
+fx:firm.79    -0.06354  32    0   fx:firm  79
+fx:firm.80    -2.20686  44    0   fx:firm  80
+fx:firm.81    -1.47297  36    0   fx:firm  81
+fx:firm.82    -0.28742  32    0   fx:firm  82
+fx:firm.83     0.79312  55    0   fx:firm  83
+fx:firm.84     0.08661  37    0   fx:firm  84
+fx:firm.85    -0.47083  33    0   fx:firm  85
+fx:firm.86    -0.34381  36    0   fx:firm  86
+fx:firm.87    -2.81580  36    0   fx:firm  87
+fx:firm.88    -0.16651  35    0   fx:firm  88
+fx:firm.89    -0.43939  39    0   fx:firm  89
+fx:firm.90    -0.54602  26    0   fx:firm  90
+fx:firm.91    -1.31270  37    0   fx:firm  91
+fx:firm.92     0.49909  31    0   fx:firm  92
+fx:firm.93     1.03640  47    0   fx:firm  93
+fx:firm.94    -1.40967  50    0   fx:firm  94
+fx:firm.95     0.32701  39    0   fx:firm  95
+fx:firm.96     0.32332  52    0   fx:firm  96
+fx:firm.97    -0.20313  31    0   fx:firm  97
+fx:firm.98     0.95963  37    0   fx:firm  98
+fx:firm.99    -0.26060  43    0   fx:firm  99
+fx:firm.100   -0.98225  33    0   fx:firm 100
+fx:firm.101    0.35861  40    0   fx:firm 101
+fx:firm.102   -0.66282  36    0   fx:firm 102
+fx:firm.103    1.67160  39    0   fx:firm 103
+fx:firm.104    1.73029  41    0   fx:firm 104
+fx:firm.105   -0.71252  31    0   fx:firm 105
+fx:firm.106    0.89847  23    0   fx:firm 106
+fx:firm.107    1.30117  43    0   fx:firm 107
+fx:firm.108    1.41535  30    0   fx:firm 108
+fx:firm.109   -3.05966  46    0   fx:firm 109
+fx:firm.110    0.24998  34    0   fx:firm 110
+fx:firm.111    0.74084  32    0   fx:firm 111
+fx:firm.112    0.82783  52    0   fx:firm 112
+fx:firm.113   -0.59084  35    0   fx:firm 113
+fx:firm.114    0.13192  34    0   fx:firm 114
+fx:firm.115    0.09302  49    0   fx:firm 115
+fx:firm.116   -0.62803  42    0   fx:firm 116
+fx:firm.117    0.53812  42    0   fx:firm 117
+fx:firm.118   -0.50492  41    0   fx:firm 118
+fx:firm.119   -1.08860  32    0   fx:firm 119
+fx:firm.120   -1.05639  35    0   fx:firm 120
+fx:firm.121    0.46795  45    0   fx:firm 121
+fx:firm.122   -0.29396  34    0   fx:firm 122
+fx:firm.123   -1.05050  34    0   fx:firm 123
+fx:firm.124    0.99636  39    0   fx:firm 124
+fx:firm.125   -0.88003  42    0   fx:firm 125
+fx:firm.126    0.85060  36    0   fx:firm 126
+fx:firm.127    0.72937  35    0   fx:firm 127
+fx:firm.128   -0.87307  48    0   fx:firm 128
+fx:firm.129    2.55972  43    0   fx:firm 129
+fx:firm.130    0.22380  51    0   fx:firm 130
+> 
+> # make sure this one works, 
+> summary(est <- felm(y ~ x | x2:id + x3:id + id))
+
+Call:
+   felm(formula = y ~ x | x2:id + x3:id + id) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-11.38  -1.40   0.10   1.51  13.54 
+
+Coefficients:
+  Estimate Std. Error t value Pr(>|t|)    
+x   1.0579     0.0357    29.6   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.43 on 4549 degrees of freedom
+Multiple R-squared(full model): 0.361   Adjusted R-squared: 0.298 
+Multiple R-squared(proj model): 0.161   Adjusted R-squared: 0.0785 
+F-statistic(full model):5.71 on 450 and 4549 DF, p-value: <2e-16 
+F-statistic(proj model):  876 on 1 and 4549 DF, p-value: <2e-16 
+*** Standard errors may be too high due to more than 2 groups and exactDOF=FALSE
+
+
+> 
+> 
+> # compare with lm
+> x <- rnorm(100)
+> id <- factor(sample(5,length(x), replace=T))
+> id.eff <- rnorm(nlevels(id))
+> firm.eff <- rnorm(nlevels(firm))
+> firm <- factor(sample(7,length(x), replace=T))
+> fx <- rnorm(length(x))
+> ix <- matrix(rnorm(2*length(x)),length(x),2)
+> y <- x + rowSums(ix*id.eff[id]) + fx*firm.eff[firm] + firm.eff[firm] + rnorm(length(x))
+> summary(est <- felm(y ~ x | ix:id + fx:firm + firm, exactDOF='rM'))
+
+Call:
+   felm(formula = y ~ x | ix:id + fx:firm + firm, exactDOF = "rM") 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.475 -0.637  0.041  0.579  2.273 
+
+Coefficients:
+  Estimate Std. Error t value Pr(>|t|)    
+x     0.83       0.11    7.56  8.3e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.04 on 75 degrees of freedom
+Multiple R-squared(full model): 0.844   Adjusted R-squared: 0.795 
+Multiple R-squared(proj model): 0.432   Adjusted R-squared: 0.25 
+F-statistic(full model):  17 on 24 and 75 DF, p-value: <2e-16 
+F-statistic(proj model): 57.1 on 1 and 75 DF, p-value: 8.34e-11 
+
+
+> getfe(est)
+          effect obs comp      fe idx
+firm.1     0.510  10    1    firm   1
+firm.2     0.759  10    1    firm   2
+firm.3     0.870  21    1    firm   3
+firm.4     0.865  18    1    firm   4
+firm.5     0.564  14    1    firm   5
+firm.6     0.418  15    1    firm   6
+firm.7    -0.949  12    1    firm   7
+ix1:id.1   1.682  17    0  ix1:id   1
+ix1:id.2   0.592  25    0  ix1:id   2
+ix1:id.3  -0.641  18    0  ix1:id   3
+ix1:id.4   0.526  15    0  ix1:id   4
+ix1:id.5   1.374  25    0  ix1:id   5
+ix2:id.1   1.836  17    0  ix2:id   1
+ix2:id.2   0.521  25    0  ix2:id   2
+ix2:id.3  -0.460  18    0  ix2:id   3
+ix2:id.4   1.324  15    0  ix2:id   4
+ix2:id.5   0.662  25    0  ix2:id   5
+fx:firm.1  0.398  10    0 fx:firm   1
+fx:firm.2  0.443  10    0 fx:firm   2
+fx:firm.3  1.007  21    0 fx:firm   3
+fx:firm.4  0.497  18    0 fx:firm   4
+fx:firm.5 -0.314  14    0 fx:firm   5
+fx:firm.6  0.625  15    0 fx:firm   6
+fx:firm.7 -1.503  12    0 fx:firm   7
+> summary(lm(y ~ x + ix:id + fx:firm + firm))
+
+Call:
+lm(formula = y ~ x + ix:id + fx:firm + firm)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.475 -0.637  0.041  0.579  2.273 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   0.5103     0.3534    1.44  0.15296    
+x             0.8301     0.1099    7.56  8.3e-11 ***
+firm2         0.2489     0.5391    0.46  0.64565    
+firm3         0.3596     0.4436    0.81  0.42014    
+firm4         0.3542     0.4374    0.81  0.42059    
+firm5         0.0539     0.5203    0.10  0.91781    
+firm6        -0.0927     0.4630   -0.20  0.84176    
+firm7        -1.4597     0.4913   -2.97  0.00398 ** 
+ix1:id1       1.6823     0.3380    4.98  4.0e-06 ***
+ix2:id1       1.8356     0.2891    6.35  1.5e-08 ***
+ix1:id2       0.5920     0.2371    2.50  0.01471 *  
+ix2:id2       0.5209     0.2436    2.14  0.03574 *  
+ix1:id3      -0.6409     0.2577   -2.49  0.01511 *  
+ix2:id3      -0.4600     0.2819   -1.63  0.10692    
+ix1:id4       0.5258     0.3356    1.57  0.12143    
+ix2:id4       1.3243     0.2885    4.59  1.7e-05 ***
+ix1:id5       1.3744     0.1931    7.12  5.6e-10 ***
+ix2:id5       0.6617     0.2173    3.05  0.00321 ** 
+fx:firm1      0.3984     0.4293    0.93  0.35637    
+fx:firm2      0.4428     0.4352    1.02  0.31219    
+fx:firm3      1.0070     0.2603    3.87  0.00023 ***
+fx:firm4      0.4967     0.2784    1.78  0.07844 .  
+fx:firm5     -0.3137     0.3569   -0.88  0.38228    
+fx:firm6      0.6247     0.3195    1.96  0.05430 .  
+fx:firm7     -1.5031     0.3538   -4.25  6.1e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.04 on 75 degrees of freedom
+Multiple R-squared:  0.844,	Adjusted R-squared:  0.795 
+F-statistic:   17 on 24 and 75 DF,  p-value: <2e-16
+
+> 
+> 
+> proc.time()
+   user  system elapsed 
+   3.02    1.09    3.02 

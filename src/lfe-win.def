@@ -1,0 +1,4 @@
+LIBRARY lfe.dll
+EXPORTS
+ R_init_lfe
+ R_unload_lfe

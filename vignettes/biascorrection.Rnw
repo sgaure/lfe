@@ -1,0 +1,127 @@
+
+% $Id: lfehow.Rnw 1655 2015-03-18 18:51:06Z sgaure $
+\documentclass{amsart}
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Limited mobility bias correction}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\newcommand{\strong}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\let\pkg=\strong
+\newcommand\code{\bgroup\@codex}
+\def\@codex#1{{\normalfont\ttfamily\hyphenchar\font=-1 #1}\egroup}
+
+\newcommand\var{\operatorname{var}}
+\newcommand\cov{\operatorname{cov}}
+\newcommand\tr{\operatorname{tr}}
+\newcommand\E{\operatorname{E}}
+
+
+\title{Limited mobility bias correction}
+
+\author{Simen Gaure}
+\address{Ragnar Frisch Centre for Economic Research, Oslo, Norway}
+\date{November 12, 2015}
+
+\begin{document}
+\begin{abstract}
+A description of what limited bias correction is. And how to compensate for it.
+\end{abstract}
+\maketitle
+
+
+
+\section{Introduction}
+We assume we have an OLS model in matrix form
+\begin{equation}\label{osys}
+ Y = X\beta + D\alpha + F\gamma + \epsilon
+\end{equation}
+where \(X\) is a \((n \times k)\)-matrix, \(D\) is a \((n \times
+g_1)\)-matrix, and \(F\) is a \((n\times g_2)\)-matrix.  It is assumed
+that \(D\) and \(F\) are matrices of dummy variables and that both
+\(g_1\) and \(g_2\) are very large (as in \(10^5-10^7\)). The
+\pkg{lfe}-package estimates \(\alpha\) and \(\gamma\) as OLS
+coefficients.  Some applications study the variances \(\var(D\alpha)\)
+and \(\var(F\gamma)\), as well as the covariance \(\cov(D\alpha,
+F\gamma)\). It was shown in \cite{AGSU07} that if one uses the
+estimates \(D\hat\alpha\) and \(F\hat\gamma\) for this purpose, the
+resulting variances are positively biased, and the covariance is
+typically negatively biased.  The biases can be large enough to change
+the sign of the covariance. They also provided explicit formulas for
+the size of the bias, in terms of the trace of some very large
+matrices.
+
+In short, the bias for \(\var(D\hat\alpha)\) can be computed as
+\begin{equation}\label{bias}
+  \delta_\alpha = \sigma_\epsilon^2 \tr(A),
+\end{equation}
+where \(A\) is a large matrix depending only on \(X\), \(D\) and \(F\).
+The unbiased variance can then be estimated as
+\begin{equation}\label{unbias}
+  \var(D\alpha) = \var(D\hat\alpha) - \sigma_\epsilon^2\tr(A)
+\end{equation}
+In some typical instances, the matrix \(A\) will be too large to handle directly,
+being of size \(g_1\).
+The bias for \(\var(F\hat\gamma)\) and the covariance, are of the same form.
+
+\section{How lfe handles this}
+In \cite{GS14} a method for estimating \(\delta_\alpha\) was outlined.
+It uses the fact that 
+\begin{equation}
+\tr(A) = \E(x^t A x),
+\end{equation}
+if \(x\) is a vector of independent random variables \(x_i\) with \(\E(x_i) = 0\) and
+\(\var(x_i) = 1\).  In fact, each \(x_i\) can optimally be choosen as drawing
+from \(\{-1,1\}\) with uniform probability.  This works because
+even if \(A\) is too large to be handled directly, it is possible to compute
+\(A x\) for a vector \(x\).  Thus, \pkg{lfe}'s \code{fevcov} routine uses
+a sample mean to estimate \(\tr(A)\).
+
+\section{Another method}
+Formula \ref{unbias} suggests another method for estimating \(\var(D\alpha)\).
+We rewrite it as
+\begin{equation}
+\var(D\hat\alpha) = \var(D\alpha) + \sigma_\epsilon^2\tr(A)
+\end{equation}
+Now, \(b=\var(D\alpha)\) and \(a=\tr(A)\) are constants, so 
+we can write
+\begin{equation}\label{sampleeq}
+\var(D\hat\alpha) = a\sigma_\epsilon^2 + b
+\end{equation}
+If we resample and scale the residuals \(\hat\epsilon\), and do the estimation of
+\(\hat\alpha\) over again, we will obtain a series of different observations
+of formula \ref{sampleeq}.  We may then do an OLS on model \ref{sampleeq}, and
+the estimate \(\hat a\) will be an estimate for \(\tr(A)\) which can be
+used in equation \ref{unbias}.  The \(\var(D\hat\alpha)\) is not normally distributed
+around its mean, this typically skews \(\hat b\) more than \(\hat a\), so \(\hat a\) is
+a better estimate.  \pkg{lfe} does not implement this method.
+
+
+\bibliographystyle{amsplain}
+\iftrue
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{1}
+
+
+\bibitem{AGSU07}
+M.~Andrews, L.~Gill, T.~Schank, and R.~Upward, \emph{{High wage workers and low
+  wage firms: negative assortative matching or limited mobility bias?}},
+  Journal of the Royal Statistical Society(A) \textbf{171(3)} (2008), 673--697.
+
+\bibitem{GS14}
+S.~Gaure, \emph{Correlation bias correction in two-way fixed-effects linear
+  regression}, Stat \textbf{3} (2014), no.~1, 370--390.
+
+\end{thebibliography}
+
+\else
+\bibliography{biblio}
+\fi
+\end{document}

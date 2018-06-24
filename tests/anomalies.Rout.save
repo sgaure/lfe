@@ -1,0 +1,566 @@
+
+R Under development (unstable) (2018-06-11 r74889) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> set.seed(42)
+> options(digits=3, warn=1,lfe.threads=1)
+> x <- rnorm(1000)
+> x1 <- rnorm(1000)
+> x2 <- rnorm(1000) 
+> z1 <- rnorm(1000)
+> z2 <- rnorm(1000)
+> Q <- rnorm(1000) 
+> f1 <- sample(8,length(x), repl=T)
+> f2 <- factor(sample(8,length(x), repl=T))
+> clu <- factor(sample(30,length(x), replace=T))
+> cluerr <- rnorm(nlevels(clu))[clu]
+> err <- abs(x)*rnorm(length(x)) + cluerr
+> y <- x +rnorm(nlevels(clu),sd=0.3)[clu] +  log(f1) + err
+> f1 <- factor(f1)
+> dat <- data.frame(y, x, f1=f1, f2, cluster=clu)
+> 
+> # deprecated stuff
+> summary(felm(y ~x + f1+f2, dat, clustervar='clu'))
+Warning: Argument(s) clustervar are deprecated and will be removed, use multipart formula instead
+
+Call:
+   felm(formula = y ~ x + f1 + f2, data = dat, clustervar = "clu") 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.292 -0.872 -0.079  1.015  5.878 
+
+Coefficients:
+            Estimate Cluster s.e. t value Pr(>|t|)    
+(Intercept)   0.3715       0.3018    1.23  0.21861    
+x             0.8683       0.0986    8.81  < 2e-16 ***
+f12           0.5880       0.1652    3.56  0.00039 ***
+f13           0.9722       0.2083    4.67  3.5e-06 ***
+f14           1.4487       0.2075    6.98  5.4e-12 ***
+f15           1.7762       0.1729   10.27  < 2e-16 ***
+f16           1.8098       0.2003    9.04  < 2e-16 ***
+f17           2.0102       0.1587   12.67  < 2e-16 ***
+f18           2.2119       0.1731   12.77  < 2e-16 ***
+f22          -0.1896       0.1762   -1.08  0.28227    
+f23          -0.2753       0.1769   -1.56  0.12002    
+f24          -0.0062       0.1647   -0.04  0.96997    
+f25          -0.0209       0.1862   -0.11  0.91060    
+f26          -0.3437       0.1870   -1.84  0.06637 .  
+f27          -0.1573       0.3306   -0.48  0.63438    
+f28          -0.2387       0.2005   -1.19  0.23409    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 984 degrees of freedom
+Multiple R-squared(full model): 0.34   Adjusted R-squared: 0.33 
+Multiple R-squared(proj model): 0.34   Adjusted R-squared: 0.33 
+F-statistic(full model, *iid*):33.8 on 15 and 984 DF, p-value: <2e-16 
+F-statistic(proj model): 56.4 on 15 and 29 DF, p-value: <2e-16 
+
+
+> summary(felm(y ~ x + G(f1)+G(f2), dat, clustervar=clu))
+Warning: Argument(s) clustervar are deprecated and will be removed, use multipart formula instead
+Warning in ..oldfelm(formula = y ~ x + G(f1) + G(f2), data = dat, clustervar = clu) :
+  Argument(s) clustervar are deprecated and will be removed, use multipart formula instead
+Warning: The G() syntax is deprecated, please use multipart formulas instead
+
+Call:
+   ..oldfelm(formula = y ~ x + G(f1) + G(f2), data = dat, clustervar = clu) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.292 -0.872 -0.079  1.015  5.878 
+
+Coefficients:
+  Estimate Cluster s.e. t value Pr(>|t|)    
+x   0.8684       0.0986    8.81   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 985 degrees of freedom
+Multiple R-squared(full model): 0.34   Adjusted R-squared: 0.331 
+F-statistic(full model, *iid*):36.3 on 14 and 985 DF, p-value: <2e-16 
+F-statistic(proj model): 77.5 on 1 and 29 DF, p-value: 1.09e-09 
+
+
+> summary(felm(y ~ x | f1+f2, dat, clustervar=clu))
+Warning: Argument(s) clustervar are deprecated and will be removed, use multipart formula instead
+
+Call:
+   felm(formula = y ~ x | f1 + f2, data = dat, clustervar = clu) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.292 -0.872 -0.079  1.015  5.878 
+
+Coefficients:
+  Estimate Cluster s.e. t value Pr(>|t|)    
+x   0.8684       0.0986    8.81   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 984 degrees of freedom
+Multiple R-squared(full model): 0.34   Adjusted R-squared: 0.33 
+Multiple R-squared(proj model): 0.222   Adjusted R-squared: 0.21 
+F-statistic(full model, *iid*):33.8 on 15 and 984 DF, p-value: <2e-16 
+F-statistic(proj model): 77.5 on 1 and 29 DF, p-value: 1.09e-09 
+
+
+> 
+> #anomalies. No variables, etc.
+> summary(est <- felm(y ~ 1 | f1|0|cluster, dat))
+
+Call:
+   felm(formula = y ~ 1 | f1 | 0 | cluster, data = dat) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -9.25  -1.04  -0.14   1.11   7.29 
+
+Coefficients:
+(No coefficients)
+
+
+> fevcov(est)
+      f1
+f1 0.556
+attr(,"bias")
+       f1
+f1 0.0198
+> summary(felm(y ~ 0 | f1|0|cluster, dat))
+
+Call:
+   felm(formula = y ~ 0 | f1 | 0 | cluster, data = dat) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -9.25  -1.04  -0.14   1.11   7.29 
+
+Coefficients:
+(No coefficients)
+
+
+> summary(felm(y ~ 0 | 0|0|cluster, dat))
+
+Call:
+   felm(formula = y ~ 0 | 0 | 0 | cluster, data = dat) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-7.096  0.452  1.574  2.687  9.603 
+
+Coefficients:
+(No coefficients)
+
+
+> 
+> summary(felm(y ~ x + x2|f1+factor(f2),dat))
+
+Call:
+   felm(formula = y ~ x + x2 | f1 + factor(f2), data = dat) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.310 -0.880 -0.065  1.018  5.828 
+
+Coefficients:
+   Estimate Std. Error t value Pr(>|t|)    
+x    0.8694     0.0518   16.80   <2e-16 ***
+x2   0.0683     0.0500    1.37     0.17    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 983 degrees of freedom
+Multiple R-squared(full model): 0.341   Adjusted R-squared: 0.331 
+Multiple R-squared(proj model): 0.224   Adjusted R-squared: 0.211 
+F-statistic(full model):31.8 on 16 and 983 DF, p-value: <2e-16 
+F-statistic(proj model):  142 on 2 and 983 DF, p-value: <2e-16 
+
+
+> summary(felm(y ~ x + x2+f1|factor(f2),dat))
+
+Call:
+   felm(formula = y ~ x + x2 + f1 | factor(f2), data = dat) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.310 -0.880 -0.065  1.018  5.828 
+
+Coefficients:
+    Estimate Std. Error t value Pr(>|t|)    
+x     0.8694     0.0518   16.80  < 2e-16 ***
+x2    0.0683     0.0500    1.37   0.1725    
+f12   0.5849     0.2134    2.74   0.0062 ** 
+f13   0.9592     0.2127    4.51  7.3e-06 ***
+f14   1.4342     0.2100    6.83  1.5e-11 ***
+f15   1.7777     0.2055    8.65  < 2e-16 ***
+f16   1.8093     0.2122    8.53  < 2e-16 ***
+f17   2.0016     0.2085    9.60  < 2e-16 ***
+f18   2.2021     0.2077   10.60  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 983 degrees of freedom
+Multiple R-squared(full model): 0.341   Adjusted R-squared: 0.331 
+Multiple R-squared(proj model): 0.338   Adjusted R-squared: 0.328 
+F-statistic(full model):31.8 on 16 and 983 DF, p-value: <2e-16 
+F-statistic(proj model): 55.9 on 9 and 983 DF, p-value: <2e-16 
+
+
+> summary(felm(y ~ x + x2+f1+factor(f2),dat))
+
+Call:
+   felm(formula = y ~ x + x2 + f1 + factor(f2), data = dat) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.310 -0.880 -0.065  1.018  5.828 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.37290    0.20209    1.85   0.0653 .  
+x            0.86943    0.05176   16.80  < 2e-16 ***
+x2           0.06830    0.05003    1.37   0.1725    
+f12          0.58495    0.21337    2.74   0.0062 ** 
+f13          0.95917    0.21269    4.51  7.3e-06 ***
+f14          1.43424    0.20999    6.83  1.5e-11 ***
+f15          1.77774    0.20549    8.65  < 2e-16 ***
+f16          1.80929    0.21218    8.53  < 2e-16 ***
+f17          2.00162    0.20848    9.60  < 2e-16 ***
+f18          2.20208    0.20773   10.60  < 2e-16 ***
+factor(f2)2 -0.18330    0.20051   -0.91   0.3609    
+factor(f2)3 -0.26947    0.21422   -1.26   0.2087    
+factor(f2)4  0.00410    0.19966    0.02   0.9836    
+factor(f2)5 -0.00709    0.20560   -0.03   0.9725    
+factor(f2)6 -0.34630    0.19879   -1.74   0.0818 .  
+factor(f2)7 -0.15270    0.20624   -0.74   0.4592    
+factor(f2)8 -0.23791    0.20669   -1.15   0.2500    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 983 degrees of freedom
+Multiple R-squared(full model): 0.341   Adjusted R-squared: 0.331 
+Multiple R-squared(proj model): 0.341   Adjusted R-squared: 0.331 
+F-statistic(full model):31.8 on 16 and 983 DF, p-value: <2e-16 
+F-statistic(proj model): 31.8 on 16 and 983 DF, p-value: <2e-16 
+
+
+> summary(lm(y ~ x + x2 + f1 + factor(f2),dat))
+
+Call:
+lm(formula = y ~ x + x2 + f1 + factor(f2), data = dat)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.310 -0.880 -0.065  1.018  5.828 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.37290    0.20209    1.85   0.0653 .  
+x            0.86943    0.05176   16.80  < 2e-16 ***
+x2           0.06830    0.05003    1.37   0.1725    
+f12          0.58495    0.21337    2.74   0.0062 ** 
+f13          0.95917    0.21269    4.51  7.3e-06 ***
+f14          1.43424    0.20999    6.83  1.5e-11 ***
+f15          1.77774    0.20549    8.65  < 2e-16 ***
+f16          1.80929    0.21218    8.53  < 2e-16 ***
+f17          2.00162    0.20848    9.60  < 2e-16 ***
+f18          2.20208    0.20773   10.60  < 2e-16 ***
+factor(f2)2 -0.18330    0.20051   -0.91   0.3609    
+factor(f2)3 -0.26947    0.21422   -1.26   0.2087    
+factor(f2)4  0.00410    0.19966    0.02   0.9836    
+factor(f2)5 -0.00709    0.20560   -0.03   0.9725    
+factor(f2)6 -0.34630    0.19879   -1.74   0.0818 .  
+factor(f2)7 -0.15270    0.20624   -0.74   0.4592    
+factor(f2)8 -0.23791    0.20669   -1.15   0.2500    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 983 degrees of freedom
+Multiple R-squared:  0.341,	Adjusted R-squared:  0.331 
+F-statistic: 31.8 on 16 and 983 DF,  p-value: <2e-16
+
+> summary(felm(y ~ x + x2 + f1 |0|0|0|factor(f2)))
+
+Call:
+   felm(formula = y ~ x + x2 + f1 | 0 | 0 | 0 | factor(f2)) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.310 -0.880 -0.065  1.018  5.828 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   0.3729     0.2021    1.85   0.0653 .  
+x             0.8694     0.0518   16.80  < 2e-16 ***
+x2            0.0683     0.0500    1.37   0.1725    
+f12           0.5849     0.2134    2.74   0.0062 ** 
+f13           0.9592     0.2127    4.51  7.3e-06 ***
+f14           1.4342     0.2100    6.83  1.5e-11 ***
+f15           1.7777     0.2055    8.65  < 2e-16 ***
+f16           1.8093     0.2122    8.53  < 2e-16 ***
+f17           2.0016     0.2085    9.60  < 2e-16 ***
+f18           2.2021     0.2077   10.60  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 983 degrees of freedom
+Multiple R-squared(full model): 0.341   Adjusted R-squared: 0.331 
+Multiple R-squared(proj model): 0.391   Adjusted R-squared: 0.381 
+F-statistic(full model):31.8 on 16 and 983 DF, p-value: <2e-16 
+F-statistic(proj model): 55.9 on 9 and 983 DF, p-value: <2e-16 
+7 variable(s) were projected out
+
+
+> summary(felm(y ~ x + f1+factor(f2) |0|0|0|x2))
+
+Call:
+   felm(formula = y ~ x + f1 + factor(f2) | 0 | 0 | 0 | x2) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.310 -0.880 -0.065  1.018  5.828 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.37290    0.20209    1.85   0.0653 .  
+x            0.86943    0.05176   16.80  < 2e-16 ***
+f12          0.58495    0.21337    2.74   0.0062 ** 
+f13          0.95917    0.21269    4.51  7.3e-06 ***
+f14          1.43424    0.20999    6.83  1.5e-11 ***
+f15          1.77774    0.20549    8.65  < 2e-16 ***
+f16          1.80929    0.21218    8.53  < 2e-16 ***
+f17          2.00162    0.20848    9.60  < 2e-16 ***
+f18          2.20208    0.20773   10.60  < 2e-16 ***
+factor(f2)2 -0.18330    0.20051   -0.91   0.3609    
+factor(f2)3 -0.26947    0.21422   -1.26   0.2087    
+factor(f2)4  0.00410    0.19966    0.02   0.9836    
+factor(f2)5 -0.00709    0.20560   -0.03   0.9725    
+factor(f2)6 -0.34630    0.19879   -1.74   0.0818 .  
+factor(f2)7 -0.15270    0.20624   -0.74   0.4592    
+factor(f2)8 -0.23791    0.20669   -1.15   0.2500    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.62 on 983 degrees of freedom
+Multiple R-squared(full model): 0.341   Adjusted R-squared: 0.331 
+Multiple R-squared(proj model): 0.341   Adjusted R-squared: 0.33 
+F-statistic(full model):31.8 on 16 and 983 DF, p-value: <2e-16 
+F-statistic(proj model): 33.9 on 15 and 983 DF, p-value: <2e-16 
+1 variable(s) were projected out
+
+
+> 
+> # IV
+> est <- felm(y ~ x | 0 | (x1 | x2 ~ z1 + z2))
+> for(lh in est$stage1$lhs) print(summary(est$stage1, lhs=lh))
+Summary for outcome x1 
+
+Call:
+   NULL 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-2.825 -0.660  0.003  0.643  3.528 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept) -0.00361    0.03119   -0.12    0.908  
+x            0.00895    0.03111    0.29    0.774  
+z1           0.05904    0.03153    1.87    0.061 .
+z2           0.01201    0.03065    0.39    0.695  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.986 on 996 degrees of freedom
+Multiple R-squared(full model): 0.00381   Adjusted R-squared: 0.000807 
+Multiple R-squared(proj model): 0.00381   Adjusted R-squared: 0.000807 
+F-statistic(full model):1.27 on 3 and 996 DF, p-value: 0.284 
+F-statistic(proj model): 1.27 on 3 and 996 DF, p-value: 0.284 
+F-statistic(excl instr.):1.85 on 2 and 996 DF, p-value: 0.157 
+
+
+Summary for outcome x2 
+
+Call:
+   NULL 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.160 -0.649  0.011  0.665  3.551 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept) -0.00456    0.03261   -0.14     0.89
+x           -0.02166    0.03252   -0.67     0.51
+z1          -0.02110    0.03296   -0.64     0.52
+z2          -0.02108    0.03204   -0.66     0.51
+
+Residual standard error: 1.03 on 996 degrees of freedom
+Multiple R-squared(full model): 0.00133   Adjusted R-squared: -0.00168 
+Multiple R-squared(proj model): 0.00133   Adjusted R-squared: -0.00168 
+F-statistic(full model):0.442 on 3 and 996 DF, p-value: 0.723 
+F-statistic(proj model): 0.442 on 3 and 996 DF, p-value: 0.723 
+F-statistic(excl instr.):0.434 on 2 and 996 DF, p-value: 0.648 
+
+
+> summary(est)
+
+Call:
+   felm(formula = y ~ x | 0 | (x1 | x2 ~ z1 + z2)) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-13.447  -2.924  -0.216   2.948  13.448 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    1.588      0.149   10.64  < 2e-16 ***
+x              0.829      0.207    4.01  6.4e-05 ***
+`x1(fit)`     -1.008      4.267   -0.24     0.81    
+`x2(fit)`     -3.763      8.433   -0.45     0.66    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.43 on 996 degrees of freedom
+Multiple R-squared(full model):   -4   Adjusted R-squared: -4.02 
+Multiple R-squared(proj model):   -4   Adjusted R-squared: -4.02 
+F-statistic(full model):  14 on 3 and 996 DF, p-value: 6.41e-09 
+F-statistic(proj model):   14 on 3 and 996 DF, p-value: 6.41e-09 
+F-statistic(endog. vars):0.131 on 2 and 996 DF, p-value: 0.877 
+
+
+> condfstat(est,type=NULL)
+            x1    x2
+iid F    0.282 0.226
+robust F 0.267 0.224
+attr(,"df1")
+[1] 1
+> summary(est2 <- felm(y ~1 | 0 | (x1 | x2 ~ z1 + z2) | 0 | x))
+
+Call:
+   felm(formula = y ~ 1 | 0 | (x1 | x2 ~ z1 + z2) | 0 | x) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-13.447  -2.924  -0.216   2.948  13.448 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    1.588      0.149   10.64   <2e-16 ***
+`x1(fit)`     -1.008      4.267   -0.24     0.81    
+`x2(fit)`     -3.763      8.433   -0.45     0.66    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.43 on 996 degrees of freedom
+Multiple R-squared(full model):   -4   Adjusted R-squared: -4.02 
+Multiple R-squared(proj model): -5.32   Adjusted R-squared: -5.34 
+F-statistic(full model):  14 on 3 and 996 DF, p-value: 6.41e-09 
+F-statistic(proj model): 0.131 on 2 and 996 DF, p-value: 0.877 
+F-statistic(endog. vars):0.131 on 2 and 996 DF, p-value: 0.877 
+1 variable(s) were projected out
+
+
+> condfstat(est2, type=NULL)
+            x1    x2
+iid F    0.282 0.226
+robust F 0.267 0.224
+attr(,"df1")
+[1] 1
+> 
+> est0 <- felm( y ~ 1|0|(Q~z1))
+> condfstat(est0)
+          Q
+iid F 0.148
+attr(,"df1")
+[1] 2
+> 
+> # inplace test and NA
+> foo <- as.numeric(1:6)
+> fl <- list(factor(c('r','g','g','r','g','b')),factor(c('b','b','r','g','b','g')))
+> a <- demeanlist(unnamed(foo), fl)
+> round(foo,6)
+[1]  0.0 -1.5  0.0  0.0  1.5  0.0
+> foo <- rnorm(6)
+> foo[3] <- NaN
+> demeanlist(foo,fl)
+[1] NaN NaN NaN NaN NaN NaN
+> round(demeanlist(foo,fl,na.rm=TRUE),3)
+[1]  0.000  0.954  0.000 -0.954  0.000
+attr(,"na.rm")
+[1] 3
+> foo <- list(vec=runif(6),mat=matrix(runif(18),6))
+> foo$vec[4] = NaN
+> foo$mat[3,2] = NaN
+> lapply(demeanlist(foo,fl),round,3)
+$vec
+[1] NaN NaN NaN NaN NaN NaN
+
+$mat
+       [,1] [,2]   [,3]
+[1,]  0.000  NaN  0.000
+[2,] -0.049  NaN -0.132
+[3,]  0.000  NaN  0.000
+[4,]  0.000  NaN  0.000
+[5,]  0.049  NaN  0.132
+[6,]  0.000  NaN  0.000
+
+> a <- demeanlist(foo,fl,na.rm=TRUE)
+> attributes(a)
+$names
+[1] "vec" "mat"
+
+$na.rm
+[1] 3 4
+
+> lapply(a,round,3)
+$vec
+[1]  0.000 -0.035  0.035  0.000
+
+$mat
+       [,1]   [,2]   [,3]
+[1,]  0.000  0.000  0.000
+[2,] -0.049  0.014 -0.132
+[3,]  0.049 -0.014  0.132
+[4,]  0.000  0.000  0.000
+
+> 
+> # autoload plm:
+> if(require('plm', quietly=TRUE)) {
++   data("EmplUK", package = "plm")
++   Em <- pdata.frame(EmplUK)
++   detach('package:plm', unload=TRUE)
++   print(felm(emp~output+capital + lag(wage,1)|firm, data=Em))
++ }
+
+Attaching package: 'plm'
+
+The following object is masked from 'package:lfe':
+
+    sargan
+
+Loading required namespace: plm
+      output      capital lag(wage, 1) 
+      0.0613       0.9570      -0.1073 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+   4.65    5.09    3.41 

@@ -1,0 +1,275 @@
+The lfe R-package is installed as any R-package from 'cran' 
+with the R-command install.packages('lfe')
+
+In the R-package, in the subdirectory exec (e.g. in
+/usr/lib64/R/library/lfe/exec or /usr/local/lib64/R/library/lfe/exec
+or wherever your installation keep the packages, it's displayed during
+installation) there's a perl-script lfescript.  It takes as an
+input-file a simple specification and creates an R-script which uses
+the lfe-package.  Here's a typical input-file:
+
+----cut test.lfe ----
+file smalldata.csv
+vars x x2 year id firm y ife ffe yfe
+model y ~ x + x2 + year | id + firm 
+dummy year
+#nofe
+#se
+#exactdf
+#fecorr
+merge
+robust
+test x x2
+wald x-x2 | x2
+subset ife > 2
+subset x <- quantile(x,0.1)
+----cut----
+
+Most of this is self-explanatory, there's a file-name, it's supposed to be
+a pure space-separated csv data file (without any header with variable names).
+However, if it ends in '.dta' it is assumed to be a Stata-file.
+
+The 'vars' line must list all the variables in the file, even if you don't
+use them.  This line is ignored if the data-file is a Stata-file.
+
+The 'model' line specifies the left-hand side and the right-hand side
+as an R-style model specification.  Note that the fixed effects are
+included here after the vertical bar (|).  Any number of fixed
+effects may be used, but currently identification in the case of more
+than two fixed effects is not very well understood. In the example,
+the 'year' variable could in principle be included as a fixed effect,
+but for variables with few values it's usually wiser to include them
+as dummies among the ordinary covariates, then you also get standard
+errors.  You may specify multiple left hand sides, e.g. like
+
+model y|w|w2 ~ x + x2 + year | id + firm 
+
+
+The 'dummy' line specifies which variables should be coded as dummies, a
+reference is automatically removed.  In the example, you'll get variables
+like year1998, year1999, year2000 or whatever time-period you've got.
+If the data-file is a Stata-file, any variable with value-labels will be
+treated this way.
+
+The 'nofe' line (commented out above) is used if one does not need to
+compute the fixed effects, only compensate for them in the other
+covariates.  In case of 3 or more fixed effects, the standard errors
+provided will be slightly wrong (because it is assumed that all the
+fixed effects are implicitly present, even though there should be an
+unknown number of references, so the degrees of freedom aren't entirely
+correct).
+
+The 'exactdf' line (commented out above) switches on exact computation
+of degrees of freedom. With more than two factors the degrees of
+freedom used in the computation of the covariance matrix may be too
+low, leading to too large standard deviations.  By computing this
+exactly, the standard errors will be unbiased (and possibly lower).
+However, this may incur quite large computational cost if the total
+number of levels in the factors is in the tens or hundreds of thousands,
+it is therefore switched off by default.  For the typical applications
+at the author's site, the bias is neglible (e.g. DFs dropping from 4248822 to
+4247533), but it may be relevant if you are blessed with less data
+than us.
+
+The 'se' line (commented out above) is included if you want standard errors
+on the fixed effects.  These are bootstrapped, and as such very time-consuming
+to compute.  Avoid if you don't need.
+
+The 'fecorr' line (commented out above) will compute bias corrected variances
+and covariances between the fixed effects
+
+The line 'merge' will cause the fixed effects to be merged into the original
+data-set and output as a file 'fe-merged.csv' for further analysis.
+
+The line 'robust' instructs the program to compute robust standard errors
+
+The line 'test x x2' instructs the program to compute a joint significance
+test of the coefficients for x and x2.
+
+The line 'wald x - x2 | x' instruct the program to compute a joint
+Wald test on the hypothesis that x-x2=0 and x=0. I.e. it is more general
+than the 'test' directive, but only a single Wald test is computed for
+each line.
+
+Output from the program is both on standard-output (the covariate estimates)
+as well as to a file 'coef.csv'.
+
+In case fixed effects are requested, one file for each fixed effect is
+created.  In the example, 'fe-id.csv' and 'fe-firm.csv'.  The output-files
+contain a header, like 'id  effect  comp  obs'.  I.e. the id, the
+estimated coefficient, its component number in the connection graph, and
+the number of observations for this effect.  
+
+If the data-file is a Stata-file, the output files will also be Stata-files.
+
+Note that fixed effects from different components are not directly comparable
+because there's a separate reference value in each component.
+
+
+Subset
+------
+There may be zero or more lines starting with 'subset'. Each one is a filter
+specification, but subsequent lines are chained. As an example
+
+  subset x < mean(x) & y < mean(y)
+
+is different from
+
+  subset x < mean(x)
+  subset y < mean(y)
+
+The first specification will include all observations which have both
+x < mean(x) and y < mean(y). The second specification will first find
+the observations which have x < mean(x).  Then, in this new dataset,
+the observations with y < mean(y) are selected.
+
+A subset specification can be any R expression which evaluates to an array of
+logicals when evaluated in a dataset.  Some examples:
+
+Pick every observation with an id which occurs exactly 8 times:
+  subset (table(id) == 8)[id]
+
+25% random selection of id's:
+  subset id %in% sample(levels(id), 0.25*nlevels(id))
+
+Upper 2% of x:
+  subset x > quantile(x, 1-0.02)
+
+Any entire id which has some observation with x > 2:
+  subset tapply(x,id,function(.x) any(.x > 2))[id]
+
+The same, but more than half of the id's observations must have x > 2
+  subset tapply(x,id,function(.x) {sum(.x > 2) > length(.x)/2} )[id]
+
+Note that any variable used inside the subset spec which is not in the
+dataset, like the function argument above, should start with a ".".
+Otherwise weird things may happen, sometimes without yielding a warning or error.
+tapply, above, splits the x into chunks with equal id, and serves it to the
+specified function.  I.e. the variable .x is a vector of all x-observations
+for a single id.
+
+Note that if your conditions are independent it is much faster to specify them
+on a single line with '&' between, than on multiple lines.
+
+
+IV estimation
+-------------
+It is also possible to do Instrumental Variable estimation (IV) using
+the two stage least squares method (2SLS) as follows:
+
+model y ~ x1 + year | id + firm | (Q ~ x3)
+
+Here the variable 'x3' is an instrument for variable Q. The variable Q should not
+be present in the first part of the formula.
+
+The parentheses around Q ~ x3 are necessary syntax, like in the algebraic formula x * (y + z)
+
+The program will perform the step
+
+  Q ~ x1 + year + x3| id + firm
+
+then use the predicted values of Q (Q.fit) in the regression
+
+  y ~ x1 + Q.fit + year | id + firm
+
+The computed standard errors are adjusted accordingly.
+
+Multiple instrumented variables are also supported, like in
+
+  model y ~ x1 + year | id + firm | ( Q | W ~ x3 + x4)
+
+where both Q and W are instrumented by both x3 and x4.
+
+If you have multiple endogenous variables, you may include a line
+  ivftest
+to compute conditional F statistics for these.  You may also include a line
+  ivboot
+to bootstrap 2.5%-97.% confidence intervals for the endoenous variables.
+
+Clustered standard errors
+-------------------------
+As a fourth part of the formula, a cluster specification for computing clustered
+standard errors can be included
+
+model y ~ x1 + year | id + firm | (Q ~ x3) | area
+
+Here the categorical variable 'area' is used to define a clustering for computing
+cluster robust standard errors.  If you don't do IV, specify that part as '0':
+
+model y ~ x1 + year | id + firm | 0 | area
+
+Multiway clustering (crossed like in Cameron/Gelbach/Miller, not nested) is also supported, like in
+
+model y ~ x1 + year | id + firm | (x2 ~ x3) | area + occupation
+
+Note that the multi way cluster robust standard errors are only
+reasonably precise when there are many groups in each factor of the
+cluster (many areas and many occupations in the example above).  The
+method of Cameron/Gelbach/Miller is mathematically flawed, though
+asymptotically correct. In particular, with few groups (say, less than
+100), it may produce negative variances.
+
+
+Control variables
+-----------------
+As a fifth part of the formula a set of variables to be used as pure control
+variables may be specified. These will be projected out of the equations before
+any estimation takes place. Use of such control variables will result in that
+the fixed effects will be impossible to recover, thus it should be used in combination
+with 'nofe':
+
+model y ~ x1 | id + firm | (Q ~ x3) | area | year + weather
+
+will remove the variables 'year' and 'weather' from the equations.
+Note that dummies in this fifth part of the formula are expanded to matrices,
+if there are many levels it should rather be specified in the 2nd field.
+
+
+Wildcards
+---------
+If you have a series of variables with the same name, you can specify them with
+wildcard notations.  I.e. a '?' matches a single character, a '*' matches zero or more
+characters. Such variable names must be quoted with backquotes, like `var*`.
+
+model y ~ x1 | id + firm | (Q ~ x3) | area | `myvar*` : (year + month)
+
+Will project away interactions between variables starting with 'myvar', and 'year' and 'month'.
+Say you have myvar1, myvarx, myvar7, together with dummies year (with 2 levels) and month 
+(with 12).  The above specification is like writing myvar1:year1 + myvar1:year2 + 
+myvarx:year1 + ... + myvar7:month1 + myvar7:month2 + ... etc.
+
+----------
+Usage:  
+Run the lfescript on your specification file to create an R-script:
+path-to-script/lfescript test.lfe > test.R
+
+In case you have more than one cpu (e.g. 8), you should tell it on the
+mountain with the command 
+
+export OMP_NUM_THREADS=8
+
+Then you run the script:
+
+R CMD BATCH test.R
+
+Standard output is redirected to the file 'test.Rout'.
+
+At the Frisch centre (with mostly Windows/stata-users) we have set up
+a server with home-directories for the users.  They may drop their
+data-file in a 'data'-folder and their specification file in a
+'submit'-folder, and then the computation is automatically forwarded
+to our compute-cluster batch-system, with output files in a separate folder
+in their home-directory.  Specifications of cpus and memory-usage are then
+included as specific comments in the specification file.
+
+Notes:
+The centering on the means is done separately for each covariate.  When you've
+set the OMP_NUM_THREADS environment variable, the lfe-package picks this up
+and sends each covariate to a separate cpu.  Thus the centering is speeded up.
+
+If you request estimation of fixed effects, there's nothing in lfe as
+such which uses more than one cpu for this task.   On the other hand,
+this is done with the Kaczmarz-method which is very fast when the
+system is as sparse as is typical for such data.
+
+

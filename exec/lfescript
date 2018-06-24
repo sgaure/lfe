@@ -1,0 +1,570 @@
+#!/usr/bin/perl
+# $Id: lfescript 1954 2016-04-08 12:47:12Z sgaure $
+$wantse = 0;
+$nofe = 0;
+$savecomp = 0;
+$analyze = 0;
+$complim = 0;
+$merge = 0;
+$collect = 1;
+$tol = 0;
+$itsbig = 0;
+$randkac = 0;
+$bN = 0;
+$exactDF = 0;
+$robust = 'FALSE';
+$usecg = 'FALSE';
+$accel = 1;
+$subset = '';
+$ivtest = 0;
+$ivboot = 0;
+$fecorr = 0;
+@waldspec = ();
+while(<>) {
+  chomp($_);
+  # strip comments
+  s/#.*$//;
+  @line = split;
+  next if($#line == -1);
+  $cmd = shift @line;
+  if($cmd eq 'file') {
+    $datafile = shift @line;
+  } elsif($cmd eq 'vars') {
+    @filevars = @line;
+  } elsif($cmd eq 'dummy') {
+      @dummies = @line;
+  } elsif($cmd eq 'response') {
+      die "keyword 'response' no longer supported";
+  } elsif($cmd eq 'covars') {
+      die "keyword 'covars' no longer supported";
+  } elsif($cmd eq 'exactdf') {
+      $exactDF = 1;
+  } elsif($cmd eq 'iv') {
+      $iv = join(' ',@line);
+  } elsif($cmd eq 'robust') {
+      $robust = 'TRUE';
+  } elsif($cmd eq 'cluster') {
+      $clustervar = shift @line;
+      $robust = 'TRUE';
+  } elsif ($cmd eq 'model') {
+      $model = join(' ',@line);
+  } elsif($cmd eq 'fe') {
+      die "keyword 'fe' no longer supported";
+  } elsif($cmd eq 'se') {
+      $bN = 0 + shift(@line);
+      if($bN == 0) {$bN = 100;}
+  } elsif($cmd eq 'out') {
+    @outlist = @line;
+  } elsif($cmd eq 'randkac') {
+      $randkac=1;
+  } elsif($cmd eq 'nofe') {
+      $nofe = 1;
+  } elsif($cmd eq 'test') {
+      $testvars = '"'. join('","',@line) . '"';
+  } elsif($cmd eq 'wald') {
+      $wspec = join(' ',@line);
+      push(@waldspec,"$wspec")
+  } elsif($cmd eq 'ivftest') {
+      $ivtest = 1;
+  } elsif($cmd eq 'ivboot') {
+      $ivtest = 1;
+      $ivboot = 1;
+  } elsif($cmd eq 'savecomp') {
+      $savecomp = 1;
+  } elsif($cmd eq 'analyze') {
+      $analyze = 1;
+  } elsif($cmd eq 'merge') {
+      $merge = 1;
+  } elsif($cmd eq 'fecorr') {
+      $fecorr = 1;
+  } elsif($cmd eq 'accel') {
+      $accel = 1;
+  } elsif($cmd eq 'complim') {
+      $complim = 0+shift(@line);
+  } elsif($cmd eq 'splitcomp') {
+      $collect = 0;
+  } elsif($cmd eq 'se') {
+      $wantse = 0; # disabled due to lack of good algorithms
+  } elsif($cmd eq 'itsbig') {
+      $itsbig = 1;
+  } elsif($cmd eq 'usecg') {
+      $usecg = 'TRUE';
+  } elsif($cmd eq 'tol') {
+      $tol = shift(@line);
+  } elsif($cmd eq 'subset') {
+      $subs = join(' ',@line);
+      if($subs > 0) {$subs = "runif(nrow(tab)) < $subs";}
+      if(length($subset) > 0) {$subset .= ",\n$subs";} else {$subset = "\n$subs";}
+  } else {
+    die "Unknown line starting with $cmd";
+  }
+}
+
+if($datafile =~ m/\.dta$/i) {
+    $format = 'dta';
+} elsif ($datafile =~ m/\.rda|\.rdata/i) {
+    $format = 'rda';
+} else {
+    $format = 'csv';
+}
+
+# either covars and response must be specified
+# or model
+#if(defined($model)) {
+#    if(defined(@covars) || defined($resp)) {
+#	print STDERR "WARNING: model line overrides covars and response \n";
+#    }
+#} elsif(!defined(@covars) || !defined($resp)) {
+#    die "Either both covars and response must be defined, or model\n";
+#} else {
+#    $model = $resp . "~" . join('+',@covars);
+#}
+
+#if(defined(@fe)) {
+#  $model .= '+G('.join(')+G(',@fe).')'
+#}
+
+
+# That's it, now, generate R-code
+print "#switch off echo for non-interactive runs\n";
+print "if(!interactive()) options(echo=FALSE)\n";
+
+print "
+dformat = '$format';
+# show warnings as they occur
+oldopts <- options(warn=1)
+version <- packageDescription('lfe',fields='Version')
+packdata <- packageDescription('lfe',fields='Packaged')
+cat('******* This is the lfe',version,packdata,'\\n')
+citation('lfe')
+";
+if($tol > 0) {print "options(lfe.eps=$tol)\n";}
+print "forcefact <- c()\n";
+if($#dummies >=0) {
+    print "forcefact <- c('" .join("','",@dummies) . "')\n";
+}
+
+print "
+require('lfe')
+options(lfe.usecg=$usecg)
+options(lfe.accel=$accel)
+# read the datafile, with correct types, numeric for covariates,
+# character for categories
+
+model <- formula($model)
+trm <- terms(model,special='G')
+feidx <- attr(trm,'specials')\$G+1
+va <- attr(trm,'variables')
+festr <- paste(sapply(feidx,function(i) deparse(va[[i]])),collapse='+')
+felist <- parse(text=paste('list(',gsub('+',',',festr,fixed=TRUE),')',sep=''))
+nm <- eval(felist,list(G=function(arg) deparse(substitute(arg))))
+
+#trm <- terms(model,specials='G')
+#feidx <- attr(trm,'specials')\$G+1
+#va <- attr(trm,'variables')
+#festr <- paste(sapply(feidx,function(i) deparse(va[[i]])),collapse='+')
+
+fvars <- all.vars(parse(text=festr))
+
+if(dformat == 'dta') {
+    library(foreign)
+    cat(date(),'Start reading Stata file','$datafile\\n')
+    tab <- try(read.dta('$datafile',convert.factors=NA),silent=TRUE)
+    oldstata <- TRUE
+    if(inherits(tab, 'try-error')) {
+      require(readstata13)
+      tab <- read.dta13('$datafile', convert.factors=FALSE)
+      oldstata <- FALSE
+    }
+    cat(date(),nrow(tab),' records read from','$datafile\\n')
+    cat('Variables present:\n'); print(colnames(tab))
+} else if(dformat == 'rda') {
+    load('$datafile')
+} else {
+
+  filevars = c('" . join("','",@filevars) . "')
+  #What are their types on input?  
+  # fe's should be read as character
+  # covars and response as numeric
+  # unused as character
+  # also, those in array @dummies should be textual
+  # so that they're coerced to factor
+  # we know the fe's, and response, we must figure out the covars
+  # used in model.  It should be parsed in R
+  ";
+  print "varnames <- all.vars(model)\n";
+  if(defined($iv)) {
+     print "ivspec <- $iv
+     varnames <- unique(c(varnames,if(is.list(ivspec)) unlist(lapply(ivspec,all.vars)) else all.vars(ivspec)))"
+  }
+  print "
+  typelist <- vector('list',length(filevars))
+  names(typelist) <- filevars
+  typelist[names(typelist) %in% varnames]  <- 0
+  typelist[names(typelist) %in% forcefact] <- ''
+  typelist[fvars] <- ''
+  ";
+  if(defined($clustervar)) {
+    print "  typelist['$clustervar'] <- ''\n";
+  }
+  print "
+  cat(date(),'Start reading from file','$datafile\\n')
+  # it takes forever to create a data.frame with a large file
+  # we stick to a list() from scan, but we convert the
+  # factors manually
+  #tab <- data.frame(scan('$datafile',what=typelist))
+  tab <- scan('$datafile',what=typelist,multi.line=FALSE)
+  # drop those we don't use, @@@@@ what about merging? @@@@@
+  tab <- tab[unlist(lapply(typelist,function(t) !is.null(t)))];
+  cat(date(),'File read\\n')
+}
+
+if(!inherits(tab,'data.frame')) {
+  # fake a data.frame
+  #attr(tab,'row.names') <- 1:length(tab[[1]])
+  class(tab) <- 'data.frame'
+  attr(tab,'row.names') <- NULL
+}
+
+# convert to factors manually
+for( f in forcefact) {
+    if(! (f %in% colnames(tab))) stop('Dummy ',f,' not found')
+    tab[[f]] <- factor(tab[[f]])
+}
+";
+if($subset ne '') {
+print "
+  cat('Using subset specification: $subset ')
+  N <- nrow(tab)
+  hsub <- chainsubset($subset)
+  tab <- tab[eval(hsub,tab),,drop=FALSE]
+  cat('\nresulting in',nrow(tab), 'records\n')
+";
+}
+
+print "
+factors <- lfe:::parseformula(model,tab)[['fl']]
+
+for(i in seq_along(factors)) {
+  cat(date(),'There are',nlevels(factors[[i]]),names(factors)[[i]],'effects\\n')
+}
+
+cf <- compfactor(factors)
+if(length(factors) > 1) cat(date(),'There are',nlevels(cf),'connected components\\n')
+if($fecorr && nlevels(cf) > 1) {
+  message('  Doing analysis on the largest component only (N=',sum(cf==1),')')
+  tab <- tab[cf==1,]
+}
+
+if(length(factors) > 2) 
+  cat(date(),'There are more than 2 dummy-groups, so nobody can help you if the dummies are non-estimable\\n')
+cat(date(),'Centering tolerance is',getOption('lfe.eps'),'\\n')
+cat(date(),'Centering variables and doing OLS on centered system...\\n\\n')
+";
+$cvar = '';
+if(defined($clustervar)) {
+    $cvar = ", clustervar='$clustervar'";
+}
+$edf = '';
+if($exactDF == 1) {
+    $edf = ", exactDOF=TRUE";
+}
+if($fecorr) {
+    $extra = ",keepX=TRUE";
+}
+#print "print('felm($model,data=tab$cvar$edf)');print(names(tab))\n";
+if(defined($iv)) {
+    print "est <- felm($model,data=tab,iv=$iv$cvar$edf$extra, wildcard='g')\n";
+} else {
+  print "est <- felm($model,data=tab$cvar$edf$extra,wildcard='g')\n";
+}
+print "
+cfactor <- est\$cfactor
+robust <- $robust || !is.null(est\$clustervar)
+if(!is.null(est\$stage1)) {
+  cat('First stage estimation:\\n')
+  for(lh in est\$stage1\$lhs) {
+    print(summary(est\$stage1, robust=robust, lhs=lh))
+  }
+  cat('Second stage estimation:\\n')
+}
+if(length(est\$lhs) > 1) {
+  for(lh in est\$lhs) {
+    print(summary(est, robust=robust, lhs=lh))
+  }
+} else {
+  print(summary(est, robust=robust))
+}
+";
+
+if(defined($testvars)) {
+print "
+  message(date(), ' Computing F-tests for joint significance of endog. vars')
+  for(lh in est\$lhs) {
+   W <- waldtest(est, c($testvars), lhs=lh)
+   message(\"F-test of joint IV significance(lhs=\",lh,\"): \", 
+       formatC(W['F']), \" on \", W['df1'], \" and \", W['df2'], 
+       \" df, p-value: \", format.pval(W['p.F']))
+  }
+  cat('\n')
+";
+}
+if($#waldspec >= 0) {
+$WSPEC = "list(~" . join(",~",@waldspec) . ")";
+print "
+  waldspec <- $WSPEC
+  message(date(), ' Computing wald tests')
+  for(lh in est\$lhs) {
+   message(\"Wald tests for lhs=\",lh)
+   for(wspec in waldspec) {
+   message(\" Wald test: \", deparse(wspec[-1][[1]]),\" = 0\")
+   W <- waldtest(est, wspec, lhs=lh)
+   message(\"  F=\", 
+       formatC(W['F']), \" on \", W['df1'], \" and \", W['df2'], 
+       \" df, p-value: \", format.pval(W['p.F']))
+   message(\"  chi2=\", 
+       formatC(W['chi2']), \" on \", W['df1'], \" df, p-value: \", format.pval(W['p']))
+
+  }
+  cat('\n')
+  }
+";
+
+}
+print "
+  if(!is.null(est\$stage1) && length(est\$stage1\$lhs) < ncol(est\$stage1\$ivx)) {
+   for(lh in est\$lhs) {
+     S <- lfe:::sargan(est,lhs=lh)
+     if(length(est\$lhs) > 1) oc <- paste(' for outcome ',lh,sep='') else oc <- ''
+     message('  Sargan\\\'s S',oc,':'); print(S)
+   }
+  }
+";
+
+if($ivtest) {
+    print "
+if(!is.null(est\$stage1)) {
+if($ivboot) {
+  message(date(), ' Computing conditional F-tests and confidence intervals')
+  cf <- condfstat(est,quant=c(0.025,0.975))
+  print(cf[,,drop=FALSE])
+  print(attr(cf,'quantiles'))
+} else {
+  message(date(), ' Computing conditional F-tests for IV')
+  print(condfstat(est)[,,drop=FALSE]);
+}
+} else {
+message('**** conditional F-test specified, but no IV performed')
+}
+";
+}
+print "
+if(!is.null(est\$clustervar)) nse <- 'cse' else if($robust) nse <- 'rse' else nse <- 'se'
+if(length(est\$lhs) == 1) {
+  se <- est[[nse]]
+} else {
+  se <- do.call(cbind, lapply(est\$STATS, function(s) s[[nse]]))
+}
+cfdat <- data.frame(value=est\$coefficients, se=se, row.names=rownames(est\$coefficients))
+if(nrow(cfdat) > 0) {
+if(dformat == 'dta') {
+  colnames(cfdat) <- gsub('.','_',colnames(cfdat),fixed=TRUE)
+  if(oldstata)
+    write.dta(cfdat,'coef.dta')
+  else
+    save.dta13(cfdat,'coef.dta')
+  cat(date(),'Coefficients written to coef.dta\\n')
+} else {
+  sink('coef.csv')
+  print(cfdat)
+  sink(NULL)
+  cat(date(),'Coefficients written to coef.csv\\n')
+}
+}
+";
+
+
+if($savecomp) {
+  print "
+  fr <- data.frame(comp=cf,factors)
+  for(i in seq_along(factors)) {
+    tfr <- unique(fr[,c(1,i+1)])
+    fn <- paste('comp-',names(factors)[[i]],'.csv',sep='')
+    write.table(tfr,file=fn,row.names=FALSE,quote=FALSE)    
+    cat(date(),'Components written to file',fn,'\\n')
+  }
+
+  ";
+}
+
+if($fecorr && $nofe) {
+    print "message('*** Both fecorr and nofe specified, ignoring nofe')\n";
+    $nofe = 0;
+}
+
+
+if($nofe) {
+  print "cat(date(),'Fixed effects not requested, finishing\\n')
+  options(oldopts)
+  if(!interactive()) quit('no')";
+  exit;
+}
+
+print "cat(date(),'Continuing with finding fixed effects\\n')";
+
+print "
+
+# So, that's it, if we're not interested in finding the
+# fixed effects.  But if we are, we must pick up the
+# residuals for the full model, i.e. use est to predict
+# non-centered Y from non-centered X and find the residuals.
+
+# We can't use predict directly since we've messed around
+# with the intercept.  We do it manually
+
+# We need to save some memory by ditching the large parts of est
+# (the qr and stuff, keep only what's needed)
+if(!$fecorr) {
+  est <- est[c('fe','residuals','refnames','r.residuals','cfactor','lhs','na.action','fitted.values')]
+  invisible(gc())
+  class(est) <- NULL
+}
+";
+if($bN > 0) {
+    print "fes <- getfe(est,se=TRUE,bN=$bN)\n";
+} else {
+    print "fes <- getfe(est)\n";
+}
+if(!$merge) {
+    print "rm(tab); invisible(gc())\n";
+}
+if($fecorr) {
+  print "
+  message(date(),' Computing limited mobility bias corrected correlations')
+  invisible(gc())
+  fecv <- fevcov(est,fes,tol=0.01)
+  message('Bias corrected variances and covariances:')
+  print(fecv)
+  if(length(fecv) > 1) {
+    message('\\nBias corrected correlations:')
+    print(cov2cor(fecv[,]))
+  }
+"
+}
+
+print "
+lhs <- est\$lhs
+naact <- est\$na.action
+fitted <- est\$fitted.values
+rm(est)
+invisible(gc())
+cat(date(),'Fixed effects found; just doing some bookkeeping now...\\n')
+
+";
+
+print "
+
+# split the frame into categories
+frms <- list()
+effnam <- 'effect'
+senam <- attr(fes,'senam')
+if(length(lhs) > 1) effnam <- paste('effect',lhs,sep='.')
+if(length(lhs) > 1) senam <- paste(senam,lhs,sep='.')
+
+for(nm in levels(fes[,'fe'])) {
+
+  whch <- which(fes[,'fe'] == nm)
+  fr <- fes[whch,]
+  fn <- paste('fe-',nm,'.',dformat,sep='')  
+# Now, if there's an interaction (a ':' in nm), we should
+# split it
+  nms <- strsplit(nm,':',fixed=TRUE)[[1]]
+  if(length(nms) == 1) {
+    fr[,nm] <- fr[,'idx']
+    rownames(fr) <- fr[,nm]
+  } else {
+    ii <- fr[,'idx']
+    lv <- levels(ii)[ii]
+    idxs <- strsplit(lv, '.',fixed=TRUE)
+    fr[,nm] <- lv
+    fr[,nms] <- t(as.data.frame(idxs, row.names=NULL))
+    nms <- c(nms,nm)
+  }
+";
+if($bN > 0) {
+    print "fr <- fr[,c(nms,effnam,senam,'comp','obs')]\n";
+} else {
+    print "fr <- fr[,c(nms,effnam,'comp','obs')]\n";
+}
+
+print "
+  if(dformat == 'dta') {
+     on <- colnames(fr)
+     colnames(fr) <- gsub('.','_',colnames(fr),fixed=TRUE)
+     if(TRUE || oldstata)
+       write.dta(fr,fn,convert.factors='numeric')
+     else {
+       # There's no convert.factors='numeric' here
+       # so we don't use it at the time
+       save.dta13(fr,fn,convert.factors=FALSE)
+     }
+     colnames(fr) <- on
+  } else {
+    write.table(fr,file=fn,quote=FALSE,row.names=FALSE)
+  }
+  frms[[nm]] <- fr
+  cat(date(),'FE written to',fn,'\\n')      
+}
+";
+
+
+
+# note to self.  Check whether package 'plyr' may be used for 
+# faster merging.
+if($merge) {
+ print "
+# stuff it back into the dataset
+
+cat(date(),'Doing some more bookkeeping, i.e. merging...\\n')
+# remove any missing values from tab                                                               
+if(!is.null(naact)) {
+  tab <- tab[-naact,]
+}
+
+class(tab) <- 'list'
+tab[['comp']] <- cfactor
+
+for(en in effnam) {
+ for(f in names(frms)) {
+   fr <- frms[[f]]
+   fact <- tab[strsplit(f,':',fixed=TRUE)[[1]]]
+   eff <- paste(f,en,sep='.')
+
+   tab[[eff]] <- rep(0,length(cfactor))
+   ia <- factor(do.call(paste,c(fact,sep='.')))
+   oo <- match(levels(ia), fr[,f])
+   split(tab[[eff]],ia) <- fr[oo,en]
+ }
+}
+tab[['fitted.values']] <- fitted
+class(tab) <- 'data.frame'
+
+cat(date(),'Writing merged data set to fe-merged.',dformat,'\\n')
+rownames(tab) <- 1:length(tab[[1]])
+if(dformat == 'dta') {
+  colnames(tab) <- gsub('.','_',colnames(tab),fixed=TRUE)  
+  if(TRUE || oldstata) 
+    write.dta(tab,'fe-merged.dta',version=10L, convert.factors='numeric')
+  else
+    save.dta13(tab,'fe-merged.dta')
+} else {
+  write.table(tab,'fe-merged.csv',quote=FALSE,row.names=FALSE)
+}
+";
+}
+
+print "
+cat(date(),'Computation done\\n')
+options(oldopts)
+if(!interactive()) quit('no')
+";

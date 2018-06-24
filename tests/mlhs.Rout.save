@@ -1,0 +1,248 @@
+
+R Under development (unstable) (2018-02-12 r74246) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> options(digits=3,warn=1,lfe.threads=2)
+> set.seed(42)
+> x <- rnorm(100)
+> x2 <- rnorm(length(x))
+> x3 <- rnorm(length(x))
+> id <- factor(sample(10, length(x), replace=TRUE))
+> id.eff <- rnorm(nlevels(id))
+> y <- x + x2 + x3 + id.eff[id] + rnorm(length(x))
+> z <- x/2 + x2/2 + x3/2 + id.eff[id]/2 + rnorm(length(x))
+> v <- x/3 + x2/2 + x3/2 + id.eff[id]/2 + rnorm(length(x))
+> w <- x/2 + x2/3 + x3/2 + id.eff[id]/3 + rnorm(length(x))
+> #write.dta(data.frame(v,w,y,z,x,x2,x3,id),'mlhs.dta')
+> est <- felm(v|w|y|z ~ x+x2+x3|id)
+> for(lh in est$lhs) {
++     print(summary(est, lhs=lh, robust=TRUE))
++ }
+Summary for outcome v 
+
+Call:
+   felm(formula = v | w | y | z ~ x + x2 + x3 | id) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.234 -0.551  0.141  0.699  1.999 
+
+Coefficients:
+   Estimate Robust s.e t value Pr(>|t|)    
+x    0.5388     0.0909    5.93  6.1e-08 ***
+x2   0.6491     0.1205    5.39  6.0e-07 ***
+x3   0.5551     0.1122    4.95  3.7e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.02 on 87 degrees of freedom
+Multiple R-squared(full model): 0.548   Adjusted R-squared: 0.485 
+Multiple R-squared(proj model): 0.488   Adjusted R-squared: 0.417 
+F-statistic(full model, *iid*):8.77 on 12 and 87 DF, p-value: 1.02e-10 
+F-statistic(proj model): 28.5 on 3 and 87 DF, p-value: 6.21e-13 
+
+
+Summary for outcome w 
+
+Call:
+   felm(formula = v | w | y | z ~ x + x2 + x3 | id) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.0872 -0.5988  0.0469  0.6361  1.9203 
+
+Coefficients:
+   Estimate Robust s.e t value Pr(>|t|)    
+x    0.6070     0.0808    7.51  4.8e-11 ***
+x2   0.2915     0.0971    3.00   0.0035 ** 
+x3   0.5857     0.0823    7.12  3.0e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.888 on 87 degrees of freedom
+Multiple R-squared(full model): 0.572   Adjusted R-squared: 0.513 
+Multiple R-squared(proj model): 0.502   Adjusted R-squared: 0.433 
+F-statistic(full model, *iid*): 9.7 on 12 and 87 DF, p-value: 1.09e-11 
+F-statistic(proj model): 32.6 on 3 and 87 DF, p-value: 3.18e-14 
+
+
+Summary for outcome y 
+
+Call:
+   felm(formula = v | w | y | z ~ x + x2 + x3 | id) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.0512 -0.6907  0.0194  0.4960  2.9585 
+
+Coefficients:
+   Estimate Robust s.e t value Pr(>|t|)    
+x     0.956      0.089   10.74  < 2e-16 ***
+x2    1.020      0.146    6.98  5.6e-10 ***
+x3    1.052      0.087   12.08  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.997 on 87 degrees of freedom
+Multiple R-squared(full model): 0.795   Adjusted R-squared: 0.767 
+Multiple R-squared(proj model): 0.75   Adjusted R-squared: 0.716 
+F-statistic(full model, *iid*):28.2 on 12 and 87 DF, p-value: <2e-16 
+F-statistic(proj model):  124 on 3 and 87 DF, p-value: <2e-16 
+
+
+Summary for outcome z 
+
+Call:
+   felm(formula = v | w | y | z ~ x + x2 + x3 | id) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.3098 -0.7121 -0.0377  0.6540  2.9361 
+
+Coefficients:
+   Estimate Robust s.e t value Pr(>|t|)    
+x    0.3725     0.1097    3.40  0.00104 ** 
+x2   0.5038     0.1251    4.03  0.00012 ***
+x3   0.5692     0.0933    6.10  2.9e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.11 on 87 degrees of freedom
+Multiple R-squared(full model): 0.458   Adjusted R-squared: 0.384 
+Multiple R-squared(proj model): 0.362   Adjusted R-squared: 0.274 
+F-statistic(full model, *iid*):6.14 on 12 and 87 DF, p-value: 1.1e-07 
+F-statistic(proj model): 19.8 on 3 and 87 DF, p-value: 7.16e-10 
+
+
+> summary(est, lhs='z', robust=TRUE)
+Summary for outcome z 
+
+Call:
+   felm(formula = v | w | y | z ~ x + x2 + x3 | id) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.3098 -0.7121 -0.0377  0.6540  2.9361 
+
+Coefficients:
+   Estimate Robust s.e t value Pr(>|t|)    
+x    0.3725     0.1097    3.40  0.00104 ** 
+x2   0.5038     0.1251    4.03  0.00012 ***
+x3   0.5692     0.0933    6.10  2.9e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.11 on 87 degrees of freedom
+Multiple R-squared(full model): 0.458   Adjusted R-squared: 0.384 
+Multiple R-squared(proj model): 0.362   Adjusted R-squared: 0.274 
+F-statistic(full model, *iid*):6.14 on 12 and 87 DF, p-value: 1.1e-07 
+F-statistic(proj model): 19.8 on 3 and 87 DF, p-value: 7.16e-10 
+
+
+> summary(zest <- felm(z ~x+x2+x3|id), robust=TRUE)
+
+Call:
+   felm(formula = z ~ x + x2 + x3 | id) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.3098 -0.7121 -0.0377  0.6540  2.9361 
+
+Coefficients:
+   Estimate Robust s.e t value Pr(>|t|)    
+x    0.3725     0.1097    3.40  0.00104 ** 
+x2   0.5038     0.1251    4.03  0.00012 ***
+x3   0.5692     0.0933    6.10  2.9e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.11 on 87 degrees of freedom
+Multiple R-squared(full model): 0.458   Adjusted R-squared: 0.384 
+Multiple R-squared(proj model): 0.362   Adjusted R-squared: 0.274 
+F-statistic(full model, *iid*):6.14 on 12 and 87 DF, p-value: 1.1e-07 
+F-statistic(proj model): 19.8 on 3 and 87 DF, p-value: 7.16e-10 
+
+
+> getfe(zest,se=TRUE)
+       effect obs comp fe idx    se
+id.1   0.3717   3    1 id   1 0.673
+id.2  -0.1380  10    1 id   2 0.366
+id.3   0.5680  14    1 id   3 0.275
+id.4  -0.6153  11    1 id   4 0.269
+id.5  -0.4806  15    1 id   5 0.249
+id.6   0.2743  12    1 id   6 0.332
+id.7  -0.4285   5    1 id   7 0.468
+id.8   0.6823  12    1 id   8 0.332
+id.9   0.0886  10    1 id   9 0.348
+id.10 -0.8944   8    1 id  10 0.329
+> getfe(est,method='cg',se=TRUE,lhs=c('w','z'))
+      effect.w effect.z obs comp fe idx    se
+id.1   -0.4992   0.3717   3    1 id   1 0.603
+id.2   -0.5938  -0.1380  10    1 id   2 0.370
+id.3    0.4096   0.5680  14    1 id   3 0.241
+id.4   -0.8767  -0.6153  11    1 id   4 0.316
+id.5   -0.5680  -0.4806  15    1 id   5 0.245
+id.6    0.0834   0.2743  12    1 id   6 0.267
+id.7   -0.8209  -0.4285   5    1 id   7 0.514
+id.8    0.3533   0.6823  12    1 id   8 0.344
+id.9    0.0520   0.0886  10    1 id   9 0.327
+id.10  -0.2485  -0.8944   8    1 id  10 0.411
+> lhs <- cbind(v,w,y,z)
+> rhs <- cbind(x,x2,x3)
+> est <- felm(lhs ~rhs|id)
+> summary(est,lhs='lhs.z', robust=TRUE)
+Summary for outcome lhs.z 
+
+Call:
+   felm(formula = lhs ~ rhs | id) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.3098 -0.7121 -0.0377  0.6540  2.9361 
+
+Coefficients:
+      Estimate Robust s.e t value Pr(>|t|)    
+rhsx    0.3725     0.1097    3.40  0.00104 ** 
+rhsx2   0.5038     0.1251    4.03  0.00012 ***
+rhsx3   0.5692     0.0933    6.10  2.9e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.11 on 87 degrees of freedom
+Multiple R-squared(full model): 0.458   Adjusted R-squared: 0.384 
+Multiple R-squared(proj model): 0.362   Adjusted R-squared: 0.274 
+F-statistic(full model, *iid*):6.14 on 12 and 87 DF, p-value: 1.1e-07 
+F-statistic(proj model): 19.8 on 3 and 87 DF, p-value: 7.16e-10 
+
+
+> getfe(est,se=TRUE)
+      effect.lhs.v effect.lhs.w effect.lhs.y effect.lhs.z obs comp fe idx    se
+id.1        1.3525      -0.4992       0.5918       0.3717   3    1 id   1 0.612
+id.2       -0.3961      -0.5938      -0.9955      -0.1380  10    1 id   2 0.309
+id.3       -0.0144       0.4096       0.1480       0.5680  14    1 id   3 0.257
+id.4       -0.6772      -0.8767      -0.4641      -0.6153  11    1 id   4 0.312
+id.5       -0.2684      -0.5680      -0.0593      -0.4806  15    1 id   5 0.265
+id.6        0.5941       0.0834       1.1402       0.2743  12    1 id   6 0.303
+id.7       -0.1337      -0.8209      -0.7067      -0.4285   5    1 id   7 0.421
+id.8        0.4306       0.3533       1.4731       0.6823  12    1 id   8 0.289
+id.9       -0.2386       0.0520      -0.3832       0.0886  10    1 id   9 0.321
+id.10      -0.9239      -0.2485      -1.6062      -0.8944   8    1 id  10 0.377
+> 
+> proc.time()
+   user  system elapsed 
+   3.53    0.54    4.76 

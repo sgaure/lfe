@@ -1,0 +1,116 @@
+
+R Under development (unstable) (2015-02-02 r67710) -- "Unsuffered Consequences"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> options(lfe.threads=2,digits=5,warn=1)
+> set.seed(65318)
+> x <- rnorm(500)
+> x2 <- rnorm(length(x))
+> 
+> ## create individual and firm
+> id <- factor(sample(10,length(x),replace=TRUE))
+> firm <- factor(sample(6,length(x),replace=TRUE,prob=c(2,rep(1,5))))
+> 
+> ## effects
+> id.eff <- rnorm(nlevels(id))
+> firm.eff <- rnorm(nlevels(firm))
+> 
+> ## left hand side
+> y <- x + 0.25*x2 + id.eff[id] + firm.eff[firm] + rnorm(length(x))
+> 
+> ## estimate
+> summary(est <- felm(y ~ x+x2 | id + firm))
+
+Call:
+   felm(formula = y ~ x + x2 | id + firm) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.9626 -0.7355  0.0079  0.7749  2.6809 
+
+Coefficients:
+   Estimate Std. Error t value Pr(>|t|)    
+x    0.9625     0.0484   19.88  < 2e-16 ***
+x2   0.2260     0.0483    4.68  3.7e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.04 on 483 degrees of freedom
+Multiple R-squared(full model): 0.721   Adjusted R-squared: 0.711 
+Multiple R-squared(proj model): 0.468   Adjusted R-squared: 0.45 
+F-statistic(full model):77.8 on 16 and 483 DF, p-value: <2e-16 
+F-statistic(proj model):  212 on 2 and 483 DF, p-value: <2e-16 
+
+
+> getfe(est)
+         effect obs comp   fe idx
+id.1    1.31012  41    1   id   1
+id.2   -0.56315  52    1   id   2
+id.3   -2.56594  68    1   id   3
+id.4    0.14085  53    1   id   4
+id.5   -0.18059  39    1   id   5
+id.6    0.43119  38    1   id   6
+id.7   -0.64938  62    1   id   7
+id.8   -0.36522  49    1   id   8
+id.9    0.95288  42    1   id   9
+id.10  -0.71179  56    1   id  10
+firm.1  0.00000 132    1 firm   1
+firm.2  0.57816  69    1 firm   2
+firm.3 -0.18875  74    1 firm   3
+firm.4  1.51273  66    1 firm   4
+firm.5  1.44679  72    1 firm   5
+firm.6 -0.78794  87    1 firm   6
+> summary(lm(y ~ x + x2 + id + firm))
+
+Call:
+lm(formula = y ~ x + x2 + id + firm)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.9626 -0.7355  0.0079  0.7749  2.6809 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   1.3101     0.1808    7.25  1.7e-12 ***
+x             0.9625     0.0484   19.88  < 2e-16 ***
+x2            0.2260     0.0483    4.68  3.7e-06 ***
+id2          -1.8733     0.2184   -8.58  < 2e-16 ***
+id3          -3.8761     0.2066  -18.76  < 2e-16 ***
+id4          -1.1693     0.2176   -5.37  1.2e-07 ***
+id5          -1.4907     0.2343   -6.36  4.6e-10 ***
+id6          -0.8789     0.2351   -3.74  0.00021 ***
+id7          -1.9595     0.2106   -9.30  < 2e-16 ***
+id8          -1.6753     0.2216   -7.56  2.0e-13 ***
+id9          -0.3572     0.2301   -1.55  0.12114    
+id10         -2.0219     0.2149   -9.41  < 2e-16 ***
+firm2         0.5782     0.1569    3.68  0.00026 ***
+firm3        -0.1887     0.1525   -1.24  0.21647    
+firm4         1.5127     0.1581    9.57  < 2e-16 ***
+firm5         1.4468     0.1533    9.44  < 2e-16 ***
+firm6        -0.7879     0.1458   -5.40  1.0e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.04 on 483 degrees of freedom
+Multiple R-squared:  0.721,	Adjusted R-squared:  0.711 
+F-statistic: 77.8 on 16 and 483 DF,  p-value: <2e-16
+
+> 
+> proc.time()
+   user  system elapsed 
+  2.382   0.094   2.366 

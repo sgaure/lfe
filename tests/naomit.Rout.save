@@ -1,0 +1,119 @@
+
+R Under development (unstable) (2015-02-02 r67710) -- "Unsuffered Consequences"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> options(lfe.threads=2,digits=5,warn=1)
+> set.seed(65318)
+> x <- rnorm(500)
+> x2 <- rnorm(length(x))
+> 
+> ## create individual and firm
+> id <- factor(sample(10,length(x),replace=TRUE))
+> firm <- factor(sample(6,length(x),replace=TRUE,prob=c(2,rep(1,5))))
+> 
+> ## effects
+> id.eff <- rnorm(nlevels(id))
+> firm.eff <- rnorm(nlevels(firm))
+> 
+> ## left hand side
+> y <- x + 0.25*x2 + id.eff[id] + firm.eff[firm] + rnorm(length(x))
+> x[sample(500,20)] <- NA
+> y[sample(500,20)] <- NA
+> ## estimate
+> summary(est <- felm(y ~ x+x2 | id+firm))
+
+Call:
+   felm(formula = y ~ x + x2 | id + firm) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.9647 -0.7273  0.0146  0.7183  2.7425 
+
+Coefficients:
+   Estimate Std. Error t value Pr(>|t|)    
+x    0.9617     0.0496   19.39  < 2e-16 ***
+x2   0.2310     0.0498    4.64  4.6e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.04 on 443 degrees of freedom
+  (40 observations deleted due to missingness)
+Multiple R-squared(full model): 0.724   Adjusted R-squared: 0.714 
+Multiple R-squared(proj model): 0.476   Adjusted R-squared: 0.458 
+F-statistic(full model):72.7 on 16 and 443 DF, p-value: <2e-16 
+F-statistic(proj model):  202 on 2 and 443 DF, p-value: <2e-16 
+
+
+> getfe(est)
+          effect obs comp   fe idx
+id.1    1.267975  40    1   id   1
+id.2   -0.623991  45    1   id   2
+id.3   -2.583663  62    1   id   3
+id.4    0.125041  49    1   id   4
+id.5   -0.259470  37    1   id   5
+id.6    0.465904  36    1   id   6
+id.7   -0.769116  58    1   id   7
+id.8   -0.446918  46    1   id   8
+id.9    0.888252  35    1   id   9
+id.10  -0.752987  52    1   id  10
+firm.1  0.000000 117    1 firm   1
+firm.2  0.659766  63    1 firm   2
+firm.3 -0.098888  69    1 firm   3
+firm.4  1.517861  61    1 firm   4
+firm.5  1.501403  67    1 firm   5
+firm.6 -0.737584  83    1 firm   6
+> summary(lm(y ~ x + x2 + id + firm -1))
+
+Call:
+lm(formula = y ~ x + x2 + id + firm - 1)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.9647 -0.7273  0.0146  0.7183  2.7425 
+
+Coefficients:
+      Estimate Std. Error t value Pr(>|t|)    
+x       0.9617     0.0496   19.39  < 2e-16 ***
+x2      0.2310     0.0498    4.64  4.6e-06 ***
+id1     1.2680     0.1851    6.85  2.5e-11 ***
+id2    -0.6240     0.1761   -3.54  0.00044 ***
+id3    -2.5837     0.1518  -17.02  < 2e-16 ***
+id4     0.1250     0.1696    0.74  0.46136    
+id5    -0.2595     0.1959   -1.32  0.18612    
+id6     0.4659     0.1961    2.38  0.01794 *  
+id7    -0.7691     0.1636   -4.70  3.5e-06 ***
+id8    -0.4469     0.1788   -2.50  0.01280 *  
+id9     0.8883     0.1904    4.67  4.1e-06 ***
+id10   -0.7530     0.1691   -4.45  1.1e-05 ***
+firm2   0.6598     0.1653    3.99  7.7e-05 ***
+firm3  -0.0989     0.1592   -0.62  0.53494    
+firm4   1.5179     0.1656    9.17  < 2e-16 ***
+firm5   1.5014     0.1603    9.37  < 2e-16 ***
+firm6  -0.7376     0.1514   -4.87  1.5e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.04 on 443 degrees of freedom
+  (40 observations deleted due to missingness)
+Multiple R-squared:  0.725,	Adjusted R-squared:  0.714 
+F-statistic: 68.6 on 17 and 443 DF,  p-value: <2e-16
+
+> 
+> proc.time()
+   user  system elapsed 
+  2.393   0.102   2.384 

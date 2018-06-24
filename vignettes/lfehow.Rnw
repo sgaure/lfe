@@ -1,0 +1,455 @@
+% $Id: lfehow.Rnw 1796 2015-11-12 13:10:20Z sgaure $
+\documentclass{amsart}
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{How lfe works}
+%\VignetteKeyword{Multiple Fixed Effects}
+%\VignetteKeyword{Kaczmarz Method}
+%\VignetteKeyword{Method of Alternating Projections}
+
+\usepackage[utf8]{inputenc}
+
+\newcommand{\strong}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\let\pkg=\strong
+\newcommand\code{\bgroup\@codex}
+\def\@codex#1{{\normalfont\ttfamily\hyphenchar\font=-1 #1}\egroup}
+
+\newcommand{\bma}{\begin{bmatrix}}
+\newcommand{\ema}{\end{bmatrix}}
+
+
+
+\title{How \pkg{lfe} works}
+
+\author{Simen Gaure}
+\address{Ragnar Frisch Centre for Economic Research, Oslo, Norway}
+\date{March 25, 2011, update in May 2013}
+
+\begin{document}
+\begin{abstract}
+Here is a proof for the demeaning method used in \pkg{lfe}, and a description
+of the methods used for solving the residual equations.  As well as
+a toy-example. This is a preliminary version of \cite{GS13}.
+This method, formulated as the Gauss-Seidel algorithm, was noted in \cite{GP10} without the
+author noticing it in the first version of this paper.
+\end{abstract}
+\maketitle
+
+
+
+\section{Introduction}
+We assume we have an OLS model in matrix form
+\begin{equation}\label{osys}
+ Y = X\beta + D\alpha + \epsilon
+\end{equation}
+where \(X\) is a \((n \times k)\)-matrix, and \(D\) is a \((n \times g)\)-matrix. 
+\(D\) is a set of dummies for \(e\) category variables.  I.e. \(D\) is a block matrix,
+\(D = \bma D_1 & D_2 & \cdots & D_e\ema\).  That is, the entries of
+each \(D_i\) consists of \(0\) and \(1\), with only one non-zero
+entry per row.  These are the dummies from a single factor, one column per level.
+Hence, the columns of each \(D_i\) are pairwise
+orthogonal.  Though, in general, \(D_i\) is not orthogonal to \(D_j\) for 
+\(i\ne j\).
+
+That is, in R the model will be
+<<eval=FALSE>>=
+Y ~ X1 + X2 + ... + Xk + D1 + D2 + ... + De
+@ 
+where \code{D1, D2, ..., De} are arbitrary factors.  I.e. an entirely
+ordinary model which may easily be estimated by \code{lm}, or with
+sparse-versions of the same.
+
+\(g\) is the sum of the number of levels in the factors.
+Now, suppose \(g\approx 10^6\), indeed, assume that all the factors
+have many levels, so that an unmanagable number of dummies will be created
+when we try to estimate, even if we sweep out the largest with a within
+transformation.
+
+Then, we must do the math.
+Let's write the model in a slightly different block matrix form, to get
+hold of some facts of the Frisch-Waugh-Lovell theorem:
+\[
+  Y = \bma X & D \ema \bma \beta \\ \alpha\ema + \epsilon
+\]
+We get the normal equations
+\[
+\bma X & D\ema' \bma X & D\ema \bma\hat\beta\\ \hat\alpha\ema= \bma X& D\ema' Y
+\]
+which, when multiplied out, become
+\[
+\bma
+X'X & X'D \\
+D'X & D'D \\
+\ema
+\bma \hat\beta \\ \hat\alpha \ema = 
+\bma X' \\ D' \ema Y
+\]
+
+We then write them as two rows
+
+\begin{align}
+&X'X \hat\beta + X'D\hat \alpha = X'Y \label{row1}\\
+&D'X \hat\beta + D'D\hat \alpha = D'Y \label{row2},
+\end{align}
+and assume, for a moment, that we have removed sufficient reference levels
+from \(D\), so that \(D'D\) is invertible.
+Now, multiply through equation \eqref{row2} with \(X'D (D'D)^{-1}\)
+and subtract equation \eqref{row1} from \eqref{row2}.  
+This removes the \(\hat\alpha\)-term from \eqref{row2}.
+We then name \(P = I - D(D'D)^{-1}D'\) to get
+\[
+X'PX \hat\beta = X'PY.
+\]
+
+Now, note that \(P\) is a projection, i.e. \(P = P' = P^2\), hence
+we have \(X'PX = X'P'PX = (PX)'PX\) and \(X'PY = X'P'PY = (PX)'PY\)
+which yields
+\begin{equation}\label{pnorm}
+(PX)'PX \hat\beta = (PX)'PY
+\end{equation}
+which is the normal equation of the system
+\begin{equation}\label{psys}
+PY = PX\beta + P\epsilon.
+\end{equation}
+
+That is, \(\hat\beta\) may be estimated from
+system \eqref{psys}, with the dummies removed, taking into account
+the adjusted degrees of freedom when computing the covariance matrix.
+
+Moreover, by multiplying through equation \eqref{row2} with 
+\(D (D'D)^{-1}\) and noting that \(D(D'D)^{-1}D' = I-P\),
+we get
+\begin{equation}\label{resid}
+  (I-P)X\hat\beta + D\hat\alpha = (I-P)Y
+\end{equation}
+which may be reordered as
+\[
+  Y - (X\hat\beta + D\hat\alpha) = PY - PX\hat\beta
+\]
+showing that the residuals of the projected system \eqref{psys} equals
+the residuals of the original system \eqref{osys}.  Similarly, the
+\(\hat\beta\) part of the covariance matrix of \eqref{osys} can be shown
+to be identical to the covariance matrix of \eqref{psys}.
+
+All this is well-known as the Frisch-Waugh-Lovell theorem, and is not
+the main point here, that's why we're still in the ``Introduction''-section.
+
+\section{What \pkg{lfe} does about this}
+
+The problem is to compute the projection \(P\), so that we may estimate
+\(\hat\beta\) from \eqref{psys}.  Whenever \(e=1\), i.e.
+a single factor, applying \(P\) amounts to subtracting the group-means.  This
+is known as the within-groups transformation, or centering on the means,
+or \emph{demeaning}.  But, what does it look like when we have more factors?
+
+Here's the idea behind \pkg{lfe}, from \cite{GS13}:
+
+For each of the factors, we have a demeaning projection 
+\(P_i = I - D_i(D_i'D_i)^{-1}D_i'\).  This is the projection
+onto the orthogonal complement of the range (column space) of
+\(D_i\), called \(R(D_i)^\bot\).  These are easy to compute, it's
+just to subtract the means of each level.  Similarly, \(P\) is the projection
+on \(R(D)^\bot\).  This one is not yet obvious how to compute.
+
+There is a relation between all these range-spaces:
+\[
+R(D)^\bot = R(D_1)^\bot \cap R(D_2)^\bot \cap \cdots \cap R(D_e)^\bot.
+\]
+To see this, consider a vector \(v \in R(D)^\bot\).  By definition,
+it's orthogonal to every column in \(D\), hence to every column in
+every \(D_i\), thus \(v\) is in the intersection on the right hand side.
+Conversely, take a \(v\) which is in all the spaces \(R(D_i)^\bot\). It's
+orthogonal to every column of every \(D_i\), hence it's orthogonal to
+every column in \(D\), so it's in \(R(D)^\bot\).
+
+This relation may be written in terms of projections:
+\[
+P = P_1 \wedge P_2 \wedge \cdots \wedge P_e.
+\]
+
+Now, there's a theorem about projections \cite[Theorem 1]{Halp62} stating that
+for every vector \(v\), we have
+\begin{equation}\label{halp}
+Pv = \lim_{n\to\infty} (P_1 P_2 \cdots P_e)^n v.
+\end{equation}
+% In R, this looks like (with convergence to a tolerance \code{eps}):
+% <<demean, eval=FALSE>>=
+% Pv <- v; oldv <- v-1
+% fl <- list(D1, D2, ..., De)
+% while(sqrt(sum((Pv-oldv)**2)) >= eps) {
+%   oldv <- Pv
+%  for(f in fl) Pv <- Pv - ave(Pv,f)
+% }
+% @ 
+
+So, there's how to compute \(Pv\) for an arbitrary vector \(v\), just demean it
+with each projection in succession, over and over, until it gives up.
+We do this for every column of \(X\) and \(Y\) to find \(PY\) and \(PX\), and then 
+we may solve \(\hat\beta\) from \eqref{pnorm}.  This procedure has been
+wrapped up with a threaded C-routine in the function \code{felm}.  
+Thus, the 
+\code{X1,X2,...,Xk} can be estimated efficiently by
+<<eval=FALSE>>=
+felm(Y ~ X1 + X2 + ... + Xk | D1 + D2 + ... + De)
+@ 
+
+
+If there is only one factor (i.e. \(e=1\)), this reduces to the within-groups model.
+
+\section{The dummies?}
+To find \(\hat\alpha\), the coefficents of all the dummies, we may write \eqref{resid} as 
+\[
+D\hat\alpha = (Y-X\hat\beta) - (PY - PX\hat\beta)
+\]
+where the right hand side is readily computed when we have completed the steps above.
+There will be no more than \(e\) non-zeros in each row of \(D\).  This type of sparse
+system lends itself to solving by the Kaczmarz method (\cite{kac37}).
+
+The Kaczmarz method may be viewed as a variant of \eqref{halp},
+specifically for solving linear equations.  (Though, historically, the
+Kaczmarz-method predates Halperin's more general Hilbert-space theorem
+by 25 years.)  The idea is that in a matrix equation like \[ Dx = b \]
+we may view each row of the system \(\langle d_i,x\rangle = b_i\) as
+an equation defining a hyperplane \(Q_i\) (where \(d_i\) is the
+\(i\)'th row of \(D\)).  The solution set of the system is the
+intersection of all the hyperplanes \(Q = Q_1 \cap Q_2\cap \cdots \cap
+Q_n\).  Thus, again, if the projection onto each \(Q_i\) is easy to
+compute (it is \(x \mapsto x + (b_i - \langle
+d_i,x\rangle)d_i/\|d_i\|^2\)), we may essentially use \eqref{halp} on
+these projections to find a vector in the intersection, starting from
+the zero-vector.
+
+In our case, each row \(d_i\) of the matrix \(D\) has exactly \(e\) non-zero entries, which are all equal to unity.
+This makes the computation of the projection on each \(Q_i\) easy and fast.
+We don't have to care about rank-deficiency (\emph{you} do, if you're going to
+interpret the results); but we do remove consecutive duplicate rows, as these
+are just repeated applications of the same projection,
+and thus contribute nothing to the result (because projections by definition
+are idempotent.)
+
+Anyway, the Kaczmarz method converges to a solution \(\hat\alpha\).
+Since we use \(0\) as our starting point, we compute the projection of
+the zero-vector onto the solution space, this is, by a defining
+property of projections, the solution with minimal norm.  We must then
+apply some estimable function to get interpretable coefficients, the
+package supplies a couple to choose from.  Moreover, it's easy to get
+different solutions by using different vectors as starting points.
+Estimable functions should evaluate to the same value for any two such
+solutions, this is utilized to test user-supplied functions for
+estimability in the function \code{is.estimable}.
+
+From the Kaczmarz method we don't get any
+indication of the rank-deficiency. Though for \(e=2\), this can be
+inferred from the component-structure returned by \code{getfe}. The
+method requires little memory, and it's way faster then most other
+methods.
+
+A drawback is that the Kaczmarz method is not immediately
+parallelizable (though there's a variant by Cimmino which is, each
+iteration projects the point onto each hyperplane, then the next
+approximation is the centroid of these projections), and it does not
+yield any covariance matrix or standard errors.  However, it is fast,
+so it's possible to bootstrap the standard errors if that's desired.
+
+A benchmark real dataset used during development contained 15 covariates,
+approx 20,000,000 observations, with 2,300,000 levels in one of the
+factors, and 270,000 in the other.  Centering the covariates takes
+approx 2 hours (on 8 CPUs), and then computing the fixed effects by
+the Kaczmarz-method takes about 4 minutes (on 1 CPU). Bootstrapping
+the standard errors (112 times) takes about 14 hours.  (It is not
+necessary to centre the covariates over again when bootstrapping, only
+the resampled residuals.  These are generally faster to centre than
+arbitrary covariates.)  This is the default method used by
+\code{getfe}.
+
+Alternatively, one may choose a sparse Cholesky solver.
+That is, we have from \eqref{row2} that 
+\[
+D'D\hat\alpha = D'(Y - X\hat\beta).  
+\]
+
+In the case \(e = 1\), we have that \(D'D\) is diagonal, this is the
+within-groups case, and \(\hat\alpha\) is just the group-means of
+the residuals \(Y-X\hat\beta\).  In the general case, we have a large, but sparse, linear
+system. This may be solved with the methods in package 
+\pkg{Matrix}.  This procedure has been packaged in the function
+\code{getfe}.
+
+Now, it turns out that identification, hence interpretation, of the coefficients,
+\emph{may} be a complicated affair.  The reason is that the matrix \(D'D\) may
+be rank-deficient in unexpected ways.  It's sometimes not sufficient to remove
+a reference-level in each factor.  In the case \(e=2\) these difficulties are
+well understood and treated in \cite{akm99} and \cite{AGSU07}, as well as
+implemented in \pkg{lfe}.  For larger \(e\), this problem
+is harder, \pkg{lfe} uses a pivoted Cholesky-method to find linear dependencies
+in \(D'D\), and removes them, but the resulting interpretation of the coefficients
+are in general not well understood.  (This, of course, applies to the Kaczmarz method as well).
+
+\section{Interactions}
+The above discussion about the method, indeed the discussion in \cite{GS13}, does not
+use anywhere that the matrix \(D\) contains only zeros and ones, except in the
+concrete computation of projections. If we interact
+one or more factors with some continuous covariates, the entire theory goes through
+unchanged.
+The centring is slightly different, involving covariates; likewise the
+Kaczmarz step. Beginning with version 1.6, \code{lfe} supports projecting out such 
+interactions, e.g.
+<<eval=FALSE>>=
+Y ~ X1 + X2 | X3:D1 + D2 + D3
+@ 
+
+The estimability analysis discards interaction terms, i.e. it assumes that all coefficients
+for \code{X3:D1} are identified.  Note that the terms in the second part of the formula are
+\emph{not} expanded like a \code{formula}, i.e. expressions like \code{X*D1} are not supported. \code{X}
+must be numeric vector, matrix or factor.
+
+\section{Optimization potential}
+Profiling with the tool ``perf'' on linux, reveals that there is some potential for optimizations 
+in both the centering process and the Kaczmarz-solver.  Both suffer from memory-bandwidth
+limitations, leading to an ``Instructions Per Cycle''-count in some cases below 0.3 (where
+the theoretical maximum is 2 or 4), despite being almost pure floating point operations.  
+This depends heavily on the problem size, cache architecture
+of the CPU, number of cores in use, memory bandwidth and latency, and the CPU-speed.  
+I haven't figured out a good solution for this, though I haven't given it a lot of thought.
+
+An interesting optimization would be to use a GPU for these
+operations.  They are quite simple, and thus quite well suited for
+coding in OpenCL, CUDA or similar GPU-tools, and could possibly yield
+an order of magnitude speedup, though I haven't tried anything of the
+sort.
+
+\goodbreak
+\section{An example}
+First we create a couple of covariates:
+<<>>=
+set.seed(41)
+x <- rnorm(500)
+x2 <- rnorm(length(x))
+x3 <- rnorm(length(x))
+@ 
+
+Then we create some random factors, not too many levels, just for illustration, and
+some effects:
+<<>>=
+f1 <- factor(sample(7,length(x),replace=TRUE))
+f2 <- factor(sample(4,length(x),replace=TRUE))
+f3 <- factor(sample(3,length(x),replace=TRUE))
+eff1 <- rnorm(nlevels(f1))
+eff2 <- rexp(nlevels(f2))
+eff3 <- runif(nlevels(f3))
+@ 
+
+Then we create an outcome with some normal residuals:
+<<>>=
+ y <- x + 0.5*x2 + 0.25*x3 + eff1[f1] + eff2[f2] + eff3[f3] + rnorm(length(x))
+@ 
+
+Now, for illustration, create a demeaning function according to \eqref{halp}:
+<<>>=
+demean <- function(v,fl) {
+  Pv <- v; oldv <- v-1
+  while(sqrt(sum((Pv-oldv)**2)) >= 1e-7) {
+    oldv <- Pv
+    for(f in fl) Pv <- Pv - ave(Pv,f)
+  }
+ Pv
+}
+@ 
+and demean things
+<<>>=
+ fl <- list(f1,f2,f3)
+ Py <- demean(y,fl)
+ Px <- demean(x,fl)
+ Px2 <- demean(x2,fl)
+ Px3 <- demean(x3,fl)
+@ 
+And then we estimate it
+<<>>=
+summary(lm(Py ~ Px + Px2 + Px3 - 1))
+@
+Note that \code{lm} believes there are too many degrees of freedom,
+so the standard errors are too small.  
+
+The function \code{felm} in
+package \pkg{lfe} adjusts for the degrees of freedom, so that we get
+the same standard errors as if we had included all the dummies:
+<<echo=FALSE>>=
+  cores <- as.integer(Sys.getenv('SG_RUN'))
+  if(is.na(cores)) options(lfe.threads=1)
+@ 
+<<>>=
+ library(lfe, quietly=TRUE)
+ summary(est <- felm(y ~ x + x2 + x3 | f1+f2+f3))
+@ 
+
+We also illustrate how to fetch the group coefficients. 
+Since there are no identification problems in this dataset, 
+we use an estimable function identical to the one in \code{lm} when using
+treatment contrasts.
+(Though, a similar function is available with \code{ef='ref'} which is the
+ default for \code{getfe}).
+<<tidy=FALSE>>=
+ef <- function(v,addnames) {
+  r1 <- v[[1]]
+  r2 <- v[[8]]
+  r3 <- v[[12]]
+  result <- c(r1+r2+r3,v[2:7]-r1,v[9:11]-r2,v[13:14]-r3)
+  if(addnames) names(result) <- c('(Intercept)',
+                             paste('f1',2:7,sep='.'),
+                             paste('f2',2:4,sep='.'),
+                             paste('f3',2:3,sep='.'))
+  result
+}
+# verify that it's estimable
+is.estimable(ef,est$fe)
+getfe(est, ef=ef, se=TRUE, bN=10000)
+@ 
+
+Here's the same estimation in \code{lm}, with dummies:
+<<>>=
+summary(lm(y ~ x + x2 + x3 + f1 + f2 + f3))
+@ 
+
+\bibliographystyle{amsplain}
+\iftrue
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{1}
+
+\bibitem{akm99}
+J.~M. Abowd, F.~Kramarz, and D.~N. Margolis, \emph{{High Wage Workers and High
+  Wage Firms}}, Econometrica \textbf{67} (1999), no.~2, 251--333.
+
+\bibitem{AGSU07}
+M.~Andrews, L.~Gill, T.~Schank, and R.~Upward, \emph{{High wage workers and low
+  wage firms: negative assortative matching or limited mobility bias?}}, J.R.
+  Stat. Soc.(A) \textbf{171(3)} (2008), 673--697.
+
+\bibitem{GS13}
+S.~Gaure, \emph{{OLS with Multiple High Dimensional Category Variables}},
+  Computational Statistics and Data Analysis \textbf{66} (2013), 8--18.
+
+\bibitem{GP10}
+P.~Guimar{\~a}es and P.~Portugal, \emph{A simple feasible procedure to fit
+  models with high-dimensional fixed effects}, Stata Journal \textbf{10}
+  (2010), no.~4, 628--649(22).
+
+\bibitem{Halp62}
+I.~Halperin, \emph{{The Product of Projection Operators}}, Acta Sci. Math.
+  (Szeged) \textbf{23} (1962), 96--99.
+
+\bibitem{kac37}
+A.~Kaczmarz, \emph{{Angen\"aherte Aufl\"osung von Systemen linearer
+  Gleichungen}}, Bulletin International de l'Academie Polonaise des Sciences et
+  des Lettres \textbf{35} (1937), 355--357.
+
+\end{thebibliography}
+
+\else
+\bibliography{biblio}
+\fi
+\end{document}

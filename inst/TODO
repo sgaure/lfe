@@ -1,0 +1,4 @@
+20110331
+Look into writing OpenCL versions of the demeaning and Kaczmarz-code.  This could be a good
+alternative to threading.  This is fairly simple I guess, just need a good autoconf-macro for figuring
+out whether there's a working OpenCL installed.

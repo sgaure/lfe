@@ -1,0 +1,212 @@
+
+R Under development (unstable) (2018-02-12 r74246) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> set.seed(65513)
+> options(lfe.threads=1,digits=4,warn=1)
+> x <- rnorm(52)
+> x2 <- rnorm(length(x))
+> x3 <- 0.2*x + 0.1*x2
+> ## create individual and firm
+> id <- factor(sample(30,length(x),prob=c(2,2,rep(1,28)),replace=TRUE))
+> firm <- factor(sample(32,length(x),prob=c(2,2,rep(1,30)),replace=TRUE))
+> year <- factor(sample(3,length(x),replace=TRUE))
+> ## effects
+> id.eff <- rnorm(nlevels(id))
+> firm.eff <- rnorm(nlevels(firm))
+> year.eff <- rnorm(nlevels(year))
+> ## left hand side
+> y <- x + 0.25*x2 + x3 + id.eff[id] + firm.eff[firm] + year.eff[year] + rnorm(length(x))
+> 
+> ## estimate and print result
+> est <- felm(y ~ x+x2+x3 |id+firm+year, exactDOF=TRUE)
+Warning in chol.default(mat, pivot = TRUE, tol = tol) :
+  the matrix is either rank-deficient or indefinite
+> 
+> ## extract the group fixed effects
+> head(getfe(est))
+      effect obs comp fe idx
+id.1  2.7064   2    1 id   1
+id.2  0.0000   5    1 id   2
+id.3  0.0000   1    4 id   3
+id.5 -0.9244   2    1 id   5
+id.6  2.6178   3    1 id   6
+id.7  1.1520   2    1 id   7
+> tail(alpha <- getfe(est,ef='ln'))
+Warning in is.estimable(ef, obj$fe) :
+  non-estimable function, largest error 0.5 in coordinate 3 ("id.3")
+Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
+  Supplied function seems non-estimable
+         effect obs comp   fe idx
+firm.29 -1.1076   2    1 firm  29
+firm.31 -2.6470   1    1 firm  31
+firm.32 -3.2750   2    1 firm  32
+year.1  -1.9948  21    5 year   1
+year.2  -0.5147  18    5 year   2
+year.3   0.7795  13    5 year   3
+> # get the names to use below, just to make it easier
+> # lower precision in output
+> 
+> nm <- rownames(alpha)
+> getfe(est,ef='zm',se=TRUE)
+          effect obs comp     se
+id.1     2.70645   2    1 0.7236
+id.2     0.00000   5    1 0.0000
+id.5    -0.92442   2    1 0.8282
+id.6     2.61776   3    1 1.1775
+id.7     1.15197   2    1 0.5210
+id.10    2.19930   1    1 1.3046
+id.11    1.73017   1    1 0.9726
+id.12    0.33843   1    1 0.5931
+id.15    0.81774   2    1 0.7103
+id.16    0.23114   1    1 0.9183
+id.17    1.88311   1    1 1.1568
+id.19    1.07002   3    1 0.5538
+id.21    0.38365   5    1 0.3465
+id.22   -1.28847   2    1 0.4164
+id.24    0.56730   4    1 0.3002
+id.27    6.42877   2    1 0.8410
+id.28    1.16319   2    1 0.8374
+firm.2  -6.23633   1    1 0.8480
+firm.4  -0.28443   1    1 0.8889
+firm.7   3.47359   3    1 0.4756
+firm.8   0.42514   5    1 0.8193
+firm.11  0.68113   3    1 0.3205
+firm.13  1.13940   3    1 0.4561
+firm.15 -0.13707   3    1 0.7036
+firm.16 -0.14573   3    1 0.4650
+firm.17  0.08609   4    1 0.4088
+firm.18  2.21980   3    1 0.3957
+firm.19  1.92760   2    1 0.5027
+firm.20  1.75477   1    1 0.6990
+firm.26  1.77711   2    1 0.4426
+firm.29 -0.99145   2    1 0.5000
+firm.31 -2.53081   1    1 0.8747
+firm.32 -3.15881   2    1 0.4960
+icpt.1  -3.46013  39    1 0.5155
+id.14    0.11573   1    2 0.6952
+id.30    0.00000   6    2 0.0000
+firm.1   2.09124   1    2 0.3696
+firm.3  -1.04011   1    2 0.3691
+firm.12  0.73709   1    2 0.4370
+firm.22 -0.26434   2    2 0.3550
+firm.24 -1.35091   1    2 0.3349
+firm.25 -0.17296   1    2 0.3662
+icpt.2  -2.83969   7    2 0.3143
+id.13   -1.27133   1    3 0.7103
+id.29    0.00000   4    3 0.0000
+firm.9  -0.47017   2    3 0.4369
+firm.14 -0.32755   1    3 0.3795
+firm.27  0.79772   2    3 0.2884
+icpt.3  -2.17375   5    3 0.2469
+id.3     0.00000   1    4 0.0000
+firm.23  0.00000   1    4 0.0000
+icpt.4   2.57920   1    4 0.4136
+year.1   0.00000  21    5 0.0000
+year.2   1.48017  18    5 0.2770
+year.3   2.77437  13    5 0.3560
+> getfe(est,ef='zm2',se=TRUE)
+          effect obs comp     se
+id.1     1.46667   2    1 0.5598
+id.2    -1.23977   5    1 0.4782
+id.5    -2.16419   2    1 0.5553
+id.6     1.37799   3    1 0.7911
+id.7    -0.08780   2    1 0.4424
+id.10    0.95953   1    1 0.9490
+id.11    0.49040   1    1 0.8135
+id.12   -0.90134   1    1 0.7840
+id.15   -0.42203   2    1 0.7539
+id.16   -1.00863   1    1 0.7252
+id.17    0.64334   1    1 0.8452
+id.19   -0.16975   3    1 0.4444
+id.21   -0.85612   5    1 0.3846
+id.22   -2.52824   2    1 0.6921
+id.24   -0.67247   4    1 0.4663
+id.27    5.18900   2    1 0.7688
+id.28   -0.07658   2    1 0.5167
+firm.2  -6.23633   1    1 0.9103
+firm.4  -0.28443   1    1 0.8151
+firm.7   3.47359   3    1 0.4798
+firm.8   0.42514   5    1 0.8416
+firm.11  0.68113   3    1 0.2940
+firm.13  1.13940   3    1 0.4255
+firm.15 -0.13707   3    1 0.8020
+firm.16 -0.14573   3    1 0.3561
+firm.17  0.08609   4    1 0.4529
+firm.18  2.21980   3    1 0.4484
+firm.19  1.92760   2    1 0.5032
+firm.20  1.75477   1    1 0.7048
+firm.26  1.77711   2    1 0.4112
+firm.29 -0.99145   2    1 0.5039
+firm.31 -2.53081   1    1 0.7408
+firm.32 -3.15881   2    1 0.5437
+icpt.1  -2.22036  39    1 0.1953
+id.14    0.05787   1    2 0.3269
+id.30   -0.05787   6    2 0.3269
+firm.1   2.09124   1    2 0.3006
+firm.3  -1.04011   1    2 0.4005
+firm.12  0.73709   1    2 0.4009
+firm.22 -0.26434   2    2 0.3941
+firm.24 -1.35091   1    2 0.3784
+firm.25 -0.17296   1    2 0.3217
+icpt.2  -2.78182   7    2 0.3213
+id.13   -0.63567   1    3 0.3580
+id.29    0.63567   4    3 0.3580
+firm.9  -0.47017   2    3 0.4289
+firm.14 -0.32755   1    3 0.3594
+firm.27  0.79772   2    3 0.2932
+icpt.3  -2.80942   5    3 0.5236
+id.3     0.00000   1    4 0.0000
+firm.23  0.00000   1    4 0.0000
+icpt.4   2.57920   1    4 0.3497
+year.1   0.00000  21    5 0.0000
+year.2   1.48017  18    5 0.3597
+year.3   2.77437  13    5 0.3784
+> ef <- function(v,addnames) {
++   names(v) <- nm
++   w <- c(v['id.2']-v['id.1'],exp(v['id.2']-v['id.1']),
++          v['id.2']+v['firm.2']+v['year.1'],v['id.5']+v['firm.4']+v['year.2'])
++   if(addnames) names(w) <-c('id2-id1','exp(id2-id1)','id2+f2+y1','id5+f4+y2')
++   w
++ }
+> getfe(est,ef=ef,se=TRUE)
+               effect       se
+id2-id1      -2.70645 0.706603
+exp(id2-id1)  0.06677 0.009972
+id2+f2+y1    -9.69646 1.274398
+id5+f4+y2    -3.18881 0.975547
+> 
+> # test whether we have estimable functions
+> 
+> R <- est$r.residuals - est$residuals
+> 
+> cat('myef :',is.estimable(ef,est$fe,R),'\n')
+myef : TRUE 
+> for(n in c('ref','zm','zm2','ln')) {
++   cat(n,':',is.estimable(efactory(est,n),est$fe,R),'\n')
++ }
+ref : TRUE 
+zm : TRUE 
+zm2 : TRUE 
+Warning in is.estimable(efactory(est, n), est$fe, R) :
+  non-estimable function, largest error 0.8 in coordinate 41 ("firm.23")
+ln : FALSE 
+> 
+> proc.time()
+   user  system elapsed 
+  2.727   0.511   4.284 

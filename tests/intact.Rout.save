@@ -1,0 +1,195 @@
+
+R Under development (unstable) (2015-09-22 r69418) -- "Unsuffered Consequences"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> options(lfe.threads=1,digits=3,warn=1)
+> set.seed(42)
+> N <- 10000
+> x <- rnorm(N)
+> y <- rnorm(N)
+> time_id <- factor(sample(5,N,repl=TRUE))
+> group <- factor(sample(c('A','B','C','M','P','Q'),N,repl=TRUE))
+> data <- data.frame(x=x, y=y, time_id=time_id, group=group)
+> 
+> model_1<-felm(y~x|group:time_id,data=data)
+> model_2<-felm(y~x|time_id+group:time_id,data=data)
+> model_3<-felm(y~x|group:time_id+ time_id+group,data=data)
+> 
+> lm_1 <- lm(y ~ x + group:time_id, data=data)
+> lm_2 <- lm(y ~ x + time_id + group:time_id, data=data)
+> lm_3 <- lm(y ~ x + group:time_id + time_id + group,data=data)
+> 
+> message('felm 1'); print(model_1)
+felm 1
+       x 
+-0.00696 
+> message('lm 1'); print(lm_1)
+lm 1
+
+Call:
+lm(formula = y ~ x + group:time_id, data = data)
+
+Coefficients:
+    (Intercept)                x  groupA:time_id1  groupB:time_id1  
+        0.05826         -0.00696         -0.09934         -0.11935  
+groupC:time_id1  groupM:time_id1  groupP:time_id1  groupQ:time_id1  
+       -0.10937         -0.09763         -0.01723         -0.02190  
+groupA:time_id2  groupB:time_id2  groupC:time_id2  groupM:time_id2  
+       -0.08361         -0.09575         -0.05962         -0.02870  
+groupP:time_id2  groupQ:time_id2  groupA:time_id3  groupB:time_id3  
+       -0.05022         -0.05703         -0.12336         -0.19929  
+groupC:time_id3  groupM:time_id3  groupP:time_id3  groupQ:time_id3  
+        0.03717         -0.12054         -0.11559         -0.06673  
+groupA:time_id4  groupB:time_id4  groupC:time_id4  groupM:time_id4  
+       -0.01849         -0.03712         -0.06358         -0.06775  
+groupP:time_id4  groupQ:time_id4  groupA:time_id5  groupB:time_id5  
+       -0.08136         -0.10135          0.04778          0.00577  
+groupC:time_id5  groupM:time_id5  groupP:time_id5  groupQ:time_id5  
+        0.07235         -0.03972         -0.03690               NA  
+
+> message('felm 2'); print(model_2)
+felm 2
+       x 
+-0.00696 
+> message('lm 2'); print(lm_2)
+lm 2
+
+Call:
+lm(formula = y ~ x + time_id + group:time_id, data = data)
+
+Coefficients:
+    (Intercept)                x         time_id2         time_id3  
+       -0.04108         -0.00696          0.01573         -0.02402  
+       time_id4         time_id5  time_id1:groupB  time_id2:groupB  
+        0.08085          0.14712         -0.02001         -0.01213  
+time_id3:groupB  time_id4:groupB  time_id5:groupB  time_id1:groupC  
+       -0.07594         -0.01863         -0.04201         -0.01003  
+time_id2:groupC  time_id3:groupC  time_id4:groupC  time_id5:groupC  
+        0.02399          0.16052         -0.04509          0.02457  
+time_id1:groupM  time_id2:groupM  time_id3:groupM  time_id4:groupM  
+        0.00171          0.05492          0.00281         -0.04926  
+time_id5:groupM  time_id1:groupP  time_id2:groupP  time_id3:groupP  
+       -0.08750          0.08211          0.03339          0.00777  
+time_id4:groupP  time_id5:groupP  time_id1:groupQ  time_id2:groupQ  
+       -0.06287         -0.08468          0.07744          0.02658  
+time_id3:groupQ  time_id4:groupQ  time_id5:groupQ  
+        0.05662         -0.08286         -0.04778  
+
+> message('felm 3'); print(model_3)
+felm 3
+       x 
+-0.00696 
+> message('lm 3'); print(lm_3)
+lm 3
+
+Call:
+lm(formula = y ~ x + group:time_id + time_id + group, data = data)
+
+Coefficients:
+    (Intercept)                x         time_id2         time_id3  
+       -0.04108         -0.00696          0.01573         -0.02402  
+       time_id4         time_id5           groupB           groupC  
+        0.08085          0.14712         -0.02001         -0.01003  
+         groupM           groupP           groupQ  groupB:time_id2  
+        0.00171          0.08211          0.07744          0.00788  
+groupC:time_id2  groupM:time_id2  groupP:time_id2  groupQ:time_id2  
+        0.03402          0.05321         -0.04872         -0.05086  
+groupB:time_id3  groupC:time_id3  groupM:time_id3  groupP:time_id3  
+       -0.05593          0.17055          0.00110         -0.07435  
+groupQ:time_id3  groupB:time_id4  groupC:time_id4  groupM:time_id4  
+       -0.02082          0.00138         -0.03506         -0.05097  
+groupP:time_id4  groupQ:time_id4  groupB:time_id5  groupC:time_id5  
+       -0.14498         -0.16031         -0.02200          0.03460  
+groupM:time_id5  groupP:time_id5  groupQ:time_id5  
+       -0.08921         -0.16679         -0.12522  
+
+> 
+> data[,'time+id'] <- data[,'time_id']
+> m <- felm(y~x|`time+id`+group + group:`time+id`,data=data)
+> print(getfe(model_3))
+                    effect  obs comp            fe idx
+time_id.1         -0.14712 2015    1       time_id   1
+time_id.2         -0.13139 1952    1       time_id   2
+time_id.3         -0.17113 1967    1       time_id   3
+time_id.4         -0.06627 1946    1       time_id   4
+time_id.5          0.00000 2120    1       time_id   5
+group.A            0.10603 1670    1         group   A
+group.B            0.08603 1623    1         group   B
+group.C            0.09601 1679    1         group   C
+group.M            0.10774 1645    1         group   M
+group.P            0.18815 1652    1         group   P
+group.Q            0.18348 1731    1         group   Q
+time_id:group.2.B  0.00788  321    2 time_id:group 2.B
+time_id:group.3.B -0.05593  335    2 time_id:group 3.B
+time_id:group.4.B  0.00138  336    2 time_id:group 4.B
+time_id:group.5.B -0.02200  337    2 time_id:group 5.B
+time_id:group.2.C  0.03402  338    2 time_id:group 2.C
+time_id:group.3.C  0.17055  315    2 time_id:group 3.C
+time_id:group.4.C -0.03506  317    2 time_id:group 4.C
+time_id:group.5.C  0.03460  345    2 time_id:group 5.C
+time_id:group.2.M  0.05321  318    2 time_id:group 2.M
+time_id:group.3.M  0.00110  313    2 time_id:group 3.M
+time_id:group.4.M -0.05097  347    2 time_id:group 4.M
+time_id:group.5.M -0.08921  337    2 time_id:group 5.M
+time_id:group.2.P -0.04872  315    2 time_id:group 2.P
+time_id:group.3.P -0.07435  315    2 time_id:group 3.P
+time_id:group.4.P -0.14498  327    2 time_id:group 4.P
+time_id:group.5.P -0.16679  366    2 time_id:group 5.P
+time_id:group.2.Q -0.05086  330    2 time_id:group 2.Q
+time_id:group.3.Q -0.02082  358    2 time_id:group 3.Q
+time_id:group.4.Q -0.16031  337    2 time_id:group 4.Q
+time_id:group.5.Q -0.12522  356    2 time_id:group 5.Q
+time_id:group.1+A  0.00000 3337    2 time_id:group 1+A
+> print(getfe(m))
+                      effect  obs comp              fe idx
+`time+id`.1         -0.14712 2015    1       `time+id`   1
+`time+id`.2         -0.13139 1952    1       `time+id`   2
+`time+id`.3         -0.17113 1967    1       `time+id`   3
+`time+id`.4         -0.06627 1946    1       `time+id`   4
+`time+id`.5          0.00000 2120    1       `time+id`   5
+group.A              0.10603 1670    1           group   A
+group.B              0.08603 1623    1           group   B
+group.C              0.09601 1679    1           group   C
+group.M              0.10774 1645    1           group   M
+group.P              0.18815 1652    1           group   P
+group.Q              0.18348 1731    1           group   Q
+`time+id`:group.2.B  0.00788  321    2 `time+id`:group 2.B
+`time+id`:group.3.B -0.05593  335    2 `time+id`:group 3.B
+`time+id`:group.4.B  0.00138  336    2 `time+id`:group 4.B
+`time+id`:group.5.B -0.02200  337    2 `time+id`:group 5.B
+`time+id`:group.2.C  0.03402  338    2 `time+id`:group 2.C
+`time+id`:group.3.C  0.17055  315    2 `time+id`:group 3.C
+`time+id`:group.4.C -0.03506  317    2 `time+id`:group 4.C
+`time+id`:group.5.C  0.03460  345    2 `time+id`:group 5.C
+`time+id`:group.2.M  0.05321  318    2 `time+id`:group 2.M
+`time+id`:group.3.M  0.00110  313    2 `time+id`:group 3.M
+`time+id`:group.4.M -0.05097  347    2 `time+id`:group 4.M
+`time+id`:group.5.M -0.08921  337    2 `time+id`:group 5.M
+`time+id`:group.2.P -0.04872  315    2 `time+id`:group 2.P
+`time+id`:group.3.P -0.07435  315    2 `time+id`:group 3.P
+`time+id`:group.4.P -0.14498  327    2 `time+id`:group 4.P
+`time+id`:group.5.P -0.16679  366    2 `time+id`:group 5.P
+`time+id`:group.2.Q -0.05086  330    2 `time+id`:group 2.Q
+`time+id`:group.3.Q -0.02082  358    2 `time+id`:group 3.Q
+`time+id`:group.4.Q -0.16031  337    2 `time+id`:group 4.Q
+`time+id`:group.5.Q -0.12522  356    2 `time+id`:group 5.Q
+`time+id`:group.1+A  0.00000 3337    2 `time+id`:group 1+A
+> 
+> proc.time()
+   user  system elapsed 
+  3.216   0.562   3.256 

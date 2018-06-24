@@ -1,0 +1,171 @@
+
+R Under development (unstable) (2015-02-02 r67710) -- "Unsuffered Consequences"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> options(lfe.threads=2,digits=5,warn=1)
+> set.seed(6320)
+> x <- rnorm(1000,mean=200)
+> x2 <- rnorm(length(x))
+> x3 <- rexp(length(x))
+> ## create individual and firm
+> id <- factor(sample(200,length(x),replace=TRUE))
+> firm <- factor(sample(200,length(x),replace=TRUE))
+> shoe <- factor(sample(200,length(x),replace=TRUE))
+> shirt <- factor(sample(200,length(x),replace=TRUE))
+> ## effects
+> id.eff <- rnorm(nlevels(id))
+> firm.eff <- rnorm(nlevels(firm))
+> shoe.eff <- rnorm(nlevels(shoe))
+> shirt.eff <- rnorm(nlevels(shirt))
+> ## left hand side
+> y <- x + 0.25*x2 + 0.5*x3 + id.eff[id] + firm.eff[firm] + shoe.eff[shoe] + shirt.eff[shirt] + rnorm(length(x))
+> 
+> ## estimate
+> est <- felm(y ~ x+x2 + x3 | id + firm + shoe + shirt)
+> cat('Components:',nlevels(est$cfactor),'largest:',sum(est$cfactor == '1'),'\n')
+Components: 1 largest: 1000 
+> ## extract the group fixed effects
+>   ## verify that id and firm coefficients are 1
+> opt <- options(scipen=8,warn=1)
+> 
+> for(ef in c('ln','ref','zm','zm2')) {
++   fe <- getfe(est,ef=ef)
++   ## merge back
++ 
++   ideff <- fe[paste('id',id,sep='.'),'effect']
++   firmeff <- fe[paste('firm',firm,sep='.'),'effect']
++   shoeeff <- fe[paste('shoe',shoe,sep='.'),'effect']
++   shirteff <- fe[paste('shirt',shirt,sep='.'),'effect']
++   if(ef %in% c('zm','zm2')) {
++     icpt <- fe[paste('icpt',1:nlevels(est$cfactor),sep='.'),'effect'][est$cfactor]
++     print(summary(lm(y ~ x + x2 + x3 + ideff + firmeff + shoeeff +shirteff + icpt-1),digits=8))
++   } else {
++     print(summary(lm(y ~ x + x2 + x3 + ideff + firmeff + shoeeff +shirteff-1),digits=8))
++   }
++ }
+Warning in is.estimable(ef, obj$fe) :
+  non-estimable function, largest error 0.02 in coordinate 476 ("shoe.79")
+Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
+  Supplied function seems non-estimable
+
+Call:
+lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff - 
+    1)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-1.573 -0.340  0.000  0.308  1.762 
+
+Coefficients:
+         Estimate Std. Error t value Pr(>|t|)    
+x        0.905809   0.000709  1277.1   <2e-16 ***
+x2       0.210249   0.016466    12.8   <2e-16 ***
+x3       0.508976   0.016618    30.6   <2e-16 ***
+ideff    1.000000   0.011595    86.2   <2e-16 ***
+firmeff  1.000000   0.011819    84.6   <2e-16 ***
+shoeeff  1.000000   0.011848    84.4   <2e-16 ***
+shirteff 1.000000   0.011732    85.2   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.508 on 993 degrees of freedom
+Multiple R-squared:     1,	Adjusted R-squared:     1 
+F-statistic: 2.22e+07 on 7 and 993 DF,  p-value: <2e-16
+
+
+Call:
+lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff - 
+    1)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-1.573 -0.340  0.000  0.308  1.762 
+
+Coefficients:
+         Estimate Std. Error t value Pr(>|t|)    
+x         0.90581    0.00134   674.2   <2e-16 ***
+x2        0.21025    0.01647    12.8   <2e-16 ***
+x3        0.50898    0.01662    30.6   <2e-16 ***
+ideff     1.00000    0.01156    86.5   <2e-16 ***
+firmeff   1.00000    0.01182    84.6   <2e-16 ***
+shoeeff   1.00000    0.01186    84.3   <2e-16 ***
+shirteff  1.00000    0.01173    85.3   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.508 on 993 degrees of freedom
+Multiple R-squared:     1,	Adjusted R-squared:     1 
+F-statistic: 2.22e+07 on 7 and 993 DF,  p-value: <2e-16
+
+
+Call:
+lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff + 
+    icpt - 1)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-1.573 -0.340  0.000  0.308  1.762 
+
+Coefficients:
+         Estimate Std. Error t value        Pr(>|t|)    
+x          0.9058     0.0167   54.13         < 2e-16 ***
+x2         0.2102     0.0165   12.76         < 2e-16 ***
+x3         0.5090     0.0166   30.61         < 2e-16 ***
+ideff      1.0000     0.0116   86.13         < 2e-16 ***
+firmeff    1.0000     0.0118   84.57         < 2e-16 ***
+shoeeff    1.0000     0.0119   84.27         < 2e-16 ***
+shirteff   1.0000     0.0117   85.19         < 2e-16 ***
+icpt       1.0000     0.1392    7.18 0.0000000000013 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.509 on 992 degrees of freedom
+Multiple R-squared:     1,	Adjusted R-squared:     1 
+F-statistic: 1.94e+07 on 8 and 992 DF,  p-value: <2e-16
+
+
+Call:
+lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff + 
+    icpt - 1)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-1.573 -0.340  0.000  0.308  1.762 
+
+Coefficients:
+         Estimate Std. Error t value      Pr(>|t|)    
+x          0.9058     0.0167   54.13       < 2e-16 ***
+x2         0.2102     0.0165   12.76       < 2e-16 ***
+x3         0.5090     0.0166   30.61       < 2e-16 ***
+ideff      1.0000     0.0116   86.13       < 2e-16 ***
+firmeff    1.0000     0.0118   84.57       < 2e-16 ***
+shoeeff    1.0000     0.0119   84.27       < 2e-16 ***
+shirteff   1.0000     0.0117   85.19       < 2e-16 ***
+icpt       1.0000     0.1544    6.48 0.00000000015 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.509 on 992 degrees of freedom
+Multiple R-squared:     1,	Adjusted R-squared:     1 
+F-statistic: 1.94e+07 on 8 and 992 DF,  p-value: <2e-16
+
+> options(opt)
+> 
+> proc.time()
+   user  system elapsed 
+  2.651   0.140   2.688 

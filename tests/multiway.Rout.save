@@ -1,0 +1,98 @@
+
+R Under development (unstable) (2018-06-11 r74881) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(lfe)
+Loading required package: Matrix
+> set.seed(43)
+> options(lfe.threads=2,digits=5,warn=1)
+> 
+> g1 <- 80
+> g2 <- 20
+> g3 <- 12
+> N <- 1000
+> clu1 <- sample(g1,N, replace=TRUE)
+> clu2 <- (clu1 + sample(7,N,replace=TRUE)-1) %% g2
+> clu3 <- (clu2 + sample(3,N,replace=TRUE)-1) %% g3
+> clu1 <- factor(clu1)
+> clu2 <- factor(clu2)
+> clu3 <- factor(clu3)
+> # group specific covariate effects
+> ceff1 <- rnorm(nlevels(clu1), sd=0.5)[clu1]
+> ceff2 <- rnorm(nlevels(clu2), sd=0.4)[clu2]
+> ceff3 <- rnorm(nlevels(clu3))[clu3]
+> 
+>  # group specific errors
+> err1 <- rnorm(nlevels(clu1), sd=0.8)[clu1]
+> err2 <- rnorm(nlevels(clu2))[clu2]
+> err3 <- rnorm(nlevels(clu3), sd=0.5)[clu3]
+> 
+> x1 <- ceff1 + 0.3*ceff2 + rnorm(N)
+> x2 <- ceff2 + 0.2*ceff3 + rnorm(N)
+> x3e <- ceff3 + 0.2*(ceff2+ceff1) + rnorm(N)
+> 
+> f1 <- factor(sample(8,N,replace=TRUE))
+> x3 <- as.vector(as(f1,'sparseMatrix') %*% x3e)[f1]/tabulate(f1)[f1]
+> err <- err1 + err2 + err3 + abs(x1+x2*x3)*rnorm(N)
+> y <- x1 + x2 + x3 + err
+> data <- data.frame(y,x1,x2,x3,f1,clu1,clu2,clu3)
+> clu <- list('clu1', 'clu2', 'clu3')
+> summary(felm(y ~ x1 + x2 + f1|0|0|clu1+clu2+clu3, data))
+Warning in newols(mm, nostats = nostats[1], exactDOF = exactDOF, onlyse = onlyse,  :
+  Negative eigenvalues set to zero in multiway clustered variance matrix. See felm(...,psdef=FALSE)
+Warning in chol.default(mat, pivot = TRUE, tol = tol) :
+  the matrix is either rank-deficient or indefinite
+
+Call:
+   felm(formula = y ~ x1 + x2 + f1 | 0 | 0 | clu1 + clu2 + clu3,      data = data) 
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-5.810 -1.184  0.079  1.238  5.609 
+
+Coefficients:
+            Estimate Cluster s.e. t value Pr(>|t|)    
+(Intercept)   0.2398       0.3036    0.79  0.42977    
+x1            1.0078       0.0795   12.67  < 2e-16 ***
+x2            0.8897       0.0717   12.41  < 2e-16 ***
+f12          -0.5790       0.1714   -3.38  0.00076 ***
+f13          -0.7071       0.2895   -2.44  0.01477 *  
+f14          -0.0238       0.2340   -0.10  0.91897    
+f15          -0.3162       0.2299   -1.38  0.16932    
+f16          -0.6152       0.2486   -2.47  0.01349 *  
+f17          -0.3242       0.2288   -1.42  0.15689    
+f18          -0.4256       0.2490   -1.71  0.08766 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.81 on 990 degrees of freedom
+Multiple R-squared(full model): 0.417   Adjusted R-squared: 0.412 
+Multiple R-squared(proj model): 0.417   Adjusted R-squared: 0.412 
+F-statistic(full model, *iid*):78.6 on 9 and 990 DF, p-value: <2e-16 
+F-statistic(proj model): 47.8 on 9 and 79 DF, p-value: <2e-16 
+
+
+> #gclu <- structure(clu, method='gaure')
+> #summary(felm(y ~ x1 + x2 + f1|0|0|clu1+clu2+clu3, data, cmeth='gaure'))
+> #summary(est <- felm(y ~ x1 + x2 | f1, data, clustervar=gclu))
+> #ef <- structure(function(x,addnames) {
+> #    c(x[1],x[2:8]-x[1])
+> #}, verified=TRUE)
+> #getfe(est,ef=ef,se=TRUE, bN=200)
+> 
+> proc.time()
+   user  system elapsed 
+  2.073   0.292   2.319 

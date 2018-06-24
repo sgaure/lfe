@@ -1,0 +1,115 @@
+May 26, 2015.  2.3-1708 -- Fixed a bug with kclass.  Fixed a bug with weighted clustered se's.
+	Some support for lags etc. from plm.
+
+Apr 6, 2015.   2.2-1691 -- Don't use cBind/rBind for R >= 3.2-0 and Matrix > 1.1.
+	Add optional argument keepCX to felm(), to keep the centred covariates and outcome.
+	Requested by Thiemo Fetzer.
+	
+Mar 26, 2015.  2.2-1685 -- Fixed bug in cgsolve concerning convergence criterion.
+	Weights updates to getfe, fevcov/bccorr, btrap.
+
+Mar 21, 2015.  2.2-1663 -- weights-argument added to felm.
+
+Mar 19, 2015.  2.2-1657 -- Made mctrace and cgsolve public. Fixed a bug which crashes R
+	if all rows have NAs.  Some other reports of failure here:
+	https://support.rstudio.com/hc/communities/public/questions/203128307-R-studio-crashes-when-executing-some-regressions
+	One crash-report I've traced to a bug in R for windows (fixed in 3.2-devel), none of my
+	code involved.
+
+Mar 12, 2015.  2.1-1642 -- Silly protection bug with data.frame input to demeanlist fixed.
+	It's fortunately not documented that data.frames can be used directly, neither
+	is it tested.
+
+Mar 11, 2015.  2.1-1640 -- On CRAN. (valgrind bug fixed)
+
+Mar  5, 2015.  2.1.1629 -- On CRAN. (previous version broke package statar)
+
+Mar  2, 2015.  2.1 -- Added k-class estimators to felm().
+
+Feb 17, 2015.  2.0-1596 -- Bootstrap IV-CIs in condfstat()
+
+Feb 10, 2015.  2.0-1570 -- On CRAN.
+
+Feb  6, 2015.  2.0-1544 -- Rewritten to build a single model frame. Fixes problems with missing
+	values different in 1st and 2nd stages in IV.
+
+Jan 31, 2015.  2.0-1486 -- Added support for conditional F statistic for multiple endogenous variables in IV. (condfstat)
+
+Jan 29, 2015.  2.0-1471 -- Added support for multiple left hand sides.
+	** DEPRECATED iv and clustervar args to felm(). Still works with warning.
+	** CHANGED 1st stage IV. to multiple lhs. $step1 is deprecated, $stage1 is a single
+	   'felm' object with multiple left hand sides.
+	   Some other changes to the content of a felm-object when doing IV.
+
+Jan 27, 2015.  1.9-1457 -- Replaced ivtest() with a more general waldtest()
+
+Jan 16, 2015.  1.9-1445 -- Added ivtest() to test endogenous variables for joint significance.
+	Added cluster-support to fevcov/bccorr, currently only for the diagonal.
+
+Dec 25, 2014.  1.8-1441 -- On CRAN.
+
+Dec 25, 2014.  1.8-1440 -- Added fevcov() and varvars(). Discovered error in the
+	handling of mutexes on Windows. Race condition. Fixed.  Rewritten
+	handling of the extra IV-variables. Didn't work properly before,
+	see Gomez on Oct 8 below.
+
+Dec 15, 2014.  1.7-1412 -- Put bccorr() back in.
+
+Oct 9, 2014.   1.7-1402 -- On CRAN. bccorr() not public for now.
+
+Oct 8, 2014.   1.7 -- Fixed a bug which prevents calling felm() with IV from within
+	a function.  Reported by Matthieu Gomez gomez.matthieu@gmail.com
+
+Sep 9, 2014.   1.7 -- Added an update.felm() function at the request of
+	Simon Schillebeeckx <s.schillebeeckx11@imperial.ac.uk>
+
+Aug 7, 2014.   1.7 -- Added support for bias corrected correlation between two fixed
+	effects (bccorr()).  Some bugfixes.  Not public yet.
+
+Mar 9, 2014.   1.7-1286 -- On CRAN.
+
+Mar 5, 2014.   1.7 -- Depend on Matrix >= 1.1-2 to ensure that exactDOF='rM' works.
+     Also import xtable and Formula.  Suggest stargazer.
+
+Feb 12, 2014.  1.7 -- Give warnings for unnamed 'clustervar' and 'iv'
+     args, in preparation for moving them out of the argument list.
+
+Feb 11, 2014.  1.7 -- Support for multi part formulas.  G() removed from documentation.
+
+Feb 3, 2014.   1.7 -- Do multiway clustering bootstrap also.
+
+Jan 29, 2014.  1.7 -- Support multiway clustering (Cameron, Gelbach,
+     Miller). Suggested by Thiemo Fetzer.
+
+Jan 23, 2014.  1.6-1188 -- On CRAN. Map G() to factor(), not
+     as.factor(), so as to remove unused levels which otherwise will
+     mess up the computation of DOF.
+
+Jan 4, 2014.  1.6-1180 -- On CRAN.
+
+Dec 17, 2013. 1.6 -- Fixed a bug in computing F-test for IV. Added
+     F-test in 1st stage for omitted i.v.  Suppress F-test writing for
+     robust and clustered errors. I can't compute it.
+
+Dec 06, 2013. 1.6-1163 -- On CRAN.
+
+Nov 29, 2013. 1.6 -- Support for G(x:f) with x matrix.
+     Fixed a one-off error in df for the one-factor case.
+     Several bug-fixes and memory optimization pertaining to large model matrices.
+     Some of them in R.
+
+Nov 25, 2013. 1.6 -- Matrix::rankMatrix bug has been fixed. We can
+     use the sparse method qrLINPACK as soon as a new version of
+     Matrix is released.  Bug #5031:
+     https://r-forge.r-project.org/tracker/index.php?func=detail&aid=5031&group_id=61&atid=294
+     Added contrasts-argument to felm. It applies to factors outside
+     G().  Fixed efactory() for G(x:f) interactions.
+
+Nov 14, 2013. 1.6 -- Added G(x:f) syntax for estimation similar to
+     x:f, i.e. interaction between a covariate and a factor. felm()
+     and getfe() are ok, but efactory() does not always produce
+     estimable functions.
+
+Nov 12, 2013. 1.5-1118 -- On CRAN. Fixed a bug which prevented bootstrapping in some cases.
+
+Oct 28, 2013. 1.5-1107 -- On CRAN. Version presented in R journal article.

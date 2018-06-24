@@ -1,0 +1,265 @@
+% $Id: speed.Rnw 1796 2015-11-12 13:10:20Z sgaure $
+\documentclass{amsproc}
+%\VignetteIndexEntry{Convergence rate with examples}
+%\VignetteKeyword{Multiple Fixed Effects}
+%\VignetteEngine{knitr::knitr}
+
+\usepackage[utf8]{inputenc}
+\newcommand{\strong}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\let\pkg=\strong
+\newcommand\code{\bgroup\@codex}
+\def\@codex#1{{\normalfont\ttfamily\hyphenchar\font=-1 #1}\egroup}
+
+\newcommand{\bma}{\begin{bmatrix}}
+\newcommand{\ema}{\end{bmatrix}}
+\newcommand{\RN}{\mathbb{R}}
+\title{Convergence rate examples and theory}
+
+\author{Simen Gaure}
+\address{Ragnar Frisch Centre for Economic Research, Oslo, Norway}
+\date{March 26, 2013}
+
+\begin{document}
+\begin{abstract}
+If you use \pkg{lfe} for various tasks, you will notice that some estimations
+converge fast, whereas others converge slowly.
+Convergence rate of the methods used by \pkg{lfe} is not a walk in the park.
+Here are some examples.
+\end{abstract}
+\maketitle
+
+\section{Introduction}
+The method employed by \pkg{lfe} is \emph{the method of alternating projections} (\cite{Halp62}).
+The link to this method comes from viewing demeaning of a vector as a \emph{projection} (\cite{GS13}), i.e.
+a linear operator \(P\) with the property \(P^2 = P = P^t\). Also, the Kaczmarz-method
+used by \pkg{lfe} to solve the sparse resulting system is a variant of alternating projections,
+though \(P\) is then an affine projection with \(P^2 = P\), not a linear operator. That is, if
+the projection demeaning factor \(i\) is \(P_i\), their intersection which demeans
+all factors is \(\lim_{n\to\infty} (P_1 P_2 \cdots P_e)^n\). We can therefore iterate the
+operator \(T = P_1 P_2 \cdots P_e\) on a vector \(x\): \(T^n x\), to demean
+\(x\).
+
+The convergence rate has been analysed in \cite{DH97} and references
+cited therein; there are also newer elaborations, e.g.\ in
+\cite{BGM12}. The convergence rate theory is in terms of
+generalized angles between subspaces, i.e. the ranges of the projections.
+The angle concept may not be immediately intuitive to practioners of linear
+regression methods, so let's have a look at some examples.
+
+\section{Examples}
+Our first example has two factors, they are independent of each other, and
+of quite high cardinality
+<<echo=FALSE>>=
+  cores <- as.integer(Sys.getenv('SG_RUN'))
+  if(is.na(cores)) options(lfe.threads=1)
+@ 
+<<>>=
+library(lfe)
+set.seed(42)
+x <- rnorm(100000)
+f1 <- sample(10000,length(x),replace=TRUE)
+f2 <- sample(10000,length(x),replace=TRUE)
+y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+@ 
+We time the first step:
+<<>>=
+system.time(est <- felm(y ~ x | f1 + f2))
+@ 
+and the second step
+<<>>=
+system.time(alpha <- getfe(est))
+@ 
+We see that there's nothing to complain about in terms of speed.
+After all, there are 20,000 dummies in this model.
+
+Now we let \code{f2} have fewer levels:
+<<>>=
+f2 <- sample(300,length(x),replace=TRUE)
+y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+system.time(est <- felm(y ~ x | f1 + f2))
+system.time(alpha <- getfe(est))
+@ 
+Not much happens, the second step is apparently faster, whereas the first is
+about the same. Note that much of the time in the first step is spent
+in mundane bookkeeping such as creating a model matrix, not in the demeaning
+as such.
+
+Now we make the fixed effects dependent. We do this by ensuring
+that for each value of \code{f1} there are at most 10 different values
+of \code{f2}. We keep the number of levels
+in \code{f2} at 300, as in the previous example. The size of
+this problem is exactly the same as in the previous example, but
+the factor structure is very different.
+
+<<>>=
+f2 <- (f1 + sample(10,length(x),replace=TRUE)) %% 300
+y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+system.time(est <- felm(y ~ x | f1 + f2))
+system.time(alpha <- getfe(est))
+@ 
+
+The estimation now takes a lot more time.
+Indeed, in this case, it is worthwile
+to consider coding \code{f2} as 300 dummies, i.e.\ as an ordinary factor, 
+even though there now are \(\approx 300\) vectors to centre, as opposed to two
+in the previous examples.
+<<>>=
+system.time(est <- felm(y ~ x + factor(f2) | f1))
+system.time(alpha <- getfe(est))
+@ 
+
+We could be tempted to believe that this is the whole story, but it's not.
+We may create another example, where each \code{f1} only has 10 different
+\code{f2}'s as above, but where the overlap is different. In the above example,
+an observation with \code{f1=1} will have \code{f2} drawn from \{2,3,4,\ldots,11\}, whereas
+an observation with \code{f1=2} will have \code{f2} in \{3,4,5,\ldots,12\} and so on, i.e.
+a considerable overlap. 
+We reduce this overlap by creating \code{f2} with a little twist, by 
+introducing some unevenly sized ``holes'' by cubing the samples of \code{1:10}.
+<<>>=
+f2 <- (f1 + sample(10,length(x),replace=TRUE)^3) %% 300
+y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+system.time(est <- felm(y ~ x | f1 + f2))
+system.time(alpha <- getfe(est))
+nlevels(est[['cfactor']])
+@ 
+We are now back at approximately the same fast convergence  as before. That is,
+convergence rate is not a simple function of data size, counts of levels and so on, even when we 
+have only two factors.  
+
+\subsection{Why?}
+In the examples above we have played with the structure of the
+bipartite graph mentioned in \cite{GS13}, indicating that convergence
+rate is not a function solely of the average degree and number of
+connected components of the graph.  Intuitively (to the author), the
+graph determines the convergence rate, at least in the operator norm
+topology, but it is unclear to me whether the rate can be
+described in simple graph theoretic terms, let alone in terms of some
+intuitive relations between dummy variables.
+
+One could speculate that convergence is related to how tightly
+connected the graph is, one such measure is the diameter of the graph, or
+the set of lengths of shortest paths.
+<<tidy=FALSE>>=
+library(igraph)
+mkgraph <- function(f1,f2)
+  graph.edgelist(cbind(paste('f1',f1),paste('f2',f2)), directed=FALSE)
+
+appxdiam <- function(g) max(shortest.paths(g,sample(V(g),10),sample(V(g),10)))
+f2 <- sample(10000,length(x),replace=TRUE)
+appxdiam(mkgraph(f1,f2))
+f2 <- (f1 + sample(5,length(x),replace=TRUE)^3) %% 300
+appxdiam(mkgraph(f1,f2))
+f2 <- (f1 + sample(5,length(x),replace=TRUE)) %% 300
+appxdiam(mkgraph(f1,f2))
+@ 
+Loosely speaking, data with ``six degrees of separation'' seems to
+converge faster than less well connected networks.  Informal trials,
+using \code{demeanlist} instead of \code{felm} to avoid overhead, show
+that convergence time grows roughly as the square of the diameter,
+also in more varied graphs than the above.  However, the author has
+not had the time to attempt to prove such an assertion.
+
+A special case of this is when the second factor is an interaction of several factors in such
+a way that there is multicollinearity by design.  This does not introduce any bias problems, but the
+speed can often be dramatically improved by removing the known multicollinearities in advance by
+collapsing appropriate levels to one.  This will diminish the diameter of the graph.
+
+Note that convergence rate in practice is also a function of the vector to be centred, this can
+be seen from the trivial example when the vector is already centred and convergence is
+attained after a single iteration.
+
+It is a sad fact of life, shown in \cite{DH97}, that when there are
+more than two factors, the convergence rate can not be determined solely by
+considering the angles of \emph{pairs} of subspaces. In \cite{BGM12} a generalized
+angle between a finite set of subspaces is introduced for the purpose of analysis.  It is
+left to the reader to imagine some simple examples with more than two factors. A real
+example with three factors can be found in \cite{TPAG13}, and real examples
+with up to five factors are treated in the appendix of \cite{GS13} as well as
+in \cite{MR12}.
+
+\section{Acceleration schemes}
+One point to note is that with more than two factors, even their \emph{order} may
+be important for the convergence rate, this has been utilized to speed up convergence
+in some cases, picking a random order of the projections for each iteration, or sampling randomly from
+the projections. One such scheme is used in \cite{SV09}, and randomization is also treated in 
+\cite{BGM12} and the papers they cite. Random shuffling of the equations is now used in the
+Kaczmarz-step of \pkg{lfe}, i.e.\ in \code{getfe}, as suggested in \cite{GS13}.
+
+Another acceleration scheme is found in \cite{GK89}, where a line search method
+is used in each iteration.  I.e. when a single iteration transforms our vector \(\eta \mapsto \eta'\),
+it is fairly easy to find the exact point on the line \(\{\eta + t(\eta' - \eta)\, :\, t \in \RN\}\) which
+is closest to the solution.  \pkg{lfe} uses this line search method in \code{felm} (or rather, in \code{demeanlist}).  However, it is noted in \cite{BDHP03} that
+this method does not always accelerate convergence.
+
+After publishing \cite{GS13}, the author was made aware that exactly
+the same method of alternating projections was arrived at in
+\cite[p. 637]{GP10}, though as a technical simplification of the
+Gauss-Seidel method of iterated regressions.  It is possible that
+acceleration schemes for the Gauss-Seidel method may be applicable,
+though the author has not yet looked into it.
+
+\iffalse
+\bibliographystyle{amsplain} \bibliography{biblio} 
+\else
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{10}
+
+\bibitem{BGM12}
+C.~Badea, S.~Grivaux, and V.~M{\"u}ller, \emph{The rate of convergence in the
+  method of alternating projections}, St. Petersburg Mathematical Journal
+  \textbf{23} (2012), 413--434, preprint in arXiv:1006.2047.
+
+\bibitem{BDHP03}
+Heinz~H. Bauschke, Frank Deutsch, Hein Hundal, and Sung-Ho Park,
+  \emph{Accelerating the convergence of the method of alternating projections},
+  Trans. Amer. Math. Soc. \textbf{355} (2003), no.~9, 3433--3461.
+
+\bibitem{DH97}
+F.~Deutsch and H.~Hundal, \emph{{The Rate of Convergence for the Method of
+  Alternating Projections, II}}, J. Math. Anal. App. \textbf{205} (1997),
+  no.~2, {381--405}.
+
+\bibitem{GS13}
+S.~Gaure, \emph{{OLS with Multiple High Dimensional Category Variables}},
+  Computational Statistics and Data Analysis \textbf{66} (2013), 8--18.
+
+\bibitem{GK89}
+W.B. Gearhart and M.~Koshy, \emph{{Acceleration schemes for the method of
+  alternating projections}}, {Journal of Computational and Applied Mathematics}
+  \textbf{26} (1989), no.~3, 235--249.
+
+\bibitem{GP10}
+P.~Guimar{\~a}es and P.~Portugal, \emph{A simple feasible procedure to fit
+  models with high-dimensional fixed effects}, Stata Journal \textbf{10}
+  (2010), no.~4, 628--649(22).
+
+\bibitem{Halp62}
+I.~Halperin, \emph{{The Product of Projection Operators}}, Acta Sci. Math.
+  (Szeged) \textbf{23} (1962), 96--99.
+
+\bibitem{MR12}
+S.~Markussen and K.~R{\o}ed, \emph{Social insurance networks}, IZA Discussion
+  Papers 6446, Institute for the Study of Labor (IZA), March 2012.
+
+\bibitem{SV09}
+T.~Strohmer and R.~Vershynin, \emph{{A Randomized Kaczmarz Algorithm with
+  Exponential Convergence}}, Journal of Fourier Analysis and Applications
+  \textbf{15} (2009), 262--278.
+
+\bibitem{TPAG13}
+S.M. Torres, P.~Portugal, J.T. Addison, and P.~Guimar{\~a}es, \emph{{The
+  Sources of Wage Variation: A Three-Way High-Dimensional Fixed Effects
+  Regression Model.}}, IZA Discussion Paper 7276, Institute for the Study of
+  Labor (IZA), March 2013.
+
+\end{thebibliography}
+
+\fi
+\end{document}
