@@ -1,9 +1,8 @@
 Package: lfe
 Version: 2.8
-Date: 2018-06-24
+Date: 2018-06-28
 Title: Linear Group Fixed Effects
-Author: Simen Gaure, Ragnar Frisch Centre for Economic Research
-Maintainer: Simen Gaure <Simen.Gaure@frisch.uio.no>
+Authors@R: person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut","cre"))
 Copyright: 2011-2018, Simen Gaure
 Depends: R (>= 2.15.2), Matrix (>= 1.1-2)
 Imports: Formula, xtable, compiler, utils, methods, sandwich, parallel

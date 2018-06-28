@@ -702,7 +702,7 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
   if(INTEGER(badconv)[0] > 0) setAttrib(ret,install("badconv"),badconv);
   // Now, there may be more attributes to set
   if(!isNull(attrs) && LENGTH(attrs) > 0) {
-    SEXP nm = GET_NAMES(attrs);
+    SEXP nm = PROTECT(GET_NAMES(attrs)); protectcount++;
     for(int i = 0; i < LENGTH(attrs); i++) {
       setAttrib(ret, installChar(STRING_ELT(nm,i)), VECTOR_ELT(attrs,i));
     }
