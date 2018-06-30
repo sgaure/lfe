@@ -23,7 +23,7 @@ print(est <- felm(y ~ x+x2|id+firm, data=fr))
 ## extract the group fixed effects
 tail(getfe(est))
 
-head(model.matrix(est))
+head(round(model.matrix(est),7))
 head(model.matrix(est,centred=FALSE))
-head(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepCX=TRUE)))
+head(round(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepCX=TRUE)),7))
 head(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepX=TRUE), centred=FALSE))

@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2016-04-25 r70547) -- "Unsuffered Consequences"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R Under development (unstable) (2018-06-26 r74931) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -50,14 +50,14 @@ firm.297 -2.516   1   35 firm 297
 firm.298 -0.846   1   34 firm 298
 firm.300 -3.014   5    1 firm 300
 > 
-> head(model.matrix(est))
-          x        x2
-1 -3.39e-01 -1.33e-01
-2  0.00e+00  0.00e+00
-3  4.65e-10  1.30e-10
-4  6.71e-01 -1.92e-02
-5 -2.28e-08 -2.91e-08
-6  0.00e+00  0.00e+00
+> head(round(model.matrix(est),7))
+       x      x2
+1 -0.339 -0.1331
+2  0.000  0.0000
+3  0.000  0.0000
+4  0.671 -0.0192
+5  0.000  0.0000
+6  0.000  0.0000
 > head(model.matrix(est,centred=FALSE))
        x      x2
 1 -1.251  1.0210
@@ -66,14 +66,14 @@ firm.300 -3.014   5    1 firm 300
 4 -1.099  1.1567
 5 -0.359 -0.5846
 6  0.368 -0.0823
-> head(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepCX=TRUE)))
-             x        x2
-[1,] -3.39e-01 -1.33e-01
-[2,]  0.00e+00  0.00e+00
-[3,]  4.65e-10  1.30e-10
-[4,]  6.71e-01 -1.92e-02
-[5,] -2.28e-08 -2.91e-08
-[6,]  0.00e+00  0.00e+00
+> head(round(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepCX=TRUE)),7))
+          x      x2
+[1,] -0.339 -0.1331
+[2,]  0.000  0.0000
+[3,]  0.000  0.0000
+[4,]  0.671 -0.0192
+[5,]  0.000  0.0000
+[6,]  0.000  0.0000
 > head(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepX=TRUE), centred=FALSE))
           x      x2
 [1,] -1.251  1.0210
@@ -85,4 +85,4 @@ firm.300 -3.014   5    1 firm 300
 > 
 > proc.time()
    user  system elapsed 
-  3.063   0.614   3.179 
+  3.380   0.635   3.490 
