@@ -225,10 +225,12 @@ demeanlist <- function(mtx,fl,icpt=0L,eps=getOption('lfe.eps'),
       ff[['fl']] <- quote(.fl)
       rm(newfl)
       ff[['attrs']] <- c(ff[['attrs']],list(na.rm=sort(badrows)))
+      ff[['mtx']] <- quote(unnamed(.mtx))
     } else {
       assign('.mtx',mtx,envir=env)
+      ff[['mtx']] <- quote(.mtx)
     }
-    ff[['mtx']] <- quote(unnamed(.mtx))
+
   }
   eval(as.call(c(list(quote(.Call), quote(C_demeanlist)), ff)), env)
 }
