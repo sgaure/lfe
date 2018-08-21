@@ -5,8 +5,8 @@
 \title{Retrieve the group fixed effects}
 \usage{
 getfe(obj, references = NULL, se = FALSE, method = "kaczmarz",
-  ef = "ref", bN = 100, robust = FALSE, cluster = obj[["clustervar"]],
-  lhs = NULL)
+  ef = "ref", bN = 100, robust = FALSE,
+  cluster = obj[["clustervar"]], lhs = NULL)
 }
 \arguments{
 \item{obj}{object of class \code{"felm"}, usually, a result of a call to

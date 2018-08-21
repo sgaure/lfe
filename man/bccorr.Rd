@@ -117,6 +117,4 @@ Gaure, S. (2014), \cite{Correlation bias correction in two-way
 \seealso{
 \code{\link{fevcov}}
 }
-\concept{
-Limited Mobility Bias
-}
+\concept{Limited Mobility Bias}

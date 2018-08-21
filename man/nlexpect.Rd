@@ -4,9 +4,10 @@
 \alias{nlexpect}
 \title{Compute expectation of a function of the coefficients.}
 \usage{
-nlexpect(est, fun, coefs, ..., tol = getOption("lfe.etol"), lhs = NULL, cv,
-  istats = FALSE, flags = list(verbose = 0), max.eval = 200000L,
-  method = c("hcubature", "pcubature", "cuhre", "suave"), vectorize = FALSE)
+nlexpect(est, fun, coefs, ..., tol = getOption("lfe.etol"), lhs = NULL,
+  cv, istats = FALSE, flags = list(verbose = 0), max.eval = 200000L,
+  method = c("hcubature", "pcubature", "cuhre", "suave"),
+  vectorize = FALSE)
 }
 \arguments{
 \item{est}{object of class \code{"felm"}, a result of a call to

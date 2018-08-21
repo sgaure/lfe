@@ -5,7 +5,7 @@
 SEXP Crowsum(SEXP Rmat, SEXP Rfactor, SEXP Rmean) {
   if(!IS_NUMERIC(Rmat)) error("Only numeric matrices accepted");
   if(!isInteger(Rfactor) && !isFactor(Rfactor)) error("Only factor or integer vector accepted");
-  mybigint_t len = length(Rmat);
+  R_xlen_t len = xlength(Rmat);
   mybigint_t cols = 0, rows=0;
   int *f = INTEGER(Rfactor);
   double *mat;

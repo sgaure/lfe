@@ -4,8 +4,8 @@
 \alias{felm}
 \title{Fit a linear model with multiple group fixed effects}
 \usage{
-felm(formula, data, exactDOF = FALSE, subset, na.action, contrasts = NULL,
-  weights = NULL, ...)
+felm(formula, data, exactDOF = FALSE, subset, na.action,
+  contrasts = NULL, weights = NULL, ...)
 }
 \arguments{
 \item{formula}{an object of class '"formula"' (or one that can be coerced to
