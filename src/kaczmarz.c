@@ -217,7 +217,7 @@ static void *kaczmarz_thr(void *varg) {
     if(vecnum >= arg->numvec) break;
 #ifdef HAVE_THREADNAME
     char thrname[16];
-    snprintf(thrname, 16, "Kz %d/%d",vecnum+1, arg->numvec);
+    snprintf(thrname, 16, "Kz %5d/%5d",vecnum+1, arg->numvec);
     STNAME(thrname);
 #endif
 

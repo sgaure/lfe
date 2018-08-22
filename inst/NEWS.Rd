@@ -1,5 +1,13 @@
 \name{NEWS}
 \title{lfe news}
+\section{Changes in version 2.8-1}{
+  \itemize{
+    \item Fixed a bug in Crowsum which prevented computation of clustered standard
+    errors in large datasets (rows x covariates exceeds 2
+    billion). Thanks to mcmalone for the report.
+    \item Minor updates to documentation and some cosmetic code changes.
+  }
+}
 \section{Changes in version 2.8}{
   \itemize{
     \item Added functionality for closed form standard errors on the fixed

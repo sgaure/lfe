@@ -279,7 +279,7 @@ static void *demeanlist_thr(void *varg) {
 #ifdef HAVE_THREADNAME
 #ifndef USEOMP
     char thrname[16];
-    snprintf(thrname,16, "Ct %d/%d",vecnum+1, arg->K);
+    snprintf(thrname,16, "Ct %5d/%5d",vecnum+1, arg->K);
     STNAME(thrname);
 #endif
 #endif

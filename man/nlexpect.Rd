@@ -10,8 +10,8 @@ nlexpect(est, fun, coefs, ..., tol = getOption("lfe.etol"), lhs = NULL,
   vectorize = FALSE)
 }
 \arguments{
-\item{est}{object of class \code{"felm"}, a result of a call to
-\code{\link{felm}}.}
+\item{est}{object of class \code{"felm"} or \code{"lm"}, a result of a call to
+\code{\link{felm}} or \code{lm}.}
 
 \item{fun}{function of coefficients to be integrated. Can also be a
 \code{quote}d expression.}
@@ -83,7 +83,7 @@ The function you provide will get an argument \code{...} if it does not have
 one already.  It will also be passed an argument \code{.z} which contains
 the actual coefficients in normalized coordinates, i.e. if \code{ch} is the
 Cholesky decomposition of the covariance matrix, and \code{pt} are the point
-estimates, the coefficients will be \code{pt + ch \%*\% .s}. The first argument
+estimates, the coefficients will be \code{pt + ch \%*\% .z}. The first argument
 is a vector with names corresponding to the coefficients.
 
 If you specify \code{vectorized=TRUE}, your function will be passed a list with vectors
@@ -132,13 +132,13 @@ nlexpect(est, (x1-pt1)^2 > pt1^2, tol=1e-7, vectorize=TRUE)
 2*nlexpect(est, x1*sign(pt1) < 0)
 
 # Here's a multivalued, vectorized example
-nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorized=TRUE)
+nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorize=TRUE)
 \donttest{
 
 # Non-linear test:
 
 # A simple one, what's the probability that product x1*x2 is between 0 and |E(x1)|?
-nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorized=TRUE)
+nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorize=TRUE)
 # Then a more complicated one with the expected value of a polynomal in the coefficients
 f <- function(x) c(poly=x[['x1']]*(6*x[['x1']]-x[['x2']]^2))
 # This is the linearized test:
