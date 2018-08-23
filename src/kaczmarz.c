@@ -217,7 +217,12 @@ static void *kaczmarz_thr(void *varg) {
     if(vecnum >= arg->numvec) break;
 #ifdef HAVE_THREADNAME
     char thrname[16];
-    snprintf(thrname, 16, "Kz %5d/%5d",vecnum+1, arg->numvec);
+    // cran whines about truncation here, that's the &%#@/%! purpose
+    //snprintf(thrname, 16, "Kz %d/%d",vecnum+1, arg->numvec);
+    char buf[256];
+    snprintf(buf,256,"Kz %d/%d",vecnum+1, arg->numvec);
+    buf[15] = 0;
+    memcpy(thrname,buf,16);
     STNAME(thrname);
 #endif
 

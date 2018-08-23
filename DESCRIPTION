@@ -1,5 +1,5 @@
 Package: lfe
-Version: 2.8-1
+Version: 2.8-2
 Date: 2018-08-22
 Title: Linear Group Fixed Effects
 Authors@R: person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut","cre"))
