@@ -35,6 +35,9 @@ Projecting out interactions between continuous covariates and factors is
 supported. I.e. individual slopes, not only individual intercepts. Multiple
 left hand sides are supported.
 
+The package does not support non-linear models. For GLMs with many dummies there
+is a package \pkg{alpaca} which uses similar methods to project them out.
+
 The estimation is done in two steps.  First the other coefficients are
 estimated with the function \code{\link{felm}} by centering on all the group
 means, followed by an OLS (similar to lm).  Then the group effects are
