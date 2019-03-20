@@ -1,4 +1,41 @@
+/* src/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if you have POSIX threads libraries and header files. */
+#undef HAVE_PTHREAD
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
+
+/* timed sem wait */
 #undef HAVE_SEM
-#undef NOTHREADS
-#undef HUGE_INT
+
+/* chg thread name */
 #undef HAVE_THREADNAME
+
+/* 64bit */
+#undef HUGE_INT
+
+/* no threads */
+#undef NOTHREADS
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE

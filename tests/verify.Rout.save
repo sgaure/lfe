@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2015-06-23 r68577) -- "Unsuffered Consequences"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -41,26 +41,26 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--2.378 -0.393  0.000  0.390  2.224 
+-2.716 -0.422  0.000  0.421  2.208 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x    1.0105     0.0207    48.9   <2e-16 ***
-x2   0.2948     0.0205    14.4   <2e-16 ***
-x3   0.4771     0.0201    23.8   <2e-16 ***
+x    0.9950     0.0210    47.4   <2e-16 ***
+x2   0.2531     0.0211    12.0   <2e-16 ***
+x3   0.5182     0.0207    25.0   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.97 on 2178 degrees of freedom
-Multiple R-squared(full model): 0.923   Adjusted R-squared: 0.823 
-Multiple R-squared(proj model): 0.592   Adjusted R-squared: 0.0641 
-F-statistic(full model):9.22 on 2821 and 2178 DF, p-value: <2e-16 
-F-statistic(proj model): 1.05e+03 on 3 and 2178 DF, p-value: <2e-16 
+Residual standard error: 0.995 on 2185 degrees of freedom
+Multiple R-squared(full model): 0.914   Adjusted R-squared: 0.803 
+Multiple R-squared(proj model): 0.577   Adjusted R-squared: 0.0313 
+F-statistic(full model):8.25 on 2814 and 2185 DF, p-value: <2e-16 
+F-statistic(proj model):  992 on 3 and 2185 DF, p-value: <2e-16 
 *** Standard errors may be too high due to more than 2 groups and exactDOF=FALSE
 
 
 > cat('Components:',nlevels(est$cfactor),'largest:',sum(est$cfactor == '1'),'\n')
-Components: 5 largest: 4994 
+Components: 7 largest: 4993 
 > ## extract the group fixed effects
 > for(ef in c('ln','ref')) {
 +   fe <- getfe(est,ef=ef)
@@ -75,7 +75,7 @@ Components: 5 largest: 4994
 +   print(summary(lm(y ~ x + x2 + x3 + ideff + firmeff + shoeeff -1),digits=8))
 + }
 Warning in is.estimable(ef, obj$fe) :
-  non-estimable function, largest error 0.4 in coordinate 1989 ("firm.550")
+  non-estimable function, largest error 0.3 in coordinate 184 ("id.198")
 Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
   Supplied function seems non-estimable
 
@@ -84,22 +84,22 @@ lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff - 1)
 
 Residuals:
    Min     1Q Median     3Q    Max 
--2.378 -0.393  0.000  0.390  2.224 
+-2.716 -0.422  0.000  0.421  2.208 
 
 Coefficients:
-        Estimate Std. Error t value Pr(>|t|)    
-x       1.010510   0.000102  9870.0   <2e-16 ***
-x2      0.294772   0.009077    32.5   <2e-16 ***
-x3      0.477103   0.008791    54.3   <2e-16 ***
-ideff   1.000000   0.007780   128.5   <2e-16 ***
-firmeff 1.000000   0.007769   128.7   <2e-16 ***
-shoeeff 1.000000   0.008144   122.8   <2e-16 ***
+         Estimate Std. Error t value Pr(>|t|)    
+x       0.9949750  0.0000765 13004.6   <2e-16 ***
+x2      0.2530979  0.0093197    27.2   <2e-16 ***
+x3      0.5182466  0.0090240    57.4   <2e-16 ***
+ideff   1.0000000  0.0079960   125.1   <2e-16 ***
+firmeff 1.0000000  0.0078187   127.9   <2e-16 ***
+shoeeff 1.0000000  0.0107776    92.8   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.641 on 4994 degrees of freedom
+Residual standard error: 0.658 on 4994 degrees of freedom
 Multiple R-squared:     1,	Adjusted R-squared:     1 
-F-statistic: 8.15e+07 on 6 and 4994 DF,  p-value: <2e-16
+F-statistic: 7.73e+07 on 6 and 4994 DF,  p-value: <2e-16
 
 
 Call:
@@ -107,31 +107,31 @@ lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff - 1)
 
 Residuals:
    Min     1Q Median     3Q    Max 
--2.378 -0.393  0.000  0.390  2.224 
+-2.716 -0.422  0.000  0.421  2.208 
 
 Coefficients:
         Estimate Std. Error t value Pr(>|t|)    
-x        1.01051    0.00010 10085.5   <2e-16 ***
-x2       0.29477    0.00908    32.5   <2e-16 ***
-x3       0.47710    0.00879    54.3   <2e-16 ***
-ideff    1.00000    0.00778   128.5   <2e-16 ***
-firmeff  1.00000    0.00777   128.8   <2e-16 ***
-shoeeff  1.00000    0.00814   122.8   <2e-16 ***
+x       0.994975   0.000123  8061.2   <2e-16 ***
+x2      0.253098   0.009320    27.2   <2e-16 ***
+x3      0.518247   0.009024    57.4   <2e-16 ***
+ideff   1.000000   0.007997   125.0   <2e-16 ***
+firmeff 1.000000   0.007816   127.9   <2e-16 ***
+shoeeff 1.000000   0.010777    92.8   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.641 on 4994 degrees of freedom
+Residual standard error: 0.658 on 4994 degrees of freedom
 Multiple R-squared:     1,	Adjusted R-squared:     1 
-F-statistic: 8.15e+07 on 6 and 4994 DF,  p-value: <2e-16
+F-statistic: 7.73e+07 on 6 and 4994 DF,  p-value: <2e-16
 
 > 
 > # Perform a bootstrap
 > a <- felm(y ~ x+x2 + x3 | id + firm, nostats=TRUE, Nboot=10, bootexpr=quote(x/x3*x2))
 > mean(a$boot)
-[1] 0.53603
+[1] 0.55391
 > sd(a$boot)
-[1] 0.10426
+[1] 0.10028
 > 
 > proc.time()
    user  system elapsed 
-  4.846   0.503   4.055 
+  6.474   9.201   2.706 

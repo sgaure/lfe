@@ -4,8 +4,8 @@
 \alias{summary.felm}
 \title{Summarize felm model fits}
 \usage{
-\method{summary}{felm}(object, ..., robust = !is.null(object$clustervar),
-  lhs = NULL)
+\method{summary}{felm}(object, ..., robust = !is.null(object$clustervar)
+  || getOption("lfe.robust"), lhs = NULL)
 }
 \arguments{
 \item{object}{an object of class \code{"felm"}, a result of a call to

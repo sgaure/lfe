@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2015-02-02 r67710) -- "Unsuffered Consequences"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -40,77 +40,77 @@ Call:
    felm(formula = y ~ x + x2 | id + firm) 
 
 Residuals:
-    Min      1Q  Median      3Q     Max 
--2.9626 -0.7355  0.0079  0.7749  2.6809 
+   Min     1Q Median     3Q    Max 
+-3.360 -0.665 -0.030  0.764  2.618 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x    0.9625     0.0484   19.88  < 2e-16 ***
-x2   0.2260     0.0483    4.68  3.7e-06 ***
+x    0.9692     0.0488   19.88  < 2e-16 ***
+x2   0.3346     0.0484    6.91  1.6e-11 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.04 on 483 degrees of freedom
-Multiple R-squared(full model): 0.721   Adjusted R-squared: 0.711 
-Multiple R-squared(proj model): 0.468   Adjusted R-squared: 0.45 
-F-statistic(full model):77.8 on 16 and 483 DF, p-value: <2e-16 
-F-statistic(proj model):  212 on 2 and 483 DF, p-value: <2e-16 
+Residual standard error: 1.03 on 483 degrees of freedom
+Multiple R-squared(full model): 0.787   Adjusted R-squared: 0.78 
+Multiple R-squared(proj model): 0.484   Adjusted R-squared: 0.467 
+F-statistic(full model): 112 on 16 and 483 DF, p-value: <2e-16 
+F-statistic(proj model):  227 on 2 and 483 DF, p-value: <2e-16 
 
 
 > getfe(est)
-         effect obs comp   fe idx
-id.1    1.31012  41    1   id   1
-id.2   -0.56315  52    1   id   2
-id.3   -2.56594  68    1   id   3
-id.4    0.14085  53    1   id   4
-id.5   -0.18059  39    1   id   5
-id.6    0.43119  38    1   id   6
-id.7   -0.64938  62    1   id   7
-id.8   -0.36522  49    1   id   8
-id.9    0.95288  42    1   id   9
-id.10  -0.71179  56    1   id  10
-firm.1  0.00000 132    1 firm   1
-firm.2  0.57816  69    1 firm   2
-firm.3 -0.18875  74    1 firm   3
-firm.4  1.51273  66    1 firm   4
-firm.5  1.44679  72    1 firm   5
-firm.6 -0.78794  87    1 firm   6
+           effect obs comp   fe idx
+id.1   -1.6363769  43    1   id   1
+id.2    0.0029098  51    1   id   2
+id.3   -0.7658186  50    1   id   3
+id.4   -0.8531414  51    1   id   4
+id.5    2.0125831  35    1   id   5
+id.6    1.1118543  56    1   id   6
+id.7    1.3748350  53    1   id   7
+id.8   -0.8797889  47    1   id   8
+id.9   -2.5330891  55    1   id   9
+id.10  -0.3791573  59    1   id  10
+firm.1  0.0000000 134    1 firm   1
+firm.2 -0.7685150  77    1 firm   2
+firm.3  0.7307192  81    1 firm   3
+firm.4  0.7251559  70    1 firm   4
+firm.5 -1.5010210  61    1 firm   5
+firm.6  2.2462290  77    1 firm   6
 > summary(lm(y ~ x + x2 + id + firm))
 
 Call:
 lm(formula = y ~ x + x2 + id + firm)
 
 Residuals:
-    Min      1Q  Median      3Q     Max 
--2.9626 -0.7355  0.0079  0.7749  2.6809 
+   Min     1Q Median     3Q    Max 
+-3.360 -0.665 -0.030  0.764  2.618 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)   1.3101     0.1808    7.25  1.7e-12 ***
-x             0.9625     0.0484   19.88  < 2e-16 ***
-x2            0.2260     0.0483    4.68  3.7e-06 ***
-id2          -1.8733     0.2184   -8.58  < 2e-16 ***
-id3          -3.8761     0.2066  -18.76  < 2e-16 ***
-id4          -1.1693     0.2176   -5.37  1.2e-07 ***
-id5          -1.4907     0.2343   -6.36  4.6e-10 ***
-id6          -0.8789     0.2351   -3.74  0.00021 ***
-id7          -1.9595     0.2106   -9.30  < 2e-16 ***
-id8          -1.6753     0.2216   -7.56  2.0e-13 ***
-id9          -0.3572     0.2301   -1.55  0.12114    
-id10         -2.0219     0.2149   -9.41  < 2e-16 ***
-firm2         0.5782     0.1569    3.68  0.00026 ***
-firm3        -0.1887     0.1525   -1.24  0.21647    
-firm4         1.5127     0.1581    9.57  < 2e-16 ***
-firm5         1.4468     0.1533    9.44  < 2e-16 ***
-firm6        -0.7879     0.1458   -5.40  1.0e-07 ***
+(Intercept)  -1.6364     0.1730   -9.46  < 2e-16 ***
+x             0.9692     0.0488   19.88  < 2e-16 ***
+x2            0.3346     0.0484    6.91  1.6e-11 ***
+id2           1.6393     0.2148    7.63  1.2e-13 ***
+id3           0.8706     0.2162    4.03  6.6e-05 ***
+id4           0.7832     0.2158    3.63  0.00031 ***
+id5           3.6490     0.2361   15.46  < 2e-16 ***
+id6           2.7482     0.2105   13.05  < 2e-16 ***
+id7           3.0112     0.2139   14.08  < 2e-16 ***
+id8           0.7566     0.2193    3.45  0.00061 ***
+id9          -0.8967     0.2111   -4.25  2.6e-05 ***
+id10          1.2572     0.2087    6.02  3.4e-09 ***
+firm2        -0.7685     0.1495   -5.14  4.0e-07 ***
+firm3         0.7307     0.1479    4.94  1.1e-06 ***
+firm4         0.7252     0.1540    4.71  3.3e-06 ***
+firm5        -1.5010     0.1604   -9.36  < 2e-16 ***
+firm6         2.2462     0.1500   14.97  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.04 on 483 degrees of freedom
-Multiple R-squared:  0.721,	Adjusted R-squared:  0.711 
-F-statistic: 77.8 on 16 and 483 DF,  p-value: <2e-16
+Residual standard error: 1.03 on 483 degrees of freedom
+Multiple R-squared:  0.787,	Adjusted R-squared:  0.78 
+F-statistic:  112 on 16 and 483 DF,  p-value: <2e-16
 
 > 
 > proc.time()
    user  system elapsed 
-  2.382   0.094   2.366 
+  1.637   0.578   1.516 

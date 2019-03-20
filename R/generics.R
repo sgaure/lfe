@@ -76,7 +76,9 @@ residuals.felm <- function(object, ..., lhs=NULL) {
 #' @export
 vcov.felm <- function(object,...,type, lhs=NULL) {
 #  if(is.na(match(type[1], c('iid', 'robust', 'cluster'))))
-  if(missing(type)) type <- if(is.null(object$clustervar)) 'iid' else 'cluster'
+  if(missing(type)) type <- if(is.null(object$clustervar)) {
+                              if(getOption('lfe.robust')) 'robust' else 'iid'
+                            } else 'cluster'
   if(!(type[1] %in% c('iid', 'robust', 'cluster')))
       stop("specify vcov-type as 'iid', 'robust' or 'cluster'")
 
@@ -129,6 +131,15 @@ estfun.felm <- function(x, ...) {
   do.call(utils::getS3method('estfun','lm'), as.list(cl)[-1])
 }
 
+#' @method bread felm
+#' @export
+bread.felm <- function(x, ...) {
+  cov.scaled <- vcov(x)
+  sigma <- summary(x)$sigma
+  return(cov.scaled / sigma^2 * x$N)
+}
+
+
 #' @method weights felm
 #' @export
 weights.felm <- function(object,...) if(is.null(object$weights)) NULL else object$weights^2
@@ -148,6 +159,8 @@ xtable.felm <- function(x, caption=NULL, label=NULL, align=NULL, digits=NULL,
     cl <- match.call(expand.dots=FALSE)
     do.call(utils::getS3method('xtable','lm'), as.list(cl)[-1])
 }
+
+
 #' @method print summary.felm
 #' @export
 print.summary.felm <- function(x,digits=max(3L,getOption('digits')-3L),...) {
@@ -328,7 +341,8 @@ model.matrix.felm <- function(object, centred=TRUE, ...) {
 #' excluded instruments is also computed.
 #' @seealso \code{\link{waldtest}}
 #' @export
-summary.felm <- function(object,...,robust=!is.null(object$clustervar),lhs=NULL) {
+summary.felm <- function(object,...,robust=!is.null(object$clustervar)||getOption('lfe.robust'),
+                         lhs=NULL) {
   z <- object
   if(z$nostats) stop('No summary for objects created with felm(nostats=TRUE)')
   if(is.null(lhs)) {

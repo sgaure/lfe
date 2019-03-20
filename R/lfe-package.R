@@ -188,7 +188,7 @@
 #' @useDynLib lfe, .registration=TRUE, .fixes='C_'
 #' @importFrom methods as
 #' @importFrom xtable xtable
-#' @importFrom sandwich estfun
+#' @importFrom sandwich estfun bread
 #' @import 'stats'
 #' @import Formula
 #' @importFrom Matrix t Diagonal rankMatrix Cholesky nnzero crossprod tcrossprod diag

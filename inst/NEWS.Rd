@@ -1,11 +1,18 @@
 \name{NEWS}
 \title{lfe news}
-\section{Changes in version 2.8-1}{
+\section{Changes in version 2.8-3}{
   \itemize{
     \item Fixed a bug in Crowsum which prevented computation of clustered standard
     errors in large datasets (rows x covariates exceeds 2
     billion). Thanks to mcmalone for the report.
     \item Minor updates to documentation and some cosmetic code changes.
+    \item Updates to configure.ac at the request of Brian Ripley
+    \item Updates to tests to reflect the new uniform \code{sample()} algorithm
+    \item summary.felm now defaults to robust errors if
+    \code{getOption(lfe.robust=TRUE)}. As with the other options, lfe.robust is
+    initialized from the environment variable LFE_ROBUST upon load.
+    \item A felm-object now works as expected with \code{formula()}.
+    \item A felm-object now works as expected with \code{sandwich::bread()}.
   }
 }
 \section{Changes in version 2.8}{

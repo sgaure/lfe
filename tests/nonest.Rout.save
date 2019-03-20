@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2015-02-02 r67710) -- "Unsuffered Consequences"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -59,7 +59,7 @@ Components: 1 largest: 1000
 +   }
 + }
 Warning in is.estimable(ef, obj$fe) :
-  non-estimable function, largest error 0.02 in coordinate 476 ("shoe.79")
+  non-estimable function, largest error 0.02 in coordinate 35 ("id.35")
 Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
   Supplied function seems non-estimable
 
@@ -69,23 +69,23 @@ lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff -
 
 Residuals:
    Min     1Q Median     3Q    Max 
--1.573 -0.340  0.000  0.308  1.762 
+-1.581 -0.270  0.000  0.278  1.752 
 
 Coefficients:
          Estimate Std. Error t value Pr(>|t|)    
-x        0.905809   0.000709  1277.1   <2e-16 ***
-x2       0.210249   0.016466    12.8   <2e-16 ***
-x3       0.508976   0.016618    30.6   <2e-16 ***
-ideff    1.000000   0.011595    86.2   <2e-16 ***
-firmeff  1.000000   0.011819    84.6   <2e-16 ***
-shoeeff  1.000000   0.011848    84.4   <2e-16 ***
-shirteff 1.000000   0.011732    85.2   <2e-16 ***
+x        1.036709   0.000257  4036.0   <2e-16 ***
+x2       0.244033   0.014252    17.1   <2e-16 ***
+x3       0.530698   0.014396    36.9   <2e-16 ***
+ideff    1.000000   0.010495    95.3   <2e-16 ***
+firmeff  1.000000   0.010924    91.5   <2e-16 ***
+shoeeff  1.000000   0.010992    91.0   <2e-16 ***
+shirteff 1.000000   0.011527    86.8   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.508 on 993 degrees of freedom
+Residual standard error: 0.441 on 993 degrees of freedom
 Multiple R-squared:     1,	Adjusted R-squared:     1 
-F-statistic: 2.22e+07 on 7 and 993 DF,  p-value: <2e-16
+F-statistic: 2.96e+07 on 7 and 993 DF,  p-value: <2e-16
 
 
 Call:
@@ -94,23 +94,23 @@ lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff -
 
 Residuals:
    Min     1Q Median     3Q    Max 
--1.573 -0.340  0.000  0.308  1.762 
+-1.581 -0.270  0.000  0.278  1.752 
 
 Coefficients:
          Estimate Std. Error t value Pr(>|t|)    
-x         0.90581    0.00134   674.2   <2e-16 ***
-x2        0.21025    0.01647    12.8   <2e-16 ***
-x3        0.50898    0.01662    30.6   <2e-16 ***
-ideff     1.00000    0.01156    86.5   <2e-16 ***
-firmeff   1.00000    0.01182    84.6   <2e-16 ***
-shoeeff   1.00000    0.01186    84.3   <2e-16 ***
-shirteff  1.00000    0.01173    85.3   <2e-16 ***
+x        1.036709   0.000381  2718.6   <2e-16 ***
+x2       0.244033   0.014252    17.1   <2e-16 ***
+x3       0.530698   0.014396    36.9   <2e-16 ***
+ideff    1.000000   0.010489    95.3   <2e-16 ***
+firmeff  1.000000   0.010925    91.5   <2e-16 ***
+shoeeff  1.000000   0.010992    91.0   <2e-16 ***
+shirteff 1.000000   0.011527    86.8   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.508 on 993 degrees of freedom
+Residual standard error: 0.441 on 993 degrees of freedom
 Multiple R-squared:     1,	Adjusted R-squared:     1 
-F-statistic: 2.22e+07 on 7 and 993 DF,  p-value: <2e-16
+F-statistic: 2.96e+07 on 7 and 993 DF,  p-value: <2e-16
 
 
 Call:
@@ -119,24 +119,24 @@ lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff +
 
 Residuals:
    Min     1Q Median     3Q    Max 
--1.573 -0.340  0.000  0.308  1.762 
+-1.581 -0.270  0.000  0.278  1.752 
 
 Coefficients:
-         Estimate Std. Error t value        Pr(>|t|)    
-x          0.9058     0.0167   54.13         < 2e-16 ***
-x2         0.2102     0.0165   12.76         < 2e-16 ***
-x3         0.5090     0.0166   30.61         < 2e-16 ***
-ideff      1.0000     0.0116   86.13         < 2e-16 ***
-firmeff    1.0000     0.0118   84.57         < 2e-16 ***
-shoeeff    1.0000     0.0119   84.27         < 2e-16 ***
-shirteff   1.0000     0.0117   85.19         < 2e-16 ***
-icpt       1.0000     0.1392    7.18 0.0000000000013 ***
+         Estimate Std. Error t value Pr(>|t|)    
+x          1.0367     0.0145   71.58   <2e-16 ***
+x2         0.2440     0.0143   17.11   <2e-16 ***
+x3         0.5307     0.0144   36.85   <2e-16 ***
+ideff      1.0000     0.0105   95.21   <2e-16 ***
+firmeff    1.0000     0.0109   91.49   <2e-16 ***
+shoeeff    1.0000     0.0110   90.92   <2e-16 ***
+shirteff   1.0000     0.0115   86.71   <2e-16 ***
+icpt       1.0000     0.4240    2.36    0.019 *  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.509 on 992 degrees of freedom
+Residual standard error: 0.441 on 992 degrees of freedom
 Multiple R-squared:     1,	Adjusted R-squared:     1 
-F-statistic: 1.94e+07 on 8 and 992 DF,  p-value: <2e-16
+F-statistic: 2.59e+07 on 8 and 992 DF,  p-value: <2e-16
 
 
 Call:
@@ -145,27 +145,27 @@ lm(formula = y ~ x + x2 + x3 + ideff + firmeff + shoeeff + shirteff +
 
 Residuals:
    Min     1Q Median     3Q    Max 
--1.573 -0.340  0.000  0.308  1.762 
+-1.581 -0.270  0.000  0.278  1.752 
 
 Coefficients:
-         Estimate Std. Error t value      Pr(>|t|)    
-x          0.9058     0.0167   54.13       < 2e-16 ***
-x2         0.2102     0.0165   12.76       < 2e-16 ***
-x3         0.5090     0.0166   30.61       < 2e-16 ***
-ideff      1.0000     0.0116   86.13       < 2e-16 ***
-firmeff    1.0000     0.0118   84.57       < 2e-16 ***
-shoeeff    1.0000     0.0119   84.27       < 2e-16 ***
-shirteff   1.0000     0.0117   85.19       < 2e-16 ***
-icpt       1.0000     0.1544    6.48 0.00000000015 ***
+         Estimate Std. Error t value Pr(>|t|)    
+x          1.0367     0.0145   71.58   <2e-16 ***
+x2         0.2440     0.0143   17.11   <2e-16 ***
+x3         0.5307     0.0144   36.85   <2e-16 ***
+ideff      1.0000     0.0105   95.21   <2e-16 ***
+firmeff    1.0000     0.0109   91.49   <2e-16 ***
+shoeeff    1.0000     0.0110   90.92   <2e-16 ***
+shirteff   1.0000     0.0115   86.71   <2e-16 ***
+icpt       1.0000     0.4569    2.19    0.029 *  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.509 on 992 degrees of freedom
+Residual standard error: 0.441 on 992 degrees of freedom
 Multiple R-squared:     1,	Adjusted R-squared:     1 
-F-statistic: 1.94e+07 on 8 and 992 DF,  p-value: <2e-16
+F-statistic: 2.59e+07 on 8 and 992 DF,  p-value: <2e-16
 
 > options(opt)
 > 
 > proc.time()
    user  system elapsed 
-  2.651   0.140   2.688 
+  2.065   0.517   1.989 

@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-06-19 r74917) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -26,7 +26,7 @@ Loading required package: Matrix
 > ## create individual and firm
 > id <- factor(sample(1500,length(x),replace=TRUE))
 > nlevels(id)
-[1] 1101
+[1] 1112
 > ## effects
 > id.eff <- rnorm(nlevels(id))
 > 
@@ -40,13 +40,13 @@ Loading required package: Matrix
 > fe <- getfe(est, se=TRUE)
 > ## merge back
 > head(fe)
-     effect obs comp fe idx    se
-id.1  1.686   1    1 id   1 1.025
-id.2 -0.998   2    1 id   2 0.724
-id.3 -0.830   1    1 id   3 1.024
-id.4 -0.562   1    1 id   4 1.028
-id.5 -1.546   2    1 id   5 0.725
-id.8 -1.814   1    1 id   8 1.025
+      effect obs comp fe idx    se
+id.2  2.8342   1    1 id   2 0.984
+id.3 -0.6856   4    1 id   3 0.494
+id.4 -1.0945   1    1 id   4 0.984
+id.5 -3.1362   1    1 id   5 0.985
+id.6  0.0450   2    1 id   6 0.696
+id.7 -0.0583   4    1 id   7 0.492
 > ideff <- fe[paste('id',id,sep='.'),'effect']
 > 
 > ## verify that id and firm coefficients are 1
@@ -58,26 +58,26 @@ lm(formula = y ~ x + x2 + x3 + ideff - 1)
 
 Coefficients:
     x     x2     x3  ideff  
-1.007  0.246  0.545  1.000  
+0.950  0.252  0.470  1.000  
 
 > 
 > # no factor
 > felm(y ~ x + x2 + x3)
 (Intercept)           x          x2          x3 
-     0.0447      0.9669      0.2145      0.5351 
+    -0.0567      0.9648      0.2642      0.5333 
 > 
 > # no covariate
 > est <- felm(y ~ 0|id,keepX=TRUE)
 > head(getfe(est, se=TRUE))
-      effect obs comp fe idx   se
-id.1  0.0434   1    1 id   1 1.57
-id.2 -1.1396   2    1 id   2 1.11
-id.3 -0.1782   1    1 id   3 1.57
-id.4 -3.4786   1    1 id   4 1.57
-id.5 -0.5694   2    1 id   5 1.11
-id.8 -1.7134   1    1 id   8 1.57
+     effect obs comp fe idx    se
+id.2  2.373   1    1 id   2 1.501
+id.3 -1.937   4    1 id   3 0.751
+id.4 -0.675   1    1 id   4 1.501
+id.5 -2.237   1    1 id   5 1.501
+id.6  0.306   2    1 id   6 1.061
+id.7  0.136   4    1 id   7 0.751
 > 
 > 
 > proc.time()
    user  system elapsed 
-  3.137   0.594   3.315 
+  1.661   0.637   1.611 

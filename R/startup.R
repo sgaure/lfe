@@ -21,7 +21,8 @@ setoption <- function(...) {
 }
 
 .onLoad <- function(libname,pkgname) {
-  setoption(usecg=FALSE, eps=1e-8, pint=1800L, accel=1L, bootmem=500, etol=c(1e-2,1e-12))
+  setoption(usecg=FALSE, eps=1e-8, pint=1800L, accel=1L, bootmem=500, etol=c(1e-2,1e-12),
+            robust=FALSE)
 
   if(is.null(cr <- getOption('lfe.threads'))) {
     cr <- as.integer(Sys.getenv('LFE_THREADS'))
@@ -38,7 +39,7 @@ setoption <- function(...) {
 
 .onUnload <- function(libpath) {
   options(lfe.usecg=NULL, lfe.eps=NULL,lfe.pint=NULL,lfe.accel=NULL,
-          lfe.bootmem=NULL,lfe.threads=NULL, lfe.etol=NULL)
+          lfe.bootmem=NULL,lfe.threads=NULL, lfe.etol=NULL,robust=FALSE)
   library.dynam.unload('lfe',libpath)
 }
 

@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-06-11 r74881) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -61,28 +61,28 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--5.810 -1.184  0.079  1.238  5.609 
+-6.408 -1.298  0.066  1.323  8.091 
 
 Coefficients:
             Estimate Cluster s.e. t value Pr(>|t|)    
-(Intercept)   0.2398       0.3036    0.79  0.42977    
-x1            1.0078       0.0795   12.67  < 2e-16 ***
-x2            0.8897       0.0717   12.41  < 2e-16 ***
-f12          -0.5790       0.1714   -3.38  0.00076 ***
-f13          -0.7071       0.2895   -2.44  0.01477 *  
-f14          -0.0238       0.2340   -0.10  0.91897    
-f15          -0.3162       0.2299   -1.38  0.16932    
-f16          -0.6152       0.2486   -2.47  0.01349 *  
-f17          -0.3242       0.2288   -1.42  0.15689    
-f18          -0.4256       0.2490   -1.71  0.08766 .  
+(Intercept)   0.3142       0.4159    0.76     0.45    
+x1            1.0244       0.0789   12.98   <2e-16 ***
+x2            0.8472       0.1173    7.22    1e-12 ***
+f12           0.3737       0.2062    1.81     0.07 .  
+f13           0.2362       0.1796    1.32     0.19    
+f14          -0.2908       0.3184   -0.91     0.36    
+f15           0.2397       0.2298    1.04     0.30    
+f16          -0.3411       0.2236   -1.53     0.13    
+f17           0.0382       0.2242    0.17     0.86    
+f18           0.0986       0.1340    0.74     0.46    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.81 on 990 degrees of freedom
-Multiple R-squared(full model): 0.417   Adjusted R-squared: 0.412 
-Multiple R-squared(proj model): 0.417   Adjusted R-squared: 0.412 
-F-statistic(full model, *iid*):78.6 on 9 and 990 DF, p-value: <2e-16 
-F-statistic(proj model): 47.8 on 9 and 79 DF, p-value: <2e-16 
+Residual standard error: 1.97 on 990 degrees of freedom
+Multiple R-squared(full model): 0.372   Adjusted R-squared: 0.366 
+Multiple R-squared(proj model): 0.372   Adjusted R-squared: 0.366 
+F-statistic(full model, *iid*):65.1 on 9 and 990 DF, p-value: <2e-16 
+F-statistic(proj model): 1.31e+04 on 9 and 79 DF, p-value: <2e-16 
 
 
 > #gclu <- structure(clu, method='gaure')
@@ -95,4 +95,4 @@ F-statistic(proj model): 47.8 on 9 and 79 DF, p-value: <2e-16
 > 
 > proc.time()
    user  system elapsed 
-  2.073   0.292   2.319 
+  1.709   0.758   1.488 

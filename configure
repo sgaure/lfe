@@ -1930,6 +1930,126 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 ac_config_files="$ac_config_files src/Makevars"
 
+# generated automatically by aclocal 1.15.1 -*- Autoconf -*-
+
+# Copyright (C) 1996-2017 Free Software Foundation, Inc.
+
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+
+# ===========================================================================
+#        https://www.gnu.org/software/autoconf-archive/ax_pthread.html
+# ===========================================================================
+#
+# SYNOPSIS
+#
+#   AX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#
+# DESCRIPTION
+#
+#   This macro figures out how to build C programs using POSIX threads. It
+#   sets the PTHREAD_LIBS output variable to the threads library and linker
+#   flags, and the PTHREAD_CFLAGS output variable to any special C compiler
+#   flags that are needed. (The user can also force certain compiler
+#   flags/libs to be tested by setting these environment variables.)
+#
+#   Also sets PTHREAD_CC to any special C compiler that is needed for
+#   multi-threaded programs (defaults to the value of CC otherwise). (This
+#   is necessary on AIX to use the special cc_r compiler alias.)
+#
+#   NOTE: You are assumed to not only compile your program with these flags,
+#   but also to link with them as well. For example, you might link with
+#   $PTHREAD_CC $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS $LIBS
+#
+#   If you are only building threaded programs, you may wish to use these
+#   variables in your default LIBS, CFLAGS, and CC:
+#
+#     LIBS="$PTHREAD_LIBS $LIBS"
+#     CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+#     CC="$PTHREAD_CC"
+#
+#   In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute constant
+#   has a nonstandard name, this macro defines PTHREAD_CREATE_JOINABLE to
+#   that name (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
+#
+#   Also HAVE_PTHREAD_PRIO_INHERIT is defined if pthread is found and the
+#   PTHREAD_PRIO_INHERIT symbol is defined when compiling with
+#   PTHREAD_CFLAGS.
+#
+#   ACTION-IF-FOUND is a list of shell commands to run if a threads library
+#   is found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it
+#   is not found. If ACTION-IF-FOUND is not specified, the default action
+#   will define HAVE_PTHREAD.
+#
+#   Please let the authors know if this macro fails on any platform, or if
+#   you have any other suggestions or comments. This macro was based on work
+#   by SGJ on autoconf scripts for FFTW (http://www.fftw.org/) (with help
+#   from M. Frigo), as well as ac_pthread and hb_pthread macros posted by
+#   Alejandro Forero Cuervo to the autoconf macro repository. We are also
+#   grateful for the helpful feedback of numerous users.
+#
+#   Updated for Autoconf 2.68 by Daniel Richard G.
+#
+# LICENSE
+#
+#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
+#   Copyright (c) 2011 Daniel Richard G. <skunk@iSKUNK.ORG>
+#
+#   This program is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License as published by the
+#   Free Software Foundation, either version 3 of the License, or (at your
+#   option) any later version.
+#
+#   This program is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+#   Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License along
+#   with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+#   As a special exception, the respective Autoconf Macro's copyright owner
+#   gives unlimited permission to copy, distribute and modify the configure
+#   scripts that are the output of Autoconf when processing the Macro. You
+#   need not follow the terms of the GNU General Public License when using
+#   or distributing such scripts, even though portions of the text of the
+#   Macro appear in them. The GNU General Public License (GPL) does govern
+#   all other use of the material that constitutes the Autoconf Macro.
+#
+#   This special exception to the GPL applies to versions of the Autoconf
+#   Macro released by the Autoconf Archive. When you make and distribute a
+#   modified version of the Autoconf Macro, you may extend this special
+#   exception to the GPL to apply to your modified version as well.
+
+#serial 24
+
+# This is what autoupdate's m4 run will expand.  It fires
+# the warning (with _au_warn_XXX), outputs it into the
+# updated configure.ac (with AC_DIAGNOSE), and then outputs
+# the replacement expansion.
+
+
+# This is an auxiliary macro that is also run when
+# autoupdate runs m4.  It simply calls m4_warning, but
+# we need a wrapper so that each warning is emitted only
+# once.  We break the quoting in m4_warning's argument in
+# order to expand this macro's arguments, not AU_DEFUN's.
+
+
+# Finally, this is the expansion that is picked up by
+# autoconf.  It tells the user to run autoupdate, and
+# then outputs the replacement expansion.  We do not care
+# about autoupdate's warning because that contains
+# information on what to do *after* running autoupdate.
+
+
 
 # Check whether --enable-threads was given.
 if test "${enable_threads+set}" = set; then :
@@ -1941,7 +2061,8 @@ fi
 
 # Check whether --enable-huge was given.
 if test "${enable_huge+set}" = set; then :
-  enableval=$enable_huge; $as_echo "#define HUGE_INT 1" >>confdefs.h
+  enableval=$enable_huge;
+$as_echo "#define HUGE_INT 1" >>confdefs.h
 
 fi
 
@@ -1955,6 +2076,8 @@ fi
 
 # pick up R's compilers, we need to use that one
 CC=`${R_HOME}/bin/R CMD config CC`
+CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
+LDFLAGS=`${R_HOME}/bin/R CMD config LDFLAGS`
 
 # Checks for programs.
 ac_ext=c
@@ -3794,7 +3917,8 @@ else
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No threads on this architecture" >&5
 $as_echo "$as_me: WARNING: No threads on this architecture" >&2;}
-  $as_echo "#define NOTHREADS 1" >>confdefs.h
+
+$as_echo "#define NOTHREADS 1" >>confdefs.h
 
   do_threads="no"
 fi
@@ -3806,7 +3930,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 else
-  $as_echo "#define NOTHREADS 1" >>confdefs.h
+
+$as_echo "#define NOTHREADS 1" >>confdefs.h
 
 fi
 
@@ -3822,8 +3947,8 @@ if test "$do_threads" = "yes"; then
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for timed semaphore wait" >&5
 $as_echo_n "checking for timed semaphore wait... " >&6; }
 # we may use these when checking for semaphores
-LDFLAGS=$PTHREAD_LIBS
-CFLAGS=$PTHREAD_CFLAGS
+LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
+CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -3857,6 +3982,7 @@ _ACEOF
 if ac_fn_c_try_run "$LINENO"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
+
 $as_echo "#define HAVE_SEM 1" >>confdefs.h
 
 else
@@ -3899,7 +4025,7 @@ for ac_lib in '' ; do
     ac_res="none required"
   else
     ac_res=-l$ac_lib
-    LIBS="-l$ac_lib -pthread $ac_func_search_save_LIBS"
+    LIBS="-l$ac_lib $PTHREAD_CFLAGS $ac_func_search_save_LIBS"
   fi
   if ac_fn_c_try_link "$LINENO"; then :
   ac_cv_search_pthread_setname_np=$ac_res
@@ -3923,7 +4049,8 @@ $as_echo "$ac_cv_search_pthread_setname_np" >&6; }
 ac_res=$ac_cv_search_pthread_setname_np
 if test "$ac_res" != no; then :
   test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-  $as_echo "#define HAVE_THREADNAME 1" >>confdefs.h
+
+$as_echo "#define HAVE_THREADNAME 1" >>confdefs.h
 
 fi
 

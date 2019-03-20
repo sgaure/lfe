@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-02-12 r74246) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -74,19 +74,19 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--7.416 -1.114 -0.137  1.133  5.588 
+-7.468 -0.873  0.022  1.036  5.203 
 
 Coefficients:
   Estimate Std. Error t value Pr(>|t|)    
-x   1.2155     0.0534    22.8   <2e-16 ***
+x   0.9058     0.0487    18.6   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.67 on 991 degrees of freedom
-Multiple R-squared(full model): 0.392   Adjusted R-squared: 0.387 
-Multiple R-squared(proj model): 0.344   Adjusted R-squared: 0.338 
-F-statistic(full model):  80 on 8 and 991 DF, p-value: <2e-16 
-F-statistic(proj model):  519 on 1 and 991 DF, p-value: <2e-16 
+Residual standard error: 1.52 on 991 degrees of freedom
+Multiple R-squared(full model): 0.357   Adjusted R-squared: 0.352 
+Multiple R-squared(proj model): 0.259   Adjusted R-squared: 0.253 
+F-statistic(full model):68.8 on 8 and 991 DF, p-value: <2e-16 
+F-statistic(proj model):  346 on 1 and 991 DF, p-value: <2e-16 
 
 
 > # CGM clustering, i.e. one factor means standard one-way clustering
@@ -98,60 +98,59 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--7.416 -1.114 -0.137  1.133  5.588 
+-7.468 -0.873  0.022  1.036  5.203 
 
 Coefficients:
             Estimate Cluster s.e. t value Pr(>|t|)    
-(Intercept)   0.4259       0.3902    1.09    0.275    
-x             1.2155       0.0728   16.69  < 2e-16 ***
-f12           0.3901       0.1652    2.36    0.018 *  
-f13           0.8216       0.1798    4.57  5.5e-06 ***
-f14           1.1619       0.1356    8.57  < 2e-16 ***
-f15           1.1455       0.1798    6.37  2.9e-10 ***
-f16           1.3783       0.1992    6.92  8.1e-12 ***
-f17           1.5924       0.1583   10.06  < 2e-16 ***
-f18           1.5688       0.1654    9.48  < 2e-16 ***
+(Intercept)   -0.494        0.363   -1.36   0.1743    
+x              0.906        0.064   14.15  < 2e-16 ***
+f12            0.680        0.202    3.36   0.0008 ***
+f13            1.081        0.273    3.97  7.8e-05 ***
+f14            1.392        0.181    7.69  3.4e-14 ***
+f15            1.501        0.238    6.30  4.5e-10 ***
+f16            1.919        0.308    6.24  6.6e-10 ***
+f17            1.855        0.244    7.59  7.3e-14 ***
+f18            2.175        0.203   10.69  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.67 on 991 degrees of freedom
-Multiple R-squared(full model): 0.392   Adjusted R-squared: 0.387 
-Multiple R-squared(proj model): 0.392   Adjusted R-squared: 0.387 
-F-statistic(full model, *iid*):  80 on 8 and 991 DF, p-value: <2e-16 
-F-statistic(proj model):  530 on 8 and 9 DF, p-value: 4.12e-11 
+Residual standard error: 1.52 on 991 degrees of freedom
+Multiple R-squared(full model): 0.357   Adjusted R-squared: 0.352 
+Multiple R-squared(proj model): 0.357   Adjusted R-squared: 0.352 
+F-statistic(full model, *iid*):68.8 on 8 and 991 DF, p-value: <2e-16 
+F-statistic(proj model): 2.01e+03 on 8 and 9 DF, p-value: 1.04e-13 
 
 
 > # this will make my experimental clustered errors for f1, typically better for few groups
 > # summary(felm(y ~x + f1|0|0|cluster+cluster2, dat))
 > summary(felm(y ~x + f1|0|0|cluster+cluster2, dat, psdef=FALSE))
-Warning in sqrt(diag(z$STATS[[lhs]]$clustervcv)) : NaNs produced
 
 Call:
    felm(formula = y ~ x + f1 | 0 | 0 | cluster + cluster2, data = dat,      psdef = FALSE) 
 
 Residuals:
    Min     1Q Median     3Q    Max 
--7.416 -1.114 -0.137  1.133  5.588 
+-7.468 -0.873  0.022  1.036  5.203 
 
 Coefficients:
             Estimate Cluster s.e. t value Pr(>|t|)    
-(Intercept)   0.4259       0.4434    0.96   0.3371    
-x             1.2155       0.0786   15.47  < 2e-16 ***
-f12           0.3901       0.1148    3.40   0.0007 ***
-f13           0.8216       0.1563    5.26  1.8e-07 ***
-f14           1.1619           NA      NA       NA    
-f15           1.1455       0.1709    6.70  3.4e-11 ***
-f16           1.3783       0.1760    7.83  1.2e-14 ***
-f17           1.5924       0.1059   15.04  < 2e-16 ***
-f18           1.5688       0.0885   17.73  < 2e-16 ***
+(Intercept)  -0.4939       0.3894   -1.27  0.20502    
+x             0.9058       0.0622   14.56  < 2e-16 ***
+f12           0.6796       0.1825    3.72  0.00021 ***
+f13           1.0809       0.2300    4.70  3.0e-06 ***
+f14           1.3923       0.1769    7.87  9.4e-15 ***
+f15           1.5012       0.2291    6.55  9.0e-11 ***
+f16           1.9191       0.2780    6.90  9.0e-12 ***
+f17           1.8555       0.2133    8.70  < 2e-16 ***
+f18           2.1749       0.2310    9.42  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.67 on 991 degrees of freedom
-Multiple R-squared(full model): 0.392   Adjusted R-squared: 0.387 
-Multiple R-squared(proj model): 0.392   Adjusted R-squared: 0.387 
-F-statistic(full model, *iid*):  80 on 8 and 991 DF, p-value: <2e-16 
-F-statistic(proj model): 38.3 on 8 and 9 DF, p-value: 4.69e-06 
+Residual standard error: 1.52 on 991 degrees of freedom
+Multiple R-squared(full model): 0.357   Adjusted R-squared: 0.352 
+Multiple R-squared(proj model): 0.357   Adjusted R-squared: 0.352 
+F-statistic(full model, *iid*):68.8 on 8 and 991 DF, p-value: <2e-16 
+F-statistic(proj model): -39.3 on 8 and 9 DF, p-value: 1 
 
 
 > # this will sample them for f1, also test having cluster in the third component
@@ -162,19 +161,19 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--7.416 -1.114 -0.137  1.133  5.588 
+-7.468 -0.873  0.022  1.036  5.203 
 
 Coefficients:
   Estimate Cluster s.e. t value Pr(>|t|)    
-x   1.2155       0.0728    16.7   <2e-16 ***
+x    0.906        0.064    14.2   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.67 on 991 degrees of freedom
-Multiple R-squared(full model): 0.392   Adjusted R-squared: 0.387 
-Multiple R-squared(proj model): 0.344   Adjusted R-squared: 0.338 
-F-statistic(full model, *iid*):  80 on 8 and 991 DF, p-value: <2e-16 
-F-statistic(proj model):  279 on 1 and 9 DF, p-value: 4.45e-08 
+Residual standard error: 1.52 on 991 degrees of freedom
+Multiple R-squared(full model): 0.357   Adjusted R-squared: 0.352 
+Multiple R-squared(proj model): 0.259   Adjusted R-squared: 0.253 
+F-statistic(full model, *iid*):68.8 on 8 and 991 DF, p-value: <2e-16 
+F-statistic(proj model):  200 on 1 and 9 DF, p-value: 1.87e-07 
 
 
 > # Comparable estimable function
@@ -187,15 +186,15 @@ F-statistic(proj model):  279 on 1 and 9 DF, p-value: 4.45e-08
 +   res
 + }
 > getfe(estg,ef=ef,se=TRUE,bN=200)
-      effect clusterse      se
-icpt 0.42589   0.35262 0.35262
-f1.2 0.39005   0.14836 0.14836
-f1.3 0.82163   0.15448 0.15448
-f1.4 1.16194   0.11748 0.11748
-f1.5 1.14548   0.16092 0.16092
-f1.6 1.37827   0.19304 0.19304
-f1.7 1.59244   0.14349 0.14349
-f1.8 1.56883   0.14396 0.14396
+       effect clusterse      se
+icpt -0.49390   0.34199 0.34199
+f1.2  0.67959   0.19774 0.19774
+f1.3  1.08092   0.25140 0.25140
+f1.4  1.39229   0.16588 0.16588
+f1.5  1.50124   0.21863 0.21863
+f1.6  1.91912   0.28410 0.28410
+f1.7  1.85550   0.22160 0.22160
+f1.8  2.17492   0.18960 0.18960
 > 
 > #summary(estr <- felm(y ~x + G(f1) + G(f2), dat), robust=TRUE)
 > #ols(y ~x + f1 + f2, dat, robust=TRUE)
@@ -204,4 +203,4 @@ f1.8 1.56883   0.14396 0.14396
 > 
 > proc.time()
    user  system elapsed 
-  1.977   0.449   2.305 
+  1.786   0.599   1.787 

@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2015-04-19 r68206) -- "Unsuffered Consequences"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -44,23 +44,23 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--5.552 -1.348  0.001  1.271  6.079 
+-3.398 -0.847  0.011  0.815  4.416 
 
 Coefficients:
          Estimate Robust s.e t value Pr(>|t|)  
-x           3.095      1.765    1.75     0.08 .
-x2         -0.586      0.938   -0.62     0.53  
-`Q(fit)`   -1.724      2.321   -0.74     0.46  
-`R(fit)`    4.219      2.734    1.54     0.12  
+x          1.4677     0.8115    1.81    0.071 .
+x2         0.0857     0.4406    0.19    0.846  
+`Q(fit)`   0.1913     1.0945    0.17    0.861  
+`R(fit)`   2.0963     1.2848    1.63    0.104  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.94 on 384 degrees of freedom
-Multiple R-squared(full model): 0.807   Adjusted R-squared: 0.799 
-Multiple R-squared(proj model): 0.601   Adjusted R-squared: 0.585 
-F-statistic(full model, *iid*): 125 on 15 and 384 DF, p-value: <2e-16 
-F-statistic(proj model):  217 on 4 and 384 DF, p-value: <2e-16 
-F-statistic(endog. vars):56.2 on 2 and 384 DF, p-value: <2e-16 
+Residual standard error: 1.27 on 384 degrees of freedom
+Multiple R-squared(full model): 0.903   Adjusted R-squared: 0.899 
+Multiple R-squared(proj model): 0.811   Adjusted R-squared: 0.803 
+F-statistic(full model, *iid*): 244 on 15 and 384 DF, p-value: <2e-16 
+F-statistic(proj model):  436 on 4 and 384 DF, p-value: <2e-16 
+F-statistic(endog. vars): 130 on 2 and 384 DF, p-value: <2e-16 
 
 
 > summary(felm(y ~ x+x2 | id+firm |(Q|R~x3+x4), kclass='liml'))
@@ -70,25 +70,27 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--5.552 -1.348  0.001  1.271  6.079 
+-3.398 -0.847  0.011  0.815  4.416 
 
 Coefficients:
-   Estimate Std. Error t value Pr(>|t|)
-x     3.095      1.919    1.61     0.11
-x2   -0.586      1.026   -0.57     0.57
-Q    -1.724      2.525   -0.68     0.50
-R     4.219      2.986    1.41     0.16
+   Estimate Std. Error t value Pr(>|t|)  
+x    1.4677     0.8535    1.72    0.086 .
+x2   0.0857     0.4703    0.18    0.856  
+Q    0.1913     1.1687    0.16    0.870  
+R    2.0963     1.3755    1.52    0.128  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.94 on 384 degrees of freedom
-Multiple R-squared(full model): 0.807   Adjusted R-squared: 0.799 
-Multiple R-squared(proj model): 0.601   Adjusted R-squared: 0.585 
-F-statistic(full model): 107 on 15 and 384 DF, p-value: <2e-16 
-F-statistic(proj model):  211 on 4 and 384 DF, p-value: <2e-16 
+Residual standard error: 1.27 on 384 degrees of freedom
+Multiple R-squared(full model): 0.903   Adjusted R-squared: 0.899 
+Multiple R-squared(proj model): 0.811   Adjusted R-squared: 0.803 
+F-statistic(full model): 238 on 15 and 384 DF, p-value: <2e-16 
+F-statistic(proj model):  437 on 4 and 384 DF, p-value: <2e-16 
 
 
 > update(est, . ~ x)
        x `Q(fit)` `R(fit)` 
-   2.240   -0.581    2.842 
+  1.5834   0.0307   2.2853 
 > # try it from within a function 
 > fr <- data.frame(y,x,id,firm,Q,R,x3,x4)
 > fun <- function() {
@@ -112,21 +114,23 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--5.552 -1.348  0.001  1.271  6.079 
+-3.398 -0.847  0.011  0.815  4.416 
 
 Coefficients:
-         Estimate Cluster s.e. t value Pr(>|t|)
-x           3.095        1.940    1.60     0.11
-x2         -0.586        1.094   -0.54     0.59
-`S(fit)`   -1.724        2.545   -0.68     0.50
-`R(fit)`    4.219        3.041    1.39     0.17
+         Estimate Cluster s.e. t value Pr(>|t|)  
+x          1.4677       0.8656    1.70    0.091 .
+x2         0.0857       0.5022    0.17    0.865  
+`S(fit)`   0.1913       1.1942    0.16    0.873  
+`R(fit)`   2.0963       1.4199    1.48    0.141  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.94 on 384 degrees of freedom
-Multiple R-squared(full model): 0.807   Adjusted R-squared: 0.799 
-Multiple R-squared(proj model): 0.601   Adjusted R-squared: 0.585 
-F-statistic(full model, *iid*): 125 on 15 and 384 DF, p-value: <2e-16 
-F-statistic(proj model):  696 on 4 and 9 DF, p-value: 3.37e-11 
-F-statistic(endog. vars):45.6 on 2 and 9 DF, p-value: 1.94e-05 
+Residual standard error: 1.27 on 384 degrees of freedom
+Multiple R-squared(full model): 0.903   Adjusted R-squared: 0.899 
+Multiple R-squared(proj model): 0.811   Adjusted R-squared: 0.803 
+F-statistic(full model, *iid*): 244 on 15 and 384 DF, p-value: <2e-16 
+F-statistic(proj model):  507 on 4 and 9 DF, p-value: 1.39e-10 
+F-statistic(endog. vars): 175 on 2 and 9 DF, p-value: 6.23e-08 
 
 
 > for(lh in est$stage1$lhs) print(summary(est$stage1, lhs=lh))
@@ -137,23 +141,23 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--0.7738 -0.1703  0.0109  0.1804  0.7101 
+-0.6979 -0.1744  0.0002  0.1829  0.7426 
 
 Coefficients:
    Estimate Cluster s.e. t value Pr(>|t|)    
-x    1.0121       0.0125    81.2   <2e-16 ***
-x2   0.1954       0.0114    17.1   <2e-16 ***
-x3   0.3215       0.0149    21.6   <2e-16 ***
-x4   0.3996       0.0122    32.7   <2e-16 ***
+x   0.97216      0.01249    77.8   <2e-16 ***
+x2  0.22848      0.01483    15.4   <2e-16 ***
+x3  0.29656      0.00942    31.5   <2e-16 ***
+x4  0.42598      0.01252    34.0   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.261 on 384 degrees of freedom
-Multiple R-squared(full model): 0.976   Adjusted R-squared: 0.975 
-Multiple R-squared(proj model): 0.957   Adjusted R-squared: 0.956 
-F-statistic(full model, *iid*):1.03e+03 on 15 and 384 DF, p-value: <2e-16 
-F-statistic(proj model): 5.5e+03 on 4 and 9 DF, p-value: 3.1e-15 
-F-statistic(excl instr.): 543 on 2 and 9 DF, p-value: 4.15e-10 
+Residual standard error: 0.269 on 384 degrees of freedom
+Multiple R-squared(full model): 0.971   Adjusted R-squared: 0.97 
+Multiple R-squared(proj model): 0.951   Adjusted R-squared: 0.949 
+F-statistic(full model, *iid*): 870 on 15 and 384 DF, p-value: <2e-16 
+F-statistic(proj model): 8.37e+03 on 4 and 9 DF, p-value: 4.7e-16 
+F-statistic(excl instr.): 710 on 2 and 9 DF, p-value: 1.25e-10 
 
 
 Summary for outcome R 
@@ -163,36 +167,36 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--0.6832 -0.1439 -0.0086  0.1415  0.6672 
+-0.6051 -0.1380 -0.0178  0.1519  0.6989 
 
 Coefficients:
    Estimate Cluster s.e. t value Pr(>|t|)    
-x    0.2120       0.0129    16.4   <2e-16 ***
-x2   0.4926       0.0148    33.2   <2e-16 ***
-x3   0.2983       0.0123    24.2   <2e-16 ***
-x4   0.3142       0.0142    22.2   <2e-16 ***
+x    0.2049       0.0114    18.0   <2e-16 ***
+x2   0.5115       0.0111    46.1   <2e-16 ***
+x3   0.2905       0.0116    25.0   <2e-16 ***
+x4   0.3308       0.0120    27.6   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Residual standard error: 0.231 on 384 degrees of freedom
-Multiple R-squared(full model): 0.958   Adjusted R-squared: 0.956 
-Multiple R-squared(proj model): 0.917   Adjusted R-squared: 0.914 
-F-statistic(full model, *iid*): 583 on 15 and 384 DF, p-value: <2e-16 
-F-statistic(proj model): 1.88e+03 on 4 and 9 DF, p-value: 3.92e-13 
-F-statistic(excl instr.):2.07e+03 on 2 and 9 DF, p-value: 1.03e-12 
+Multiple R-squared(full model): 0.95   Adjusted R-squared: 0.948 
+Multiple R-squared(proj model): 0.913   Adjusted R-squared: 0.91 
+F-statistic(full model, *iid*): 485 on 15 and 384 DF, p-value: <2e-16 
+F-statistic(proj model): 1.53e+03 on 4 and 9 DF, p-value: 9.68e-13 
+F-statistic(excl instr.): 605 on 2 and 9 DF, p-value: 2.55e-10 
 
 
 > print(condfstat(est,NULL,quantiles=c(0.1,0.5,0.9)))
-               S      R
-iid F     3.5305 3.5298
-robust F  4.0320 4.0746
-cluster F 3.3712 3.4076
+                S       R
+iid F      6.8028  6.8024
+robust F   7.9129  7.9919
+cluster F 14.6613 13.8477
 attr(,"df1")
 [1] 1
 attr(,"quantiles")
-       10%    50%      90%
-S -10.4127 -1.733  0.40256
-R   1.5908  4.165 12.65984
+       10%     50%    90%
+S -1.89448 0.39829 1.2657
+R  0.80861 1.79392 4.2885
 attr(,"quantiles")attr(,"q")
 [1] 0.1 0.5 0.9
 attr(,"quantiles")attr(,"samples")
@@ -200,4 +204,4 @@ attr(,"quantiles")attr(,"samples")
 > 
 > proc.time()
    user  system elapsed 
-  2.782   1.381   2.644 
+  2.503   1.942   1.778 

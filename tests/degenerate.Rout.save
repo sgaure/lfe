@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2016-04-03 r70416) -- "Unsuffered Consequences"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -52,24 +52,24 @@ Call:
 
 Residuals:
    Min     1Q Median     3Q    Max 
--3.325 -0.679 -0.005  0.658  3.178 
+-3.219 -0.676  0.005  0.660  3.028 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
 x        NA         NA      NA       NA    
-x2  -0.3703     0.0287   -12.9   <2e-16 ***
-x3   1.3819     0.0191    72.2   <2e-16 ***
+x2  -0.4175     0.0281   -14.8   <2e-16 ***
+x3   1.4086     0.0188    75.1   <2e-16 ***
 x4       NA         NA      NA       NA    
 x5       NA         NA      NA       NA    
 x6       NA         NA      NA       NA    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.01 on 1980 degrees of freedom
-Multiple R-squared(full model): 0.876   Adjusted R-squared: 0.875 
-Multiple R-squared(proj model): 0.776   Adjusted R-squared: 0.774 
-F-statistic(full model): 736 on 19 and 1980 DF, p-value: <2e-16 
-F-statistic(proj model): 1.14e+03 on 6 and 1980 DF, p-value: <2e-16 
+Residual standard error: 0.987 on 1980 degrees of freedom
+Multiple R-squared(full model): 0.873   Adjusted R-squared: 0.872 
+Multiple R-squared(proj model): 0.786   Adjusted R-squared: 0.784 
+F-statistic(full model): 717 on 19 and 1980 DF, p-value: <2e-16 
+F-statistic(proj model): 1.21e+03 on 6 and 1980 DF, p-value: <2e-16 
 
 
 > #alpha
@@ -85,4 +85,4 @@ accuracy: 1.00000000e+00 1.00000000e+00>
 > 
 > proc.time()
    user  system elapsed 
-  2.238   0.714   2.212 
+  1.815   1.147   1.519 

@@ -6,7 +6,7 @@ AC_CONFIG_SRCDIR([src/lfe.c])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build/autoconf])
 AC_CONFIG_FILES([src/Makevars])
-
+m4_include([tools/ax_pthread.m4])
 dnl AC_LANG(C)
 AC_ARG_ENABLE([threads],
         [AS_HELP_STRING([--disable-threads],[do not use threads])],
@@ -14,7 +14,7 @@ AC_ARG_ENABLE([threads],
 
 AC_ARG_ENABLE([huge],
 	[AS_HELP_STRING([--enable-huge],[use 64 bit integers])],
-	[AC_DEFINE([HUGE_INT], [1])],
+	[AC_DEFINE([HUGE_INT], [1], [64bit])],
 	[])
 
 dnl local debug 
@@ -25,6 +25,8 @@ AC_ARG_ENABLE([pedantry],,
 AC_SUBST(DFLAGS)
 # pick up R's compilers, we need to use that one
 CC=`${R_HOME}/bin/R CMD config CC`
+CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
+LDFLAGS=`${R_HOME}/bin/R CMD config LDFLAGS`
 
 # Checks for programs.
 AC_PROG_CC
@@ -34,10 +36,10 @@ AC_PROG_CC
 if test "$do_threads" = "yes"; then
   AX_PTHREAD([], [
   AC_MSG_WARN([No threads on this architecture])
-  AC_DEFINE([NOTHREADS], [1])
+  AC_DEFINE([NOTHREADS], [1], [no threads])
   do_threads="no"])
 else
-  AC_DEFINE([NOTHREADS], [1])
+  AC_DEFINE([NOTHREADS], [1], [no threads])
 fi
 AC_SUBST(PTHREAD_CFLAGS)
 AC_SUBST(PTHREAD_LIBS)
@@ -51,8 +53,8 @@ if test "$do_threads" = "yes"; then
 # bugger fails on macosx
 AC_MSG_CHECKING(for timed semaphore wait)
 # we may use these when checking for semaphores
-LDFLAGS=$PTHREAD_LIBS
-CFLAGS=$PTHREAD_CFLAGS
+LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
+CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 AC_TRY_RUN(dnl
 [#include <semaphore.h>
  #include <stdlib.h>
@@ -76,12 +78,12 @@ AC_TRY_RUN(dnl
   }
 ],
 AC_MSG_RESULT(yes)
-AC_DEFINE([HAVE_SEM], [1]),
+AC_DEFINE([HAVE_SEM], [1], [timed sem wait]),
 AC_MSG_RESULT(no)
 )
 
 # check for capability of setting thread name
-AC_SEARCH_LIBS([pthread_setname_np], [], AC_DEFINE([HAVE_THREADNAME]), [], [-pthread])
+AC_SEARCH_LIBS([pthread_setname_np], [], AC_DEFINE([HAVE_THREADNAME],1, [chg thread name]), [], [$PTHREAD_CFLAGS])
 AC_SUBST(HAVE_THREADNAME)
 fi
 

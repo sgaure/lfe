@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-06-19 r74917) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -42,21 +42,21 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--2.5460 -0.6543  0.0447  0.7555  2.1551 
+-2.4995 -0.4254 -0.0321  0.4885  1.7591 
 
 Coefficients:
    Estimate Robust s.e t value Pr(>|t|)    
-x    0.4182     0.0998    4.19  6.6e-05 ***
-x2   0.3496     0.1128    3.10   0.0026 ** 
-x3   0.5057     0.1020    4.96  3.5e-06 ***
+x    0.5637     0.0739    7.63  2.8e-11 ***
+x2   0.4178     0.0858    4.87  4.9e-06 ***
+x3   0.5643     0.0846    6.67  2.3e-09 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.959 on 87 degrees of freedom
-Multiple R-squared(full model): 0.491   Adjusted R-squared: 0.421 
-Multiple R-squared(proj model): 0.372   Adjusted R-squared: 0.285 
-F-statistic(full model, *iid*):   7 on 12 and 87 DF, p-value: 1.01e-08 
-F-statistic(proj model): 19.4 on 3 and 87 DF, p-value: 1.03e-09 
+Residual standard error: 0.843 on 87 degrees of freedom
+Multiple R-squared(full model): 0.638   Adjusted R-squared: 0.588 
+Multiple R-squared(proj model): 0.526   Adjusted R-squared: 0.461 
+F-statistic(full model, *iid*):12.8 on 12 and 87 DF, p-value: 1.34e-14 
+F-statistic(proj model): 50.7 on 3 and 87 DF, p-value: <2e-16 
 
 
 Summary for outcome w 
@@ -66,21 +66,21 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--1.8107 -0.5524 -0.0814  0.5097  1.9525 
+-2.2058 -0.5929 -0.0948  0.6021  2.6465 
 
 Coefficients:
    Estimate Robust s.e t value Pr(>|t|)    
-x    0.6001     0.0817    7.34  1.0e-10 ***
-x2   0.2866     0.1077    2.66   0.0092 ** 
-x3   0.6338     0.0939    6.75  1.6e-09 ***
+x     0.681      0.102    6.67  2.2e-09 ***
+x2    0.450      0.131    3.43  0.00092 ***
+x3    0.451      0.089    5.06  2.3e-06 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.869 on 87 degrees of freedom
+Residual standard error: 0.924 on 87 degrees of freedom
 Multiple R-squared(full model): 0.587   Adjusted R-squared: 0.53 
-Multiple R-squared(proj model): 0.526   Adjusted R-squared: 0.461 
-F-statistic(full model, *iid*):10.3 on 12 and 87 DF, p-value: 2.69e-12 
-F-statistic(proj model): 31.5 on 3 and 87 DF, p-value: 6.83e-14 
+Multiple R-squared(proj model): 0.506   Adjusted R-squared: 0.437 
+F-statistic(full model, *iid*):10.3 on 12 and 87 DF, p-value: 2.75e-12 
+F-statistic(proj model): 22.5 on 3 and 87 DF, p-value: 6.99e-11 
 
 
 Summary for outcome y 
@@ -90,21 +90,21 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--2.2860 -0.6127 -0.0153  0.7093  2.7247 
+-2.3645 -0.6425  0.0859  0.6470  2.9411 
 
 Coefficients:
    Estimate Robust s.e t value Pr(>|t|)    
-x    1.0063     0.0996   10.10  2.5e-16 ***
-x2   0.9789     0.1174    8.34  1.0e-12 ***
-x3   1.0581     0.0993   10.65  < 2e-16 ***
+x     1.151      0.088   13.09  < 2e-16 ***
+x2    1.000      0.120    8.32  1.1e-12 ***
+x3    1.173      0.108   10.89  < 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.02 on 87 degrees of freedom
-Multiple R-squared(full model): 0.782   Adjusted R-squared: 0.752 
-Multiple R-squared(proj model): 0.743   Adjusted R-squared: 0.708 
-F-statistic(full model, *iid*):  26 on 12 and 87 DF, p-value: <2e-16 
-F-statistic(proj model): 97.9 on 3 and 87 DF, p-value: <2e-16 
+Residual standard error: 1.03 on 87 degrees of freedom
+Multiple R-squared(full model): 0.833   Adjusted R-squared: 0.81 
+Multiple R-squared(proj model): 0.772   Adjusted R-squared: 0.741 
+F-statistic(full model, *iid*):36.1 on 12 and 87 DF, p-value: <2e-16 
+F-statistic(proj model): 94.9 on 3 and 87 DF, p-value: <2e-16 
 
 
 Summary for outcome z 
@@ -114,21 +114,21 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--2.4226 -0.6465 -0.0502  0.6757  2.7806 
+-2.6990 -0.6658  0.0189  0.6380  1.9743 
 
 Coefficients:
    Estimate Robust s.e t value Pr(>|t|)    
-x    0.4716     0.0948    4.98  3.2e-06 ***
-x2   0.5991     0.1285    4.66  1.1e-05 ***
-x3   0.5400     0.1197    4.51  2.0e-05 ***
+x    0.4902     0.0879    5.57  2.7e-07 ***
+x2   0.6401     0.1138    5.62  2.2e-07 ***
+x3   0.4422     0.1147    3.86  0.00022 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.1 on 87 degrees of freedom
-Multiple R-squared(full model): 0.504   Adjusted R-squared: 0.436 
-Multiple R-squared(proj model): 0.41   Adjusted R-squared: 0.328 
-F-statistic(full model, *iid*):7.37 on 12 and 87 DF, p-value: 3.74e-09 
-F-statistic(proj model): 32.9 on 3 and 87 DF, p-value: 2.62e-14 
+Residual standard error: 1.02 on 87 degrees of freedom
+Multiple R-squared(full model): 0.599   Adjusted R-squared: 0.544 
+Multiple R-squared(proj model): 0.441   Adjusted R-squared: 0.364 
+F-statistic(full model, *iid*):10.8 on 12 and 87 DF, p-value: 8.33e-13 
+F-statistic(proj model): 28.6 on 3 and 87 DF, p-value: 5.6e-13 
 
 
 > summary(est, lhs='z', robust=TRUE)
@@ -139,21 +139,21 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--2.4226 -0.6465 -0.0502  0.6757  2.7806 
+-2.6990 -0.6658  0.0189  0.6380  1.9743 
 
 Coefficients:
    Estimate Robust s.e t value Pr(>|t|)    
-x    0.4716     0.0948    4.98  3.2e-06 ***
-x2   0.5991     0.1285    4.66  1.1e-05 ***
-x3   0.5400     0.1197    4.51  2.0e-05 ***
+x    0.4902     0.0879    5.57  2.7e-07 ***
+x2   0.6401     0.1138    5.62  2.2e-07 ***
+x3   0.4422     0.1147    3.86  0.00022 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.1 on 87 degrees of freedom
-Multiple R-squared(full model): 0.504   Adjusted R-squared: 0.436 
-Multiple R-squared(proj model): 0.41   Adjusted R-squared: 0.328 
-F-statistic(full model, *iid*):7.37 on 12 and 87 DF, p-value: 3.74e-09 
-F-statistic(proj model): 32.9 on 3 and 87 DF, p-value: 2.62e-14 
+Residual standard error: 1.02 on 87 degrees of freedom
+Multiple R-squared(full model): 0.599   Adjusted R-squared: 0.544 
+Multiple R-squared(proj model): 0.441   Adjusted R-squared: 0.364 
+F-statistic(full model, *iid*):10.8 on 12 and 87 DF, p-value: 8.33e-13 
+F-statistic(proj model): 28.6 on 3 and 87 DF, p-value: 5.6e-13 
 
 
 > summary(zest <- felm(z ~x+x2+x3|id,keepX=TRUE), robust=TRUE)
@@ -163,47 +163,47 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--2.4226 -0.6465 -0.0502  0.6757  2.7806 
+-2.6990 -0.6658  0.0189  0.6380  1.9743 
 
 Coefficients:
    Estimate Robust s.e t value Pr(>|t|)    
-x    0.4716     0.0948    4.98  3.2e-06 ***
-x2   0.5991     0.1285    4.66  1.1e-05 ***
-x3   0.5400     0.1197    4.51  2.0e-05 ***
+x    0.4902     0.0879    5.57  2.7e-07 ***
+x2   0.6401     0.1138    5.62  2.2e-07 ***
+x3   0.4422     0.1147    3.86  0.00022 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.1 on 87 degrees of freedom
-Multiple R-squared(full model): 0.504   Adjusted R-squared: 0.436 
-Multiple R-squared(proj model): 0.41   Adjusted R-squared: 0.328 
-F-statistic(full model, *iid*):7.37 on 12 and 87 DF, p-value: 3.74e-09 
-F-statistic(proj model): 32.9 on 3 and 87 DF, p-value: 2.62e-14 
+Residual standard error: 1.02 on 87 degrees of freedom
+Multiple R-squared(full model): 0.599   Adjusted R-squared: 0.544 
+Multiple R-squared(proj model): 0.441   Adjusted R-squared: 0.364 
+F-statistic(full model, *iid*):10.8 on 12 and 87 DF, p-value: 8.33e-13 
+F-statistic(proj model): 28.6 on 3 and 87 DF, p-value: 5.6e-13 
 
 
 > getfe(zest,se=TRUE)
        effect obs comp fe idx    se
-id.1  -0.2459   3    1 id   1 0.643
-id.2  -0.4949  10    1 id   2 0.354
-id.3   0.4533  14    1 id   3 0.298
-id.4  -1.1892  11    1 id   4 0.337
-id.5  -0.1773  15    1 id   5 0.291
-id.6   0.6889  12    1 id   6 0.320
-id.7   0.0239   5    1 id   7 0.495
-id.8   0.6544  12    1 id   8 0.322
-id.9   0.4439  10    1 id   9 0.357
-id.10 -0.7450   8    1 id  10 0.392
+id.1   0.0713   5    1 id   1 0.460
+id.2  -0.3484   8    1 id   2 0.373
+id.3  -0.7928  13    1 id   3 0.291
+id.4  -0.5728   7    1 id   4 0.397
+id.5  -1.6214  10    1 id   5 0.328
+id.6   1.2285   7    1 id   6 0.387
+id.7   0.7963  14    1 id   7 0.279
+id.8   0.5192  15    1 id   8 0.265
+id.9  -1.0537   5    1 id   9 0.460
+id.10 -0.4860  16    1 id  10 0.260
 > getfe(est,method='cg',se=TRUE,lhs=c('w','z'))
       effect.w effect.z obs comp fe idx  se.w  se.z
-id.1   -0.3477  -0.2459   3    1 id   1 0.507 0.643
-id.2   -1.0345  -0.4949  10    1 id   2 0.279 0.354
-id.3    0.2510   0.4533  14    1 id   3 0.235 0.298
-id.4   -0.4282  -1.1892  11    1 id   4 0.266 0.337
-id.5   -0.2612  -0.1773  15    1 id   5 0.229 0.291
-id.6   -0.0256   0.6889  12    1 id   6 0.252 0.320
-id.7    0.1479   0.0239   5    1 id   7 0.390 0.495
-id.8    0.6574   0.6544  12    1 id   8 0.254 0.322
-id.9   -0.3292   0.4439  10    1 id   9 0.281 0.357
-id.10  -0.2143  -0.7450   8    1 id  10 0.309 0.392
+id.1     0.277   0.0713   5    1 id   1 0.416 0.460
+id.2    -0.193  -0.3484   8    1 id   2 0.337 0.373
+id.3    -0.555  -0.7928  13    1 id   3 0.263 0.291
+id.4    -0.407  -0.5728   7    1 id   4 0.359 0.397
+id.5    -1.145  -1.6214  10    1 id   5 0.296 0.328
+id.6    -0.475   1.2285   7    1 id   6 0.350 0.387
+id.7     1.011   0.7963  14    1 id   7 0.252 0.279
+id.8     0.326   0.5192  15    1 id   8 0.240 0.265
+id.9    -0.993  -1.0537   5    1 id   9 0.416 0.460
+id.10   -0.665  -0.4860  16    1 id  10 0.236 0.260
 > lhs <- cbind(v,w,y,z)
 > rhs <- cbind(x,x2,x3)
 > est <- felm(lhs ~rhs|id+firm,keepX=TRUE)
@@ -215,67 +215,67 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--2.3167 -0.6517  0.0052  0.7282  2.8583 
+-2.2337 -0.6746  0.0996  0.6950  1.8839 
 
 Coefficients:
       Estimate Robust s.e t value Pr(>|t|)    
-rhsx     0.390      0.111    3.52  0.00072 ***
-rhsx2    0.580      0.141    4.10  9.9e-05 ***
-rhsx3    0.592      0.129    4.60  1.6e-05 ***
+rhsx     0.521      0.101    5.16  1.8e-06 ***
+rhsx2    0.639      0.129    4.96  4.1e-06 ***
+rhsx3    0.429      0.126    3.40   0.0011 ** 
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.12 on 78 degrees of freedom
-Multiple R-squared(full model): 0.538   Adjusted R-squared: 0.413 
-Multiple R-squared(proj model): 0.388   Adjusted R-squared: 0.224 
-F-statistic(full model, *iid*):4.32 on 21 and 78 DF, p-value: 1.09e-06 
-F-statistic(proj model): 23.9 on 3 and 78 DF, p-value: 4.46e-11 
+Residual standard error: 1.03 on 78 degrees of freedom
+Multiple R-squared(full model): 0.633   Adjusted R-squared: 0.534 
+Multiple R-squared(proj model): 0.449   Adjusted R-squared: 0.301 
+F-statistic(full model, *iid*): 6.4 on 21 and 78 DF, p-value: 6.04e-10 
+F-statistic(proj model): 20.5 on 3 and 78 DF, p-value: 6.98e-10 
 
 
 > getfe(est,se=TRUE)
         effect.lhs.v effect.lhs.w effect.lhs.y effect.lhs.z obs comp   fe idx
-id.1          0.9496      -0.0129       0.6340       0.3046   3    1   id   1
-id.2         -0.3973      -0.9933      -0.7503      -0.3806  10    1   id   2
-id.3          0.4377       0.3254       0.8671       0.6716  14    1   id   3
-id.4         -0.1492      -0.4279      -1.0238      -1.0974  11    1   id   4
-id.5         -0.2540      -0.1518      -0.1375       0.0259  15    1   id   5
-id.6          0.9037       0.1821       1.0403       0.9356  12    1   id   6
-id.7         -0.4754       0.2472      -0.2487       0.0604   5    1   id   7
-id.8          0.4978       0.8521       0.1426       0.8003  12    1   id   8
-id.9         -0.6727      -0.2880      -0.1429       0.6474  10    1   id   9
-id.10        -0.4734      -0.3363      -1.2853      -0.5932   8    1   id  10
-firm.1       -0.1833       0.0802      -0.6517      -0.3493  11    1 firm   1
-firm.2       -0.0827      -0.3265      -0.0524      -0.1384  13    1 firm   2
-firm.3       -1.0074      -0.1621       0.0925       0.1254   6    1 firm   3
-firm.4       -0.5475       0.0378       0.0103      -0.1956  11    1 firm   4
-firm.5       -0.2021       0.5068       0.5882       0.4730   9    1 firm   5
-firm.6       -0.6207      -0.0401       0.0452      -0.4747  10    1 firm   6
-firm.7        0.2903      -0.3770      -0.1791      -0.4015  13    1 firm   7
-firm.8       -0.3185      -0.6264      -1.1608      -0.8747   5    1 firm   8
-firm.9        0.0579      -0.1311      -0.3886      -0.1294   6    1 firm   9
-firm.10       0.0000       0.0000       0.0000       0.0000  16    1 firm  10
+id.1          0.8749       0.9812       0.0489       0.7051   5    1   id   1
+id.2          0.6719       0.4853       0.8638       0.0607   8    1   id   2
+id.3          0.3024       0.1536      -0.4686      -0.4533  13    1   id   3
+id.4          0.0844       0.2636      -0.0926      -0.0300   7    1   id   4
+id.5         -0.3246      -0.2747      -0.7442      -1.2239  10    1   id   5
+id.6          2.1050       0.1077       2.1595       1.5731   7    1   id   6
+id.7          1.3908       1.8396       3.0891       1.2949  14    1   id   7
+id.8          1.0757       0.9470       1.0288       1.0310  15    1   id   8
+id.9         -0.0124       0.0539      -0.1982      -0.4388   5    1   id   9
+id.10         0.0000       0.0000       0.0000       0.0000  16    1   id  10
+firm.1       -0.8998      -0.4904      -0.7812      -0.7076  12    1 firm   1
+firm.2       -1.0174      -1.0420      -1.4526      -0.1498  14    1 firm   2
+firm.3       -1.2929      -0.5287      -1.0098      -0.4653  12    1 firm   3
+firm.4       -0.8283      -0.7822      -0.4942      -0.3447  12    1 firm   4
+firm.5       -1.2683      -1.3940      -1.0347      -0.8927   8    1 firm   5
+firm.6       -2.0526      -0.2337      -0.6150       0.2459   3    1 firm   6
+firm.7       -0.9234      -1.0914      -1.7224      -0.8636   6    1 firm   7
+firm.8       -1.1723      -0.5550      -1.2184      -0.3741  13    1 firm   8
+firm.9       -0.8319      -0.0858      -0.8495      -0.1335   9    1 firm   9
+firm.10      -0.6497      -0.8919      -1.0865      -0.7919  11    1 firm  10
         se.lhs.v se.lhs.w se.lhs.y se.lhs.z
-id.1       0.504    0.541    0.549    0.666
-id.2       0.331    0.299    0.365    0.390
-id.3       0.368    0.256    0.346    0.351
-id.4       0.280    0.284    0.347    0.334
-id.5       0.303    0.268    0.345    0.362
-id.6       0.353    0.294    0.323    0.341
-id.7       0.426    0.361    0.439    0.515
-id.8       0.352    0.310    0.348    0.400
-id.9       0.353    0.324    0.421    0.384
-id.10      0.360    0.372    0.468    0.475
-firm.1     0.353    0.328    0.392    0.431
-firm.2     0.373    0.309    0.348    0.360
-firm.3     0.418    0.361    0.426    0.505
-firm.4     0.314    0.324    0.368    0.409
-firm.5     0.324    0.364    0.422    0.436
-firm.6     0.377    0.357    0.381    0.405
-firm.7     0.332    0.333    0.379    0.403
-firm.8     0.485    0.449    0.510    0.572
-firm.9     0.399    0.359    0.480    0.426
-firm.10    0.000    0.000    0.000    0.000
+id.1       0.419    0.358    0.484    0.500
+id.2       0.328    0.340    0.449    0.429
+id.3       0.297    0.305    0.397    0.353
+id.4       0.410    0.416    0.459    0.413
+id.5       0.328    0.334    0.431    0.350
+id.6       0.365    0.378    0.472    0.477
+id.7       0.292    0.270    0.380    0.353
+id.8       0.277    0.280    0.319    0.328
+id.9       0.418    0.433    0.557    0.555
+id.10      0.000    0.000    0.000    0.000
+firm.1     0.233    0.252    0.316    0.336
+firm.2     0.300    0.287    0.382    0.326
+firm.3     0.284    0.281    0.327    0.361
+firm.4     0.321    0.288    0.360    0.383
+firm.5     0.384    0.315    0.496    0.436
+firm.6     0.548    0.466    0.654    0.680
+firm.7     0.394    0.457    0.495    0.478
+firm.8     0.279    0.279    0.370    0.382
+firm.9     0.340    0.333    0.388    0.420
+firm.10    0.277    0.291    0.333    0.388
 > 
 > proc.time()
    user  system elapsed 
-  4.484   0.856   4.907 
+  2.251   0.615   2.216 

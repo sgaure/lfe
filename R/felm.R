@@ -11,9 +11,11 @@ makematrix <- function(mf, contrasts=NULL, pf=parent.frame(),
   wpos <- which(!is.na(pmatch(names(mf),'weights')))
   if(length(wpos) > 0) {
     weights <- eval(mf[[wpos]],pf)
-    if(anyNA(weights) || any(weights < 0)) stop('missing or negative weights not allowed')
-    weights <- sqrt(weights)
-    weights[weights==0] <- 1e-60
+    if(!is.null(weights)) {
+      if(anyNA(weights) || any(weights < 0)) stop('missing or negative weights not allowed')
+      weights <- sqrt(weights)
+      weights[weights==0] <- 1e-60
+    }
   } else {
     weights <- NULL
   }
@@ -1098,6 +1100,7 @@ felm <- function(formula, data, exactDOF=FALSE, subset, na.action,
   if(now  > last + pint) {last <- now; message(date(), ' finished centering model matrix')}
   z <- felm.mm(mm,nostats,exactDOF,keepX,keepCX,keepModel,kclass,fuller,onlyse,psdef=psdef)
   z$call <- match.call()
+  z$formula <- formula
   z$keepX <- keepX
   z$keepCX <- keepCX
   if(Nboot > 0) {

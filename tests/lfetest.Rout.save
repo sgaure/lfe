@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-06-26 r74931) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-03-09 r76219) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -38,26 +38,26 @@ Loading required package: Matrix
 > ## estimate and print result
 > print(est <- felm(y ~ x+x2|id+firm, data=fr))
     x    x2 
-0.906 0.507 
+0.677 0.444 
 > 
 > ## extract the group fixed effects
 > tail(getfe(est))
          effect obs comp   fe idx
-firm.293 -1.372   2    1 firm 293
-firm.295 -5.501   1    1 firm 295
-firm.296 -1.338   1    1 firm 296
-firm.297 -2.516   1   35 firm 297
-firm.298 -0.846   1   34 firm 298
-firm.300 -3.014   5    1 firm 300
+firm.294 -2.057   1    6 firm 294
+firm.295 -1.347   4    1 firm 295
+firm.296 -0.227   1   51 firm 296
+firm.297 -2.447   2    4 firm 297
+firm.298  1.220   1   23 firm 298
+firm.300 -4.167   3    1 firm 300
 > 
 > head(round(model.matrix(est),7))
-       x      x2
-1 -0.339 -0.1331
-2  0.000  0.0000
-3  0.000  0.0000
-4  0.671 -0.0192
-5  0.000  0.0000
-6  0.000  0.0000
+      x    x2
+1 0.000 0.000
+2 0.000 0.000
+3 0.693 0.437
+4 0.000 0.000
+5 0.000 0.000
+6 0.000 0.000
 > head(model.matrix(est,centred=FALSE))
        x      x2
 1 -1.251  1.0210
@@ -67,13 +67,13 @@ firm.300 -3.014   5    1 firm 300
 5 -0.359 -0.5846
 6  0.368 -0.0823
 > head(round(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepCX=TRUE)),7))
-          x      x2
-[1,] -0.339 -0.1331
-[2,]  0.000  0.0000
-[3,]  0.000  0.0000
-[4,]  0.671 -0.0192
-[5,]  0.000  0.0000
-[6,]  0.000  0.0000
+         x    x2
+[1,] 0.000 0.000
+[2,] 0.000 0.000
+[3,] 0.693 0.437
+[4,] 0.000 0.000
+[5,] 0.000 0.000
+[6,] 0.000 0.000
 > head(model.matrix(felm(y ~ x+x2|id+firm, data=fr,keepX=TRUE), centred=FALSE))
           x      x2
 [1,] -1.251  1.0210
@@ -85,4 +85,4 @@ firm.300 -3.014   5    1 firm 300
 > 
 > proc.time()
    user  system elapsed 
-  3.380   0.635   3.490 
+   1.93    0.51    1.75 
