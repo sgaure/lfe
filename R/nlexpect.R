@@ -55,7 +55,7 @@
 #' tolerances is met.
 #' 
 #' The \code{...} can be used for passing other arguments to the integration
-#' routine.
+#' routine \code{cubature::cubintegrate} and the function to be integrated.
 #' 
 #' @param est object of class \code{"felm"} or \code{"lm"}, a result of a call to
 #' \code{\link{felm}} or \code{lm}.
@@ -73,10 +73,12 @@
 #' @param flags list. Additional flags for the underlying integration routine. Not used after the
 #' package \pkg{R2Cuba} disappeared.
 #' @param max.eval integer. Maximum number of integral evaluations.
-#' @param method character. Either \code{"hcubature"} (default) or \code{"pcubature"} from package \pkg{cubature}. 
+#' @param method character. A method specification usable by \code{cubature::cubintegrate}. 
 #' The documentation there says that \code{"pcubature"} is good for smooth integrands of low dimensions.
-#' @param vectorize logical. Use vectorized function evaluation from package \pkg{cubature}. This can speed
-#' up integration significantly.
+#' @param vectorize logical or numeric. Use vectorized function evaluation from package
+#' \pkg{cubature}. This can speed up integration significantly. If method is from the Cuba library
+#' (i.e. not pcubature or hcubature), \code{vectorize} should be specified as a numeric, a vectorization
+#' factor. The default is 128.
 #' @return The function \code{nlexpect} computes and returns the expectation of
 #' the function \code{fun(beta)}, with \code{beta} a vector of coefficients.
 #' I.e., if the coefficients \code{beta} are bootstrapped a large number of
@@ -139,27 +141,19 @@
 #' @export nlexpect
 nlexpect <- function(est, fun, coefs, ..., tol=getOption('lfe.etol'), lhs=NULL,
                      cv, istats=FALSE, flags=list(verbose=0), max.eval=200000L,
-                     method=c('hcubature','pcubature','cuhre','suave'),vectorize=FALSE) {
+                     method=c('hcubature','pcubature','cuhre','suave','vegas','divonne'),
+                     vectorize=FALSE) {
 
   mc <- match.call(expand.dots=FALSE)
   xargs <- names(mc[['...']])
   method <- match.arg(method)
-  if(method %in% c('cuhre','suave')) {
-    stop('Methods cuhre and suave no longer supported because package R2Cuba has gone extinct.')
-#    if(!requireNamespace('R2Cuba', quietly=TRUE)) {
-#      warning('Package "R2Cuba" not found.')
-#      return(NULL);
-#    }
-#    adapt <- FALSE
-#    R2ig <- switch(method, cuhre=R2Cuba::cuhre, suave=R2Cuba::suave)
-  } else {
-    if(!requireNamespace('cubature', quietly=TRUE)) {
-      warning('Package "cubature" not found.')
-      return(NULL)
-    }
-    adapt <- TRUE
-    adaptig <- switch(method,hcubature=cubature::hcubature,pcubature=cubature::pcubature)
+  if(!requireNamespace('cubature', quietly=TRUE)) {
+    warning('Package "cubature" not found.')
+    return(NULL)
   }
+#  adapt <- TRUE
+#  adaptig <- switch(method,hcubature=cubature::hcubature,pcubature=cubature::pcubature,
+#                    cuhre=cubature::cuhre,suave=cubature::suave, vegas=cubature::vegas)
 
   if(isTRUE(est$nostats) && missing(cv))
       stop('This test requires that felm() is run without nostats=TRUE; or specify a cv argument')
@@ -215,8 +209,9 @@ nlexpect <- function(est, fun, coefs, ..., tol=getOption('lfe.etol'), lhs=NULL,
   # then integrate fun(x) > 0 with the multivariate normal distribution.
   # we use the package cubature for the integration.
   K <- length(cf)
-  
-  if(!vectorize) {
+  if(is.numeric(vectorize)) nvec = if(vectorize<=1) 1 else vectorize
+  if(isTRUE(vectorize)) nvec = 128 else nvec = 1
+  if(nvec <= 1) {
     integrand <- function(x, ...) {
       jac <- prod(1/cos(x))^2
       z <- tan(x)
@@ -256,8 +251,11 @@ nlexpect <- function(est, fun, coefs, ..., tol=getOption('lfe.etol'), lhs=NULL,
   }
 
   eps <- 10*.Machine$double.eps
-  ret <- adaptig(integrand,rep(-pi/2-eps,K),rep(pi/2-eps,K),...,tol=reltol,
-                 absError=abstol,fDim=fdim,maxEval=max.eval,vectorInterface=vectorize)
+  ret <- cubature::cubintegrate(integrand,rep(-pi/2-eps,K),rep(pi/2-eps,K),fDim=fdim,
+                      method=method,relTol=reltol,
+                      absTol=abstol,maxEval=max.eval,nVec=nvec,...)
+#  ret <- adaptig(integrand,rep(-pi/2-eps,K),rep(pi/2-eps,K),...,tol=reltol,
+#                 absError=abstol,fDim=fdim,maxEval=max.eval,vectorInterface=vectorize)
   names(ret$integral) <- names(sv)
   if(is.array(sv)) {
     dim(ret$integral) <- dim(sv)

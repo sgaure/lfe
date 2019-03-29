@@ -6,8 +6,8 @@
 \usage{
 nlexpect(est, fun, coefs, ..., tol = getOption("lfe.etol"), lhs = NULL,
   cv, istats = FALSE, flags = list(verbose = 0), max.eval = 200000L,
-  method = c("hcubature", "pcubature", "cuhre", "suave"),
-  vectorize = FALSE)
+  method = c("hcubature", "pcubature", "cuhre", "suave", "vegas",
+  "divonne"), vectorize = FALSE)
 }
 \arguments{
 \item{est}{object of class \code{"felm"} or \code{"lm"}, a result of a call to
@@ -36,11 +36,13 @@ package \pkg{R2Cuba} disappeared.}
 
 \item{max.eval}{integer. Maximum number of integral evaluations.}
 
-\item{method}{character. Either \code{"hcubature"} (default) or \code{"pcubature"} from package \pkg{cubature}. 
+\item{method}{character. A method specification usable by \code{cubature::cubintegrate}. 
 The documentation there says that \code{"pcubature"} is good for smooth integrands of low dimensions.}
 
-\item{vectorize}{logical. Use vectorized function evaluation from package \pkg{cubature}. This can speed
-up integration significantly.}
+\item{vectorize}{logical or numeric. Use vectorized function evaluation from package
+\pkg{cubature}. This can speed up integration significantly. If method is from the Cuba library
+(i.e. not pcubature or hcubature), \code{vectorize} should be specified as a numeric, a vectorization
+factor. The default is 128.}
 }
 \value{
 The function \code{nlexpect} computes and returns the expectation of
@@ -100,7 +102,7 @@ the absolute tolerance. Termination occurs when at least one of the
 tolerances is met.
 
 The \code{...} can be used for passing other arguments to the integration
-routine.
+routine \code{cubature::cubintegrate} and the function to be integrated.
 }
 \note{
 An alternative to this method is to use the \code{bootexpr} argument
