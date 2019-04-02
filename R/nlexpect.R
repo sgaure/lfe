@@ -119,7 +119,7 @@
 #' # Non-linear test:
 #'
 #' # A simple one, what's the probability that product x1*x2 is between 0 and |E(x1)|?
-#' nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorize=TRUE)
+#' nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorize=TRUE, method='divonne')
 #' # Then a more complicated one with the expected value of a polynomal in the coefficients
 #' f <- function(x) c(poly=x[['x1']]*(6*x[['x1']]-x[['x2']]^2))
 #' # This is the linearized test:
