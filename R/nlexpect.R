@@ -113,7 +113,7 @@
 #' 2*nlexpect(est, x1*sign(pt1) < 0)
 #'
 #' # Here's a multivalued, vectorized example
-#' nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorize=TRUE)
+#' nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorize=TRUE, method='divonne')
 #' \donttest{
 #' 
 #' # Non-linear test:
