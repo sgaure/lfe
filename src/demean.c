@@ -166,10 +166,14 @@ static int demean(int N, double *vec, double *weights,int *scale,
       }
     }
 
-    delta = 0.0;
-    for(int i = 0; i < N; i++) delta += (prev2[i]-vec[i])*(prev2[i]-vec[i]);
+    delta = neps = 0.0;
+    for(int i = 0; i < N; i++) {
+      delta += (prev2[i]-vec[i])*(prev2[i]-vec[i]);
+      neps += vec[i]*vec[i];
+    }
     memcpy(prev2,vec,N*sizeof(double));
     delta = sqrt(delta);
+    neps = sqrt(1.0+neps)*eps;
     c = delta/prevdelta;
     /* c is the convergence rate per iteration, at infinity they add up to 1/(1-c).
        This is true for e==2, but also in the ballpark for e>2 we guess.
@@ -216,7 +220,7 @@ static int demean(int N, double *vec, double *weights,int *scale,
 #endif
       strftime(timbuf, sizeof(timbuf), "%c", &tmarriv);
       sprintf(buf,"...centering vec %d i:%d c:%.1e d:%.1e(t:%.1e) ETA:%s\n",
-	      vecnum,iter,1.0-c,delta,targ,timbuf);
+	      vecnum,iter,1.0-c,delta,target,timbuf);
       pushmsg(buf,lock);
       lastiter = iter;
       prevdp = delta;
@@ -302,7 +306,7 @@ static void *demeanlist_thr(void *varg) {
     (arg->done)++;
     if(arg->quiet > 0 && now > arg->last + arg->quiet && arg->K > 1) {
       char buf[256];
-      sprintf(buf,"...finished centering vector %d of %d in %d seconds\n",
+      sprintf(buf,"...finished centering %d of %d vectors in %d seconds\n",
 	     arg->done,arg->K,(int)(now-arg->start));
       arg->last = now;
       UNLOCK(arg->lock); 
