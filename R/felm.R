@@ -700,7 +700,7 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
         z$STATS[[lhs]]$clustervcv <- cvcv
         if(singlelhs) z$clustervcv <- cvcv
         rm(meat,cvcv)
-        .Call(C_scalecols, xz, rscale)
+#        .Call(C_scalecols, xz, rscale)
       } else {
         stop('unknown multi way cluster algorithm:',method)
       }
