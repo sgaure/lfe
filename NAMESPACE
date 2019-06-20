@@ -2,6 +2,7 @@
 
 S3method(bread,felm)
 S3method(coef,felm)
+S3method(confint,felm)
 S3method(estfun,felm)
 S3method(model.frame,felm)
 S3method(model.matrix,felm)
