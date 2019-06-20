@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-08-19 r75170) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-05-02 r76454) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -59,9 +59,9 @@ Loading required package: Matrix
 > # find bias corrections
 > bccorr(est)
         corr           v1           v2          cov           d1           d2 
--0.030728526  0.950001416  1.370274827 -0.035059660  0.091768924  0.088489551 
+ 0.008569979  0.933723478  1.297425684  0.009432572  0.082334457  0.061969275 
          d12 
--0.006345166 
+-0.004721002 
 > 
 > 
 > 
@@ -103,41 +103,41 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.3048 -0.5541  0.0000  0.5560  2.6463 
+-2.5692 -0.5356  0.0000  0.5265  3.0282 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x   1.01027    0.02219   45.52   <2e-16 ***
-x2  0.23879    0.02319   10.30   <2e-16 ***
+x   0.98931    0.02125   46.55   <2e-16 ***
+x2  0.25710    0.02188   11.75   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 1.032 on 2010 degrees of freedom
-Multiple R-squared(full model): 0.8997   Adjusted R-squared: 0.8503 
-Multiple R-squared(proj model): 0.5262   Adjusted R-squared: 0.293 
-F-statistic(full model):18.23 on 989 and 2010 DF, p-value: < 2.2e-16 
-F-statistic(proj model):  1116 on 2 and 2010 DF, p-value: < 2.2e-16 
+Residual standard error: 0.981 on 2006 degrees of freedom
+Multiple R-squared(full model): 0.8987   Adjusted R-squared: 0.8485 
+Multiple R-squared(proj model): 0.5385   Adjusted R-squared: 0.3101 
+F-statistic(full model):17.92 on 993 and 2006 DF, p-value: < 2.2e-16 
+F-statistic(proj model):  1170 on 2 and 2006 DF, p-value: < 2.2e-16 
 
 
 > ## extract the group effects
 > alpha <- getfe(est)
 > head(alpha)
-       effect obs comp fe idx
-id.1 2.780164   4    1 id   1
-id.2 1.305613   2    1 id   2
-id.3 1.973887   3    1 id   3
-id.4 3.479075   4    1 id   4
-id.5 2.618930   2    1 id   5
-id.6 4.341930   3    1 id   6
+         effect obs comp fe idx
+id.1  0.7558736   6    1 id   1
+id.2 -0.7764543   1    1 id   2
+id.3  0.9832472   7    1 id   3
+id.4  2.7358165   4    1 id   4
+id.5  0.9211335   4    1 id   5
+id.6  3.8248845   2    1 id   6
 > ## bootstrap standard errors
 > head(btrap(alpha,est))
-       effect obs comp fe idx        se
-id.1 2.780164   4    1 id   1 0.4524265
-id.2 1.305613   2    1 id   2 0.7353362
-id.3 1.973887   3    1 id   3 0.5261809
-id.4 3.479075   4    1 id   4 0.4598114
-id.5 2.618930   2    1 id   5 0.6978330
-id.6 4.341930   3    1 id   6 0.5812627
+         effect obs comp fe idx        se
+id.1  0.7558736   6    1 id   1 0.4565457
+id.2 -0.7764543   1    1 id   2 0.8725093
+id.3  0.9832472   7    1 id   3 0.3565344
+id.4  2.7358165   4    1 id   4 0.4586499
+id.5  0.9211335   4    1 id   5 0.4740637
+id.6  3.8248845   2    1 id   6 0.6129610
 > 
 > ## bootstrap some differences
 > ef <- function(v,addnames) {
@@ -154,9 +154,9 @@ id.6 4.341930   3    1 id   6 0.5812627
 > 
 > head(btrap(alpha,est,ef=ef))
             effect  note        se
-id2-id1 -1.4745509 line1 0.7238747
-id3-id2  0.6682742 line2 0.8375219
-id3-id1 -0.8062767 line3 0.5451103
+id2-id1 -1.5323279 line1 0.8175766
+id3-id2  1.7597015 line2 0.8622066
+id3-id1  0.2273736 line3 0.4678413
 > options(oldopts)
 > 
 > 
@@ -183,14 +183,14 @@ id3-id1 -0.8062767 line3 0.5451103
 > # a matrix of dummies, which probably is rank deficient
 >   B <- makeDmatrix(list(f1,f2))
 >   dim(B)
-[1] 100000  56723
+[1] 100000  56753
 > # create a right hand side
 >   b <- as.matrix(B %*% rnorm(ncol(B)))
 > # solve B' B x = B' b
 >   sol <- cgsolve(crossprod(B), crossprod(B, b), eps=-1e-2)
 >   #verify solution
 >   sqrt(sum((B %*% sol - b)^2))
-[1] 0.0004464837
+[1] 0.0007802951
 > 
 > 
 > 
@@ -257,12 +257,17 @@ Coefficients:
 > fr <- data.frame(f1,f2,cf)
 > fr[cf==3,]
      f1  f2 cf
-55   22  17  3
-100 182  17  3
-179 182 253  3
-252 280 253  3
-254 182 118  3
-367  22 170  3
+7   277 111  3
+28  198 115  3
+52  141  65  3
+55  108 219  3
+204 108  65  3
+246 141 264  3
+278 108 115  3
+301 277 264  3
+325 141 185  3
+352 109  65  3
+396 277  63  3
 > 
 > 
 > 
@@ -336,8 +341,8 @@ attr(,"df1")
 [1] 1
 attr(,"quantiles")
           5%      95%
-x1 0.2652038 1.233032
-x2 0.7175800 1.720472
+x1 0.4076302 1.238373
+x2 0.7415684 1.635039
 attr(,"quantiles")attr(,"q")
 [1] 0.05 0.95
 attr(,"quantiles")attr(,"samples")
@@ -368,38 +373,38 @@ attr(,"quantiles")attr(,"samples")
 > # centre on all means
 > mtx0 <- demeanlist(mtx,fl)
 > head(data.frame(mtx0,fl))
-          X1          X2          X3    g1    g2    g3    g4
-1 -0.8668450  1.50762202 -1.08898096   red   red green   red
-2  0.0825542 -0.38986296  0.66802164 green  blue  blue   red
-3 -0.7869389  0.79517615  0.05985494  blue   red   red green
-4  1.8280256  0.97790753  1.82237342  blue green  blue  blue
-5  0.4935794 -0.05185021 -1.20979000  blue  blue green green
-6 -1.0602976 -0.28754378  1.13633703 green   red  blue   red
+           X1         X2         X3    g1    g2    g3    g4
+1 -0.64196076  1.4456118 -1.3025993   red   red green  blue
+2 -0.06326532 -0.2158289  0.6045219 green green green   red
+3 -0.40641864  0.7223192  0.2344265  blue  blue  blue green
+4  1.40753491  0.8459852  2.1454416  blue   red   red  blue
+5  0.09988421 -0.2905892 -1.0429431  blue  blue   red  blue
+6 -0.75980638 -0.1095204  1.1490805  blue green green green
 > # verify that the group means for the columns are zero
 > lapply(fl, function(f) apply(mtx0,2,tapply,f,mean))
 $g1
                  X1            X2            X3
-blue   1.832421e-12 -5.045401e-11  1.211166e-11
-green  1.862484e-12 -4.625585e-11  5.738506e-12
-red   -3.115460e-12  8.128143e-11 -1.470903e-11
+blue   4.029092e-12 -4.113887e-13 -3.656474e-10
+green  3.004903e-12  6.395388e-14  3.751943e-10
+red   -7.680146e-12  3.528239e-13 -5.681341e-11
 
 $g2
                  X1           X2            X3
-blue  -2.051028e-17 9.444344e-18 -3.574544e-17
-green -8.673617e-18 3.469447e-19  5.172753e-18
-red   -6.370692e-18 3.396477e-17  1.075067e-17
+blue  -4.816087e-18 6.232643e-18  2.922735e-17
+green -2.429030e-18 7.222454e-18 -2.173773e-17
+red    6.679396e-18 5.807147e-18  1.077004e-17
 
 $g3
                  X1            X2            X3
-blue  -1.744820e-11  2.885894e-11 -1.650047e-11
-green  1.293615e-11 -5.983123e-12  1.088000e-11
-red    3.143348e-12 -2.130632e-11  4.387097e-12
+blue  -2.727461e-11  7.652167e-13  3.084120e-10
+green -3.646924e-11 -4.633995e-14 -3.716751e-10
+red    6.153743e-11 -5.825537e-13  1.427556e-10
 
 $g4
                  X1            X2            X3
-blue   3.539578e-12 -1.447864e-12  2.761446e-12
-green  1.931682e-12 -3.174342e-12  2.132959e-12
-red   -6.139949e-12  5.127238e-12 -5.476854e-12
+blue   2.109630e-13 -4.238365e-13  1.771802e-10
+green -1.727496e-13  1.232453e-13  1.812780e-11
+red   -1.337501e-14  2.238489e-13 -1.548618e-10
 
 > options(oldopts)
 > 
@@ -434,11 +439,11 @@ function (v, addnames)
     }
     v
 }
-<bytecode: 0x55f222b93e30>
-<environment: 0x55f2216d9148>
+<bytecode: 0x5574497341e0>
+<environment: 0x55744a0c2f18>
 > is.estimable(ef,fl)
 Warning in is.estimable(ef, fl) :
-  non-estimable function, largest error 0.006 in coordinate 4013 ("id.4013")
+  non-estimable function, largest error 0.003 in coordinate 1050 ("id.1050")
 [1] FALSE
 > ## then the default
 > print(ef <- efactory(obj,'ref'))
@@ -457,8 +462,8 @@ function (v, addnames)
     }
     v
 }
-<bytecode: 0x55f2224504f8>
-<environment: 0x55f22266dc28>
+<bytecode: 0x557447d789a8>
+<environment: 0x557449232850>
 attr(,"verified")
 [1] TRUE
 > is.estimable(ef,fl)
@@ -510,20 +515,20 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.3746 -0.6739  0.0036  0.6755  3.1556 
+-3.4329 -0.6925 -0.0261  0.6946  2.7795 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x   1.05003    0.03185   32.97   <2e-16 ***
-x2  0.44664    0.03183   14.03   <2e-16 ***
+x   0.96790    0.03120   31.02   <2e-16 ***
+x2  0.48603    0.03123   15.56   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 1.029 on 966 degrees of freedom
-Multiple R-squared(full model): 0.8067   Adjusted R-squared: 0.8001 
-Multiple R-squared(proj model): 0.5728   Adjusted R-squared: 0.5583 
-F-statistic(full model):122.2 on 33 and 966 DF, p-value: < 2.2e-16 
-F-statistic(proj model): 647.7 on 2 and 966 DF, p-value: < 2.2e-16 
+Residual standard error: 1.009 on 966 degrees of freedom
+Multiple R-squared(full model): 0.7456   Adjusted R-squared: 0.7369 
+Multiple R-squared(proj model): 0.5549   Adjusted R-squared: 0.5397 
+F-statistic(full model):85.78 on 33 and 966 DF, p-value: < 2.2e-16 
+F-statistic(proj model): 602.1 on 2 and 966 DF, p-value: < 2.2e-16 
 
 
 > ## Not run: 
@@ -550,28 +555,28 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.4146 -0.6686 -0.0149  0.6829  3.0998 
+-3.4927 -0.6913 -0.0241  0.6976  2.7567 
 
 Coefficients:
          Estimate Robust s.e t value Pr(>|t|)    
-x         0.89520    0.18857   4.747 2.37e-06 ***
-x2        0.44111    0.03226  13.675  < 2e-16 ***
-`Q(fit)`  1.02579    0.12955   7.918 6.61e-15 ***
-`W(fit)`  0.93813    0.05105  18.375  < 2e-16 ***
+x         0.89435    0.16419   5.447  6.5e-08 ***
+x2        0.48430    0.03160  15.326  < 2e-16 ***
+`Q(fit)`  1.03746    0.10833   9.577  < 2e-16 ***
+`W(fit)`  0.97835    0.04679  20.908  < 2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 1.025 on 964 degrees of freedom
-Multiple R-squared(full model): 0.7459   Adjusted R-squared: 0.7367 
-Multiple R-squared(proj model): 0.5609   Adjusted R-squared: 0.5449 
-F-statistic(full model, *iid*):90.04 on 35 and 964 DF, p-value: < 2.2e-16 
-F-statistic(proj model): 381.2 on 4 and 964 DF, p-value: < 2.2e-16 
-F-statistic(endog. vars):547.8 on 2 and 964 DF, p-value: < 2.2e-16 
+Residual standard error: 1.017 on 964 degrees of freedom
+Multiple R-squared(full model): 0.6976   Adjusted R-squared: 0.6867 
+Multiple R-squared(proj model): 0.6043   Adjusted R-squared:  0.59 
+F-statistic(full model, *iid*): 71.4 on 35 and 964 DF, p-value: < 2.2e-16 
+F-statistic(proj model): 460.9 on 4 and 964 DF, p-value: < 2.2e-16 
+F-statistic(endog. vars):681.6 on 2 and 964 DF, p-value: < 2.2e-16 
 
 
 > condfstat(ivest)
              Q        W
-iid F 36.65646 58.45394
+iid F 40.07999 66.90775
 attr(,"df1")
 [1] 11
 > ## Not run: 
@@ -624,22 +629,22 @@ attr(,"df1")
 > est <- felm(y|z ~ x+x2|id+firm+foo, data=fr, keepX=TRUE)
 > # find bias corrections, there's little bias in this example
 > print(yv <- fevcov(est, lhs='y'))
-              id         firm          foo
-id    0.92025530 -0.011069589 -0.019794399
-firm -0.01106959  0.964082331 -0.009815829
-foo  -0.01979440 -0.009815829  1.035318331
+               id        firm          foo
+id    1.031163938 0.006729247 -0.006303323
+firm  0.006729247 1.046116404  0.010550689
+foo  -0.006303323 0.010550689  1.058185345
 attr(,"bias")
                 id          firm           foo
-id    3.185035e-02 -3.086703e-04 -9.744607e-05
-firm -3.086703e-04  2.159692e-02 -1.275526e-05
-foo  -9.744607e-05 -1.275526e-05  1.552533e-02
+id    0.0307580151 -0.0002094436 -0.0001106874
+firm -0.0002094436  0.0224115429 -0.0001244024
+foo  -0.0001106874 -0.0001244024  0.0132579840
 > ## Here's how to compute the unbiased correlation matrix:
 > cm <- cov2cor(yv)
 > structure(cm,bias=NULL)
-              id         firm          foo
-id    1.00000000 -0.011752230 -0.020279218
-firm -0.01175223  1.000000000 -0.009825009
-foo  -0.02027922 -0.009825009  1.000000000
+               id        firm          foo
+id    1.000000000 0.006479069 -0.006034272
+firm  0.006479069 1.000000000  0.010027899
+foo  -0.006034272 0.010027899  1.000000000
 > 
 > 
 > 
@@ -664,11 +669,11 @@ foo  -0.02027922 -0.009825009  1.000000000
 > #both bootstrap and computed se:
 > cbind(getfe(est,ef=efactory(est,'ref'),se=TRUE), fse=fixedse(est))
        effect obs comp fe idx         se        fse
-f.1 0.9354485 212    1  f   1 0.06752416 0.07239479
-f.2 1.9504291 208    1  f   2 0.06982697 0.07311460
-f.3 3.0979605 206    1  f   3 0.07683635 0.07351750
-f.4 3.9299698 180    1  f   4 0.08075644 0.07872855
-f.5 5.0332818 194    1  f   5 0.07520879 0.07567327
+f.1 0.9569311 185    1  f   1 0.07807322 0.07535548
+f.2 1.9949066 223    1  f   2 0.06163607 0.06860181
+f.3 3.0326896 185    1  f   3 0.07650146 0.07532290
+f.4 4.0294033 196    1  f   4 0.07595171 0.07317074
+f.5 4.9413841 211    1  f   5 0.07077708 0.07054858
 > #compare with lm:
 > summary(lm(y ~x+f-1))
 
@@ -677,22 +682,22 @@ lm(formula = y ~ x + f - 1)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.4260 -0.6562 -0.0168  0.7455  3.0437 
+-3.5561 -0.6437 -0.0299  0.7166  2.9214 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x   1.02191    0.03234   31.60   <2e-16 ***
-f1  0.93545    0.07239   12.92   <2e-16 ***
-f2  1.95043    0.07311   26.68   <2e-16 ***
-f3  3.09796    0.07352   42.14   <2e-16 ***
-f4  3.92997    0.07873   49.92   <2e-16 ***
-f5  5.03328    0.07567   66.51   <2e-16 ***
+x   1.01522    0.03135   32.38   <2e-16 ***
+f1  0.95693    0.07536   12.70   <2e-16 ***
+f2  1.99491    0.06860   29.08   <2e-16 ***
+f3  3.03269    0.07532   40.26   <2e-16 ***
+f4  4.02940    0.07317   55.07   <2e-16 ***
+f5  4.94138    0.07055   70.04   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 1.054 on 994 degrees of freedom
-Multiple R-squared:  0.9145,	Adjusted R-squared:  0.914 
-F-statistic:  1772 on 6 and 994 DF,  p-value: < 2.2e-16
+Residual standard error: 1.024 on 994 degrees of freedom
+Multiple R-squared:  0.9216,	Adjusted R-squared:  0.9211 
+F-statistic:  1947 on 6 and 994 DF,  p-value: < 2.2e-16
 
 > 
 > 
@@ -735,21 +740,21 @@ Call:
    felm(formula = y ~ x + x2 | id + firm) 
 
 Residuals:
-    Min      1Q  Median      3Q     Max 
--2.9142 -0.5841 -0.0093  0.5791  3.1733 
+     Min       1Q   Median       3Q      Max 
+-2.94796 -0.59482 -0.01038  0.59008  3.15936 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x   1.00768    0.01684   59.84   <2e-16 ***
-x2  0.25075    0.01716   14.61   <2e-16 ***
+x   1.01409    0.01687   60.11   <2e-16 ***
+x2  0.26766    0.01752   15.28   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.9838 on 3199 degrees of freedom
-Multiple R-squared(full model): 0.9275   Adjusted R-squared: 0.9094 
-Multiple R-squared(proj model): 0.5433   Adjusted R-squared: 0.429 
-F-statistic(full model):51.19 on 800 and 3199 DF, p-value: < 2.2e-16 
-F-statistic(proj model):  1902 on 2 and 3199 DF, p-value: < 2.2e-16 
+Residual standard error: 0.9892 on 3200 degrees of freedom
+Multiple R-squared(full model): 0.9149   Adjusted R-squared: 0.8937 
+Multiple R-squared(proj model): 0.5457   Adjusted R-squared: 0.4323 
+F-statistic(full model):43.06 on 799 and 3200 DF, p-value: < 2.2e-16 
+F-statistic(proj model):  1922 on 2 and 3200 DF, p-value: < 2.2e-16 
 
 
 > ## extract the group effects
@@ -759,11 +764,11 @@ F-statistic(proj model):  1902 on 2 and 3199 DF, p-value: < 2.2e-16
 > ## names so we must precompute some numerical indices in ef
 > idx <- match(c('id.5','id.6','firm.11','firm.12'),rownames(alpha))
 > alpha[idx,]
-             effect obs comp   fe idx        se
-id.5     1.13152965   9    1   id   5 0.3445724
-id.6     2.14526185   7    1   id   6 0.3818530
-firm.11 -0.07364465  19    1 firm  11 0.2777234
-firm.12  0.85743509  13    1 firm  12 0.3326070
+           effect obs comp   fe idx        se
+id.5    2.8685887   6    1   id   5 0.4564400
+id.6    2.1252963   7    1   id   6 0.4294043
+firm.11 0.2437394  18    1 firm  11 0.2809155
+firm.12 0.2925972  14    1 firm  12 0.3584084
 > ef <- function(v,addnames) {
 +   w <- c(v[idx[[2]]]-v[idx[[1]]],v[idx[[4]]]+v[idx[[1]]],
 +          v[idx[[4]]]-v[idx[[3]]])
@@ -771,10 +776,10 @@ firm.12  0.85743509  13    1 firm  12 0.3326070
 +   w
 + }
 > getfe(est,ef=ef,se=TRUE)
-           effect        se
-id6-id5 1.0137322 0.4800143
-f12+id5 1.9889647 0.3895297
-f12-f11 0.9310797 0.3126626
+             effect        se
+id6-id5 -0.74329244 0.5178066
+f12+id5  3.16118596 0.4907870
+f12-f11  0.04885782 0.3275784
 > options(oldopts)
 > ## Not run: 
 > ##D summary(lm(y ~ x+x2+id+firm-1))
@@ -820,11 +825,11 @@ f12-f11 0.9310797 0.3126626
 + }
 > is.estimable(ef, list(id=id,firm=firm), keepdiff=TRUE)
 Warning in is.estimable(ef, list(id = id, firm = firm), keepdiff = TRUE) :
-  non-estimable function, largest error 0.002 in coordinate 3 ("f2k-f1k")
+  non-estimable function, largest error 0.01 in coordinate 3 ("f2k-f1k")
 [1] FALSE
 attr(,"diff")
-      id6-id5       f2k+id5       f2k-f1k 
--1.096185e-10  1.217011e-10  1.771467e-03 
+     id6-id5      f2k+id5      f2k-f1k 
+2.797201e-11 1.212475e-11 1.436988e-02 
 > options(oldopts)
 > 
 > 
@@ -851,7 +856,7 @@ attr(,"diff")
 > ## the matrix of dummies
 >   D <- makeDmatrix(list(f1,f2,f3,f4))
 >   dim(D)
-[1] 100000  61490
+[1] 100000  61499
 > ## an x
 >   truex <- runif(ncol(D))
 > ## and the right hand side
@@ -860,11 +865,11 @@ attr(,"diff")
 >   sol <- kaczmarz(list(f1,f2,f3,f4),R)
 > ## verify that the solution solves the system Dx = R
 >   sqrt(sum((D %*% sol - R)^2))
-[1] 2.804356e-07
+[1] 3.600146e-07
 > ## but the solution is not equal to the true x, because the system is
 > ## underdetermined
 >   sqrt(sum((sol - truex)^2))
-[1] 52.72395
+[1] 52.45481
 > ## moreover, the solution from kaczmarz has smaller norm
 >   sqrt(sum(sol^2)) < sqrt(sum(truex^2))
 [1] TRUE
@@ -905,49 +910,49 @@ Call:
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.7847 -0.6308 -0.0100  0.6685  2.6419 
+-3.4685 -0.6450 -0.0293  0.6631  2.8981 
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x   0.99805    0.03080  32.407  < 2e-16 ***
-x2  0.25640    0.03079   8.326 2.79e-16 ***
+x   0.91611    0.03103  29.520  < 2e-16 ***
+x2  0.24114    0.03095   7.792 1.68e-14 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.9983 on 977 degrees of freedom
-Multiple R-squared(full model): 0.795   Adjusted R-squared: 0.7904 
-Multiple R-squared(proj model): 0.5346   Adjusted R-squared: 0.5241 
-F-statistic(full model):172.2 on 22 and 977 DF, p-value: < 2.2e-16 
-F-statistic(proj model): 561.1 on 2 and 977 DF, p-value: < 2.2e-16 
+Residual standard error: 1.008 on 977 degrees of freedom
+Multiple R-squared(full model): 0.7621   Adjusted R-squared: 0.7567 
+Multiple R-squared(proj model): 0.4893   Adjusted R-squared: 0.4778 
+F-statistic(full model):142.3 on 22 and 977 DF, p-value: < 2.2e-16 
+F-statistic(proj model): 468.1 on 2 and 977 DF, p-value: < 2.2e-16 
 *** Standard errors may be too high due to more than 2 groups and exactDOF=FALSE
 
 
 > 
 >   getfe(est,se=TRUE)
-            effect obs comp   fe idx         se
-id.1    -0.1040100  99    1   id   1 0.11606112
-id.2    -0.4122123  87    1   id   2 0.13612384
-id.3    -1.2554127 110    1   id   3 0.13905317
-id.4    -1.0318285 107    1   id   4 0.12376648
-id.5    -0.4003577  95    1   id   5 0.13273354
-id.6    -1.4981340 107    1   id   6 0.11165320
-id.7    -0.2455824  83    1   id   7 0.13198117
-id.8    -0.2301982  94    1   id   8 0.12842267
-id.9    -1.0591430 102    1   id   9 0.14391133
-id.10   -0.8622197 116    1   id  10 0.11375803
-firm.1   0.0000000 415    1 firm   1 0.00000000
-firm.2   2.0570303 362    1 firm   2 0.06966295
-firm.3  -0.7119418 223    1 firm   3 0.08542294
-year.1   0.0000000 162    2 year   1 0.00000000
-year.2   2.3920443 120    2 year   2 0.10840401
-year.3  -0.9493803  82    2 year   3 0.14561771
-year.4   1.9013068  92    2 year   4 0.12829532
-year.5  -0.9171550  88    2 year   5 0.12735290
-year.6   0.8661089  94    2 year   6 0.11749860
-year.7   0.6138608  82    2 year   7 0.12246494
-year.8   0.2385705  79    2 year   8 0.14429578
-year.9  -0.2289633  90    2 year   9 0.13494791
-year.10  1.0767303 111    2 year  10 0.12728775
+             effect obs comp   fe idx         se
+id.1    -0.25923494  88    1   id   1 0.13632132
+id.2     1.06062345  90    1   id   2 0.14546483
+id.3     0.06034638  90    1   id   3 0.13201034
+id.4     0.44271187 109    1   id   4 0.13256707
+id.5     0.51696693  98    1   id   5 0.13117504
+id.6     1.43021599 108    1   id   6 0.14482875
+id.7     0.23001980 100    1   id   7 0.13899292
+id.8     1.07498270 112    1   id   8 0.13169287
+id.9    -0.38411917  97    1   id   9 0.14582033
+id.10    1.62621598 108    1   id  10 0.12815771
+firm.1   0.00000000 415    1 firm   1 0.00000000
+firm.2  -0.15451360 359    1 firm   2 0.07219465
+firm.3   2.59917570 226    1 firm   3 0.08069538
+year.1   0.00000000 166    2 year   1 0.00000000
+year.2  -1.90629543 144    2 year   2 0.11552284
+year.3  -0.72206632  90    2 year   3 0.13077982
+year.4  -1.34267982  89    2 year   4 0.13507944
+year.5  -1.84370897  87    2 year   5 0.13840235
+year.6   0.39746394  81    2 year   6 0.13503649
+year.7  -0.62958841  82    2 year   7 0.15321151
+year.8  -0.33821454  72    2 year   8 0.15098197
+year.9  -1.77057443  90    2 year   9 0.12325007
+year.10  0.15294690  99    2 year  10 0.12299566
 > # compare with an ordinary lm
 >   summary(lm(y ~ x+x2+id+firm+year-1))
 
@@ -956,39 +961,39 @@ lm(formula = y ~ x + x2 + id + firm + year - 1)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.7847 -0.6308 -0.0100  0.6685  2.6419 
+-3.4685 -0.6450 -0.0293  0.6631  2.8981 
 
 Coefficients:
        Estimate Std. Error t value Pr(>|t|)    
-x       0.99805    0.03080  32.407  < 2e-16 ***
-x2      0.25640    0.03079   8.326 2.79e-16 ***
-id1    -0.10401    0.12840  -0.810  0.41812    
-id2    -0.41221    0.13607  -3.029  0.00251 ** 
-id3    -1.25541    0.12435 -10.096  < 2e-16 ***
-id4    -1.03183    0.12672  -8.143 1.17e-15 ***
-id5    -0.40036    0.13020  -3.075  0.00216 ** 
-id6    -1.49813    0.12743 -11.757  < 2e-16 ***
-id7    -0.24558    0.13633  -1.801  0.07195 .  
-id8    -0.23020    0.13105  -1.757  0.07931 .  
-id9    -1.05914    0.13210  -8.018 3.06e-15 ***
-id10   -0.86222    0.12265  -7.030 3.88e-12 ***
-firm2   2.05703    0.07231  28.448  < 2e-16 ***
-firm3  -0.71194    0.08338  -8.538  < 2e-16 ***
-year2   2.39204    0.12067  19.822  < 2e-16 ***
-year3  -0.94938    0.13579  -6.991 5.04e-12 ***
-year4   1.90131    0.13113  14.500  < 2e-16 ***
-year5  -0.91715    0.13313  -6.889 1.00e-11 ***
-year6   0.86611    0.13003   6.661 4.53e-11 ***
-year7   0.61386    0.13629   4.504 7.47e-06 ***
-year8   0.23857    0.13809   1.728  0.08438 .  
-year9  -0.22896    0.13165  -1.739  0.08231 .  
-year10  1.07673    0.12389   8.691  < 2e-16 ***
+x       0.91611    0.03103  29.520  < 2e-16 ***
+x2      0.24114    0.03095   7.792 1.68e-14 ***
+id1    -0.25923    0.13589  -1.908 0.056720 .  
+id2     1.06062    0.13104   8.094 1.71e-15 ***
+id3     0.06035    0.13485   0.448 0.654599    
+id4     0.44271    0.12720   3.480 0.000523 ***
+id5     0.51697    0.13192   3.919 9.52e-05 ***
+id6     1.43022    0.12637  11.318  < 2e-16 ***
+id7     0.23002    0.13224   1.739 0.082278 .  
+id8     1.07498    0.12360   8.697  < 2e-16 ***
+id9    -0.38412    0.13391  -2.869 0.004213 ** 
+id10    1.62622    0.12621  12.885  < 2e-16 ***
+firm2  -0.15451    0.07361  -2.099 0.036071 *  
+firm3   2.59918    0.08399  30.945  < 2e-16 ***
+year2  -1.90630    0.11514 -16.557  < 2e-16 ***
+year3  -0.72207    0.13338  -5.414 7.78e-08 ***
+year4  -1.34268    0.13293 -10.101  < 2e-16 ***
+year5  -1.84371    0.13476 -13.682  < 2e-16 ***
+year6   0.39746    0.13803   2.880 0.004070 ** 
+year7  -0.62959    0.13669  -4.606 4.65e-06 ***
+year8  -0.33821    0.14309  -2.364 0.018290 *  
+year9  -1.77057    0.13274 -13.339  < 2e-16 ***
+year10  0.15295    0.12844   1.191 0.234006    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.9983 on 977 degrees of freedom
-Multiple R-squared:  0.801,	Adjusted R-squared:  0.7964 
-F-statistic:   171 on 23 and 977 DF,  p-value: < 2.2e-16
+Residual standard error: 1.008 on 977 degrees of freedom
+Multiple R-squared:  0.7679,	Adjusted R-squared:  0.7625 
+F-statistic: 140.6 on 23 and 977 DF,  p-value: < 2.2e-16
 
 >   options(oldopts)
 > 
@@ -1011,30 +1016,30 @@ F-statistic:   171 on 23 and 977 DF,  p-value: < 2.2e-16
 >   fl <- lapply(1:3, function(i) factor(sample(3,10,replace=TRUE)))
 >   fl
 [[1]]
- [1] 1 2 2 3 1 3 3 2 2 1
+ [1] 1 3 1 2 1 3 3 2 2 3
 Levels: 1 2 3
 
 [[2]]
- [1] 1 1 3 2 3 2 3 3 2 3
+ [1] 3 1 1 1 2 2 2 2 3 1
 Levels: 1 2 3
 
 [[3]]
- [1] 3 1 2 1 1 2 1 2 3 2
+ [1] 3 1 1 1 1 2 1 1 2 2
 Levels: 1 2 3
 
 >   makeDmatrix(fl, weights=seq(0.1,1,0.1))
 10 x 9 sparse Matrix of class "dgCMatrix"
       f1.1 f1.2 f1.3 f2.1 f2.2 f2.3 f3.1 f3.2 f3.3
- [1,]  0.1  .    .    0.1  .    .    .    .    0.1
- [2,]  .    0.2  .    0.2  .    .    0.2  .    .  
- [3,]  .    0.3  .    .    .    0.3  .    0.3  .  
- [4,]  .    .    0.4  .    0.4  .    0.4  .    .  
- [5,]  0.5  .    .    .    .    0.5  0.5  .    .  
+ [1,]  0.1  .    .    .    .    0.1  .    .    0.1
+ [2,]  .    .    0.2  0.2  .    .    0.2  .    .  
+ [3,]  0.3  .    .    0.3  .    .    0.3  .    .  
+ [4,]  .    0.4  .    0.4  .    .    0.4  .    .  
+ [5,]  0.5  .    .    .    0.5  .    0.5  .    .  
  [6,]  .    .    0.6  .    0.6  .    .    0.6  .  
- [7,]  .    .    0.7  .    .    0.7  0.7  .    .  
- [8,]  .    0.8  .    .    .    0.8  .    0.8  .  
- [9,]  .    0.9  .    .    0.9  .    .    .    0.9
-[10,]  1.0  .    .    .    .    1.0  .    1.0  .  
+ [7,]  .    .    0.7  .    0.7  .    0.7  .    .  
+ [8,]  .    0.8  .    .    0.8  .    0.8  .    .  
+ [9,]  .    0.9  .    .    .    0.9  .    0.9  .  
+[10,]  .    .    1.0  1.0  .    .    .    1.0  .  
 > 
 > 
 > 
@@ -1060,24 +1065,24 @@ Levels: 1 2 3
 [1] 0.6807816+0i
 >   # mctrace is not really useful for small problems.
 >   mctrace(fun,ncol(A),tol=0.05)
-[1] 0.6539472
+[1] 0.6590496
 attr(,"sd")
-[1] 0.03255193
+[1] 0.03281585
 attr(,"iterations")
-[1] 10892
+[1] 11102
 >   # try a larger problem (3000x3000):
 >   f1 <- factor(sample(1500,3000,replace=TRUE))
 >   f2 <- factor(sample(1500,3000,replace=TRUE))
 >   fl <- list(f1,f2)
 >   mctrace(fl,tol=-5)
-[1] 512.6789
+[1] 503.8349
 attr(,"sd")
-[1] 4.309791
+[1] 4.485407
 attr(,"iterations")
-[1] 42
+[1] 28
 >   # exact:
 >   length(f1) - nlevels(f1) - nlevels(f2) + nlevels(compfactor(fl))
-[1] 509
+[1] 503
 > 
 > 
 > 
@@ -1151,18 +1156,18 @@ x2 -0.12240804  1.224730
 0.2779329 
 > 
 > # Here's a multivalued, vectorized example
-> nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorize=TRUE)
+> nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorize=TRUE, method='divonne')
          x1
-a 0.2514457
-b 0.0883645
+a 0.8587288
+b 0.5324731
 > ## No test: 
 > 
 > # Non-linear test:
 > 
 > # A simple one, what's the probability that product x1*x2 is between 0 and |E(x1)|?
-> nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorize=TRUE)
+> nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorize=TRUE, method='divonne')
        x1 
-0.3977857 
+0.3914772 
 > # Then a more complicated one with the expected value of a polynomal in the coefficients
 > f <- function(x) c(poly=x[['x1']]*(6*x[['x1']]-x[['x2']]^2))
 > # This is the linearized test:
@@ -1229,18 +1234,18 @@ b 0.0883645
 > alpha <- getfe(est)
 > # estimate the covariance matrix of the fixed effects
 > fevcov(est, alpha)
-              id        firm         foo
-id    0.95000141 -0.04658861  0.03880143
-firm -0.04658861  5.53028926 -0.01080117
-foo   0.03880143 -0.01080117  9.15858839
+              id       firm         foo
+id    0.93372348 0.01224916 -0.11164451
+firm  0.01224916 4.95014733  0.04605155
+foo  -0.11164451 0.04605155  6.48715940
 attr(,"bias")
                id         firm          foo
-id    0.091768924 -0.004231931 -0.003282517
-firm -0.004231931  0.088102140 -0.002394416
-foo  -0.003282517 -0.002394416  0.049109103
+id    0.082334457 -0.004334716 -0.002472491
+firm -0.004334716  0.060817078 -0.002995544
+foo  -0.002472491 -0.002995544  0.044123684
 > # estimate variances of the diagonal
 > varvars(est, alpha)
-[1] 0.01018015 0.05503299 0.09774750
+[1] 0.008598521 0.043820908 0.057656021
 > 
 > 
 > 
@@ -1289,7 +1294,7 @@ F-statistic:  5219 on 2 and 9997 DF,  p-value: < 2.2e-16
    0.9019639    0.5757362    3.0000000    0.9019611    0.1919121 9997.0000000 
 attr(,"formula")
 ~x - 1 | x2 + 0.2 | `(Intercept)`
-<environment: 0x55f2215c27d0>
+<environment: 0x5574473dadf0>
 > # The Delta-method coincides when the function is linear:
 > waldtest(est, function(x) x - c(0, 1, -0.2))
            p         chi2          df1          p.F            F          df2 
@@ -1297,7 +1302,7 @@ attr(,"formula")
 attr(,"formula")
 function (x) 
 x - c(0, 1, -0.2)
-<bytecode: 0x55f2221a8b78>
+<bytecode: 0x557448c67da0>
 > 
 > 
 > 
@@ -1307,7 +1312,7 @@ x - c(0, 1, -0.2)
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  28.359 0.921 15.406 0 0 
+Time elapsed:  16.177 3.862 15.587 0 0 
 > grDevices::dev.off()
 null device 
           1 
