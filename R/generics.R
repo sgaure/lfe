@@ -127,7 +127,7 @@ confint_one <- function (object, parm=NULL, level = 0.95, lhs=NULL, type=NULL, .
   
   cf <- coef(object, lhs = lhs)
   if(is.matrix(cf)) {
-    cf <- drop(cf)
+    cf <- setNames(drop(cf), rownames(cf)) ## drop removes name if 1,1 matrix!
   }
   pnames <- names(cf)
   if (is.null(parm)) 
