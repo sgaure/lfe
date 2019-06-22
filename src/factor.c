@@ -77,6 +77,7 @@ FACTOR** makefactors(SEXP flist, int allowmissing, double *weights) {
     f = factors[truefac++] = (FACTOR*) R_alloc(1,sizeof(FACTOR));
     f->group = INTEGER(VECTOR_ELT(flist,i));
     f->nlevels = LENGTH(getAttrib(VECTOR_ELT(flist,i),R_LevelsSymbol));
+    if(f->nlevels <= 0) error("factor %d in list has no levels\n",i+1);
     f->oneiter = oneiter;
     SEXP xattr = getAttrib(VECTOR_ELT(flist,i),install("x"));
     if(isNull(xattr)) {
@@ -122,10 +123,7 @@ FACTOR** makefactors(SEXP flist, int allowmissing, double *weights) {
       if(f->group[j] > 0) {
 	double w = (f->x == NULL) ? (weights==NULL ? 1.0 : weights[j]) :
 	  (weights==NULL ? f->x[j] : f->x[j]*weights[j]);
-	//	if(NULL == f->x)
 	  f->gpsize[f->group[j]-1] += w*w;
-	  //	else
-	  //	  f->gpsize[f->group[j]-1] += f->x[j]*f->x[j];
       } else {
 	if(!allowmissing) error("Factors can't have missing levels");
       }

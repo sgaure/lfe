@@ -527,7 +527,7 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
   // Find the length of the data
   // We are never called with length(flist) == 0
   //  if(NAMED(vlist) == 0) Rprintf("inplace %p\n",vlist); else Rprintf("out of place %p\n",vlist);
-  PROTECT(flist = AS_LIST(flist));  protectcount++;
+  if(!isNewList(flist)) error("flist is not a list");
   if(LENGTH(flist) == 0) {
     warning("demeanlist called with length(fl)==0, internal error?");
     N = 0;
@@ -561,7 +561,6 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
     weights = REAL(PROTECT(AS_NUMERIC(Rweights)));  protectcount++;
   }
 
-  //  numfac = LENGTH(flist);
   factors = makefactors(flist, 1, weights);
   numfac = 0;
   for(FACTOR **f = factors; *f != NULL; f++) numfac++;
@@ -641,6 +640,7 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
 	SET_VECTOR_ELT(reslist,i,elt);
 	target[cnt] = vectors[cnt];
       } else {
+	if(LENGTH(elt) != N) error("lengths of vectors (%d) != lengths of factors(%d)",LENGTH(elt),N);
 	PROTECT(resvec = allocVector(REALSXP,LENGTH(elt)));
 	SET_VECTOR_ELT(reslist,i,resvec);
 	UNPROTECT(1);
@@ -654,6 +654,7 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
       int rcols = cols;
       int j;
       SEXP mtx;
+      if(nrows(elt) != N) error("nrow(matrix) (%d) != lengths of factors(%d)",nrows(elt),N);
       /* Allocate a matrix */
       if(icptlen != 1) icpt = vicpt[i]-1;
       if(icpt >= 0 && icpt < cols) rcols--;

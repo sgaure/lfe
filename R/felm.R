@@ -692,9 +692,9 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
         sc <- apply(sapply(cluster, function(f) table(f)[f]),1,mean)
         xc <- demeanlist(xz,cluster, means=TRUE)
        .Call(C_scalecols, xc, sqrt(sc))
-        adj <- 1
-        adj <- adj*prod(sapply(cluster, function(f) nlevels(f)/(nlevels(f)-1)))
-        .Call(C_dsyrk, 1, meat, dfadj*adj, xc)
+        adj <- dfadj
+#        adj <- adj*prod(sapply(cluster, function(f) nlevels(f)/(nlevels(f)-1)))
+        .Call(C_dsyrk, 1, meat, adj, xc)
         cvcv <- .Call(C_sandwich,1.0,inv,meat)
         setdimnames(cvcv, vcvnames)
         z$STATS[[lhs]]$clustervcv <- cvcv
