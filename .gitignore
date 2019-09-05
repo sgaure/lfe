@@ -16,3 +16,7 @@
 .Rproj.user
 *.Rproj
 *.Rbuildignore
+# Build files
+config.*
+src/config.h
+src/Makevars
