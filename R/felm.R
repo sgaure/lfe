@@ -367,6 +367,20 @@ mmdemean <- function(mm) {
 }
 
 
+## Simple function borrowing from lme4::isNested() to check for nested factors.
+## Will be used to check if a DoF correction needs to be made in the case where
+## clusters are nested in FEs. See https://www.kellogg.northwestern.edu/faculty/matsa/htm/fe.htm
+is_nested <- function(f1, f2) {
+  f1 <- as.factor(f1)
+  f2 <- as.factor(f2)
+  stopifnot(length(f1) == length(f2))
+  k <- length(levels(f1))
+  sm <- as(new("ngTMatrix", i = as.integer(f2) - 1L, j = as.integer(f1) - 
+                 1L, Dim = c(length(levels(f2)), k)), "CsparseMatrix")
+  all(sm@p[2:(k + 1L)] - sm@p[1:k] <= 1L)
+}
+
+
 newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=FALSE,
                    kappa=NULL, onlyse=FALSE, psdef=FALSE) {
 
@@ -651,6 +665,23 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
       method <- attr(cluster,'method')
       if(is.null(method)) method <- 'cgm'
       dfadj <- (z$N-1)/z$df
+      ## GRM: An extra adjustment to the DoF is needed in cases where clusters
+      ## are nested within any of the fixed effects. See Cameron and Miller (2015,
+      ## pp. 14-15):
+      ## http://cameron.econ.ucdavis.edu/research/Cameron_Miller_JHR_2015_February.pdf#page=14
+      fe_cl_grid <- expand.grid(fe_k=seq_along(1:length(z$fe)), cl_g=seq_along(1:length(cluster)))
+      any_nested <-
+        sapply(1:nrow(fe_cl_grid), function(n) {
+          fe_k <- fe_cl_grid$fe_k[n]
+          cl_g <- fe_cl_grid$cl_g[n]
+          is_nested(z$fe[[fe_k]], cluster[[cl_g]])
+        })
+      if (TRUE %in% any_nested) {
+        ## Will use the simple correction proposed by Gormley and Matsa. See:
+        ## https://www.kellogg.northwestern.edu/faculty/matsa/htm/fe.htm
+        dfadj <- dfadj * z$df/(z$df+totvar-1) 
+      }
+      ## End of nested cluster adjustment
       d <- length(cluster)
       if(method == 'cgm') {
         meat <- matrix(0,Ncoef,Ncoef)
