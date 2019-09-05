@@ -12,3 +12,7 @@
 *.cache
 # emacs backup
 *~
+# Rproj files
+.Rproj.user
+*.Rproj
+*.Rbuildignore
