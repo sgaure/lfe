@@ -669,22 +669,26 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
       ## GRM: Extra adjustments to the DoF are needed in cases where clusters
       ## are nested within any of the FEs. See Cameron and Miller (2015, pp. 14-15):
       ## http://cameron.econ.ucdavis.edu/research/Cameron_Miller_JHR_2015_February.pdf#page=14
-      fe_cl_grid <- expand.grid(fe_k=seq_along(1:length(z$fe)), cl_g=seq_along(1:length(cluster)))
-      any_nested <-
-        sapply(1:nrow(fe_cl_grid), function(n) {
-          fe_k <- fe_cl_grid$fe_k[n]
-          cl_g <- fe_cl_grid$cl_g[n]
-          is_nested(z$fe[[fe_k]], cluster[[cl_g]])
-        })
-      if(TRUE %in% any_nested) {
-        ## Will use the simple correction proposed by Gormley and Matsa. See:
-        ## https://www.kellogg.northwestern.edu/faculty/matsa/htm/fe.htm
-        dfadj <- dfadj * z$df/(z$df + totvar - 1) 
-        ## In addition to the above, matching Stata's output in the case of 
-        ## nested clusters also requires that the regressor p-values are
-        ## calculated according to the Wald Test "df2" degrees of freedom; i.e.
-        ## reduce the degrees of freedom to the number of clusters-1
-        z$df <- min(nlevels(z$clustervar[[1]])-1, z$df)
+      fe_cl_grid <- expand.grid(fe_k=seq_along(z$fe), cl_g=seq_along(cluster))
+      any_nested <- 
+        vapply(
+          seq_len(nrow(fe_cl_grid)), 
+          function(n) {
+            fe_k <- fe_cl_grid$fe_k[n]
+            cl_g <- fe_cl_grid$cl_g[n]
+            is_nested(z$fe[[fe_k]], cluster[[cl_g]])
+            },
+          FUN.VALUE = logical(1)
+        )
+      if (any(any_nested)) {
+        # Will use the simple correction proposed by Gormley and Matsa (RFS, 2014). 
+        # See: https://www.kellogg.northwestern.edu/faculty/matsa/htm/fe.htm
+        dfadj <- dfadj * z$df / (z$df + totvar - 1) 
+        # In addition to the above, matching Stata's output in the case of 
+        # nested clusters also requires that the regressor p-values are
+        # calculated according to the Wald Test "df2" degrees of freedom; i.e.
+        # reduce the degrees of freedom to the number of clusters-1
+        z$df <- min(nlevels(z$clustervar[[1]]) - 1L, z$df)
         z$df.residual <- z$df
       }
       ## End of nested cluster adjustment
