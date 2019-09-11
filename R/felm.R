@@ -680,21 +680,35 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
             },
           FUN.VALUE = logical(1)
         )
+      ## Find the minimum cluster dimension. Will be used below in the case of
+      ## multiway clustering (but only if the FEs are nested within a cluster, 
+      ## or `cmethod=reghdfe` is specified as an argument).
+      min_clust <- 
+        min(vapply(
+          seq_along(cluster),
+          function(i) nlevels(cluster[[i]]), 
+          FUN.VALUE = integer(1)
+        ))
       if (any(any_nested)) {
         # Will use the simple correction proposed by Gormley and Matsa (RFS, 2014). 
         # See: https://www.kellogg.northwestern.edu/faculty/matsa/htm/fe.htm
         dfadj <- dfadj * z$df / (z$df + totvar - 1) 
-        # In addition to the above, matching Stata's output in the case of 
-        # nested clusters also requires that the regressor p-values are
-        # calculated according to the Wald Test "df2" degrees of freedom; i.e.
-        # reduce the degrees of freedom to the number of clusters-1
-        z$df <- min(nlevels(z$clustervar[[1]]) - 1L, z$df)
+        # In addition to the above, the nested clusters case requires that 
+        # regressor p-values are calculated using no. of clusters - 1 degrees
+        # of freedom; similar to "df2" in `waldtest()`. This is straight forward
+        # when there is only a single cluster variable. In the case of multiway 
+        # clustering, however, we'll conservatively take "no. of clusters" to 
+        # mean the cluster variable with the smallest dimension. If nothing else, 
+        # this should ensure consistency with comparable implementations in 
+        # Stata (via reghdfe) and Julia (via FixedEffectModels.jl). See also:
+        # https://github.com/matthieugomez/FixedEffectModels.jl/pull/50
+        z$df <- min(min_clust-1, z$df)
         z$df.residual <- z$df
       }
       ## End of nested cluster adjustment
       
       d <- length(cluster)
-      if(method == 'cgm') {
+      if(method %in% c('cgm', 'reghdfe')) {
         meat <- matrix(0,Ncoef,Ncoef)
         for(i in 1:(2^d-1)) {
           # Find out which ones to interact
@@ -703,7 +717,20 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
           sgn <- 2*(sum(iac) %% 2) - 1
           # interact the factors
           ia <- factor(do.call(paste,c(cluster[iac],sep='\004')))
-          adj <- sgn*dfadj*nlevels(ia)/(nlevels(ia)-1)
+          # CGM2011 (sec 2.3) describe two possible small-sample adjustments 
+          # using the number of clusters in each cluster category. Note that
+          # these two approaches should only diverge in the case of multiway 
+          # clustering.
+          if(method == 'cgm') {
+            ## Option 1 (used by GCM2011 in their paper and also our default here)
+            adj <- sgn*dfadj*nlevels(ia)/(nlevels(ia)-1)
+          } else { ## i.e. if method == 'reghdfe'
+            ## Option 2 (used by Stata's reghdfe among others, so we'll name it that for convenience)
+            adj <- sgn*dfadj*min_clust/(min_clust-1)
+            ## Will also need to adjust DoF used to calculate p-vals and CIs
+            z$df <- min(min_clust-1, z$df)
+            z$df.residual <- z$df
+          }
           .Call(C_dsyrk,1.0,meat,adj,Crowsum(xz,ia))
         }
 
@@ -1121,7 +1148,7 @@ felm <- function(formula, data, exactDOF=FALSE, subset, na.action,
   env <- environment()
   lapply(intersect(knownargs,ka), function(arg) assign(arg,args[[arg]], pos=env))
 
-  if(!(cmethod %in% c('cgm','gaure'))) stop('Unknown cmethod: ',cmethod)
+  if(!(cmethod %in% c('cgm','reghdfe','gaure'))) stop('Unknown cmethod: ',cmethod)
 
   # also implement a check for unknown arguments
   unk <- setdiff(names(args), knownargs)
