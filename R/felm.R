@@ -375,7 +375,7 @@ is_nested <- function(f1, f2) {
   f2 <- as.factor(f2)
   stopifnot(length(f1) == length(f2))
   k <- length(levels(f1))
-  sm <- as(new("ngTMatrix", i = as.integer(f2) - 1L, j = as.integer(f1) - 
+  sm <- as(methods::new("ngTMatrix", i = as.integer(f2) - 1L, j = as.integer(f1) - 
                  1L, Dim = c(length(levels(f2)), k)), "CsparseMatrix")
   all(sm@p[2:(k + 1L)] - sm@p[1:k] <= 1L)
 }
@@ -681,8 +681,8 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
           FUN.VALUE = logical(1)
         )
       ## Find the minimum cluster dimension. Will be used below in the case of
-      ## multiway clustering (but only if the FEs are nested within a cluster, 
-      ## or `cmethod=reghdfe` is specified as an argument).
+      ## multiway clustering, but only if the FEs are nested within a cluster, 
+      ## or 'cgm2' (or 'reghdfe') is specified for the `cmethod` argument.
       min_clust <- 
         min(vapply(
           seq_along(cluster),
@@ -708,7 +708,7 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
       ## End of nested cluster adjustment
       
       d <- length(cluster)
-      if(method %in% c('cgm', 'reghdfe')) {
+      if(method %in% c('cgm', 'cgm2', 'reghdfe')) {
         meat <- matrix(0,Ncoef,Ncoef)
         for(i in 1:(2^d-1)) {
           # Find out which ones to interact
@@ -724,8 +724,8 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
           if(method == 'cgm') {
             ## Option 1 (used by GCM2011 in their paper and also our default here)
             adj <- sgn*dfadj*nlevels(ia)/(nlevels(ia)-1)
-          } else { ## i.e. if method == 'reghdfe'
-            ## Option 2 (used by Stata's reghdfe among others, so we'll name it that for convenience)
+          } else { ## i.e. if method %in% c('cgm2','reghdfe')
+            ## Option 2 (used by Stata's reghdfe among others, so we'll give it that alias for convenience)
             adj <- sgn*dfadj*min_clust/(min_clust-1)
             ## Will also need to adjust DoF used to calculate p-vals and CIs
             z$df <- min(min_clust-1, z$df)
@@ -861,7 +861,11 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' will be removed at a later time.
 #' 
 #' The standard errors are adjusted for the reduced degrees of freedom coming
-#' from the dummies which are implicitly present.  In the case of two factors,
+#' from the dummies which are implicitly present.  (An exception occurs in the
+#' case of clustered standard errors and, specifically, where clusters are 
+#' nested within fixed effects; see 
+#' \href{https://github.com/sgaure/lfe/issues/1#issuecomment-528643802}{here}.) 
+#' In the case of two factors,
 #' the exact number of implicit dummies is easy to compute.  If there are more
 #' factors, the number of dummies is estimated by assuming there's one
 #' reference-level for each factor, this may be a slight over-estimation,
@@ -877,6 +881,35 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' The \code{contrasts} argument is similar to the one in \code{lm()}, it is
 #' used for factors in the first part of the formula. The factors in the second
 #' part are analyzed as part of a possible subsequent \code{getfe()} call.
+#' 
+#' The \code{cmethod} argument may affect the clustered covariance matrix (and 
+#' thus regressor standard errors), either directly or via adjustments to a 
+#' degrees of freedom scaling factor. In particular, Cameron, Gelbach and Miller
+#' (CGM2011, sec. 2.3) describe two possible small cluster corrections that are 
+#' relevant in the case of multiway clustering. \itemize{
+#' \item The first approach adjusts each component of the cluster-robust 
+#' variance estimator (CRVE) by its own \eqn{c_i} adjustment factor. For 
+#' example, the first component (with \eqn{G} clusters) is adjusted by 
+#' \eqn{c_1=\frac{G}{G-1}\frac{N-1}{N-K}}{c_1 = G/(G-1)*(N-1)/(N-K)}, 
+#' the second component (with \eqn{H} clusters) is adjusted
+#' by \eqn{c_2=\frac{H}{H-1}\frac{N-1}{N-K}}{c_2 = H/(H-1)*(N-1)/(N-K)}, etc.
+#' \item The second approach applies the same adjustment to all CRVE components:
+#' \eqn{c=\frac{J}{J-1}\frac{N-1}{N-K}}{c = J/(J-1)*(N-1)/(N-K)}, where
+#' \eqn{J=\min(G,H)}{J=min(G,H)} in the case of two-way clustering, for example. 
+#' }
+#' Any differences resulting from these two approaches are likely to be minor, 
+#' and they will obviously yield exactly the same results when there is only one 
+#' cluster dimension. Still, CGM2011 adopt the former approach in their own 
+#' paper and simulations. This is also the default method that \code{felm} uses 
+#' (i.e. \code{cmethod = 'cgm'}). However, the latter approach has since been 
+#' adopted by several other packages that allow for robust inference with 
+#' multiway clustering. This includes the popular Stata package
+#' \href{http://scorreia.com/software/reghdfe/}{reghdfe}, as well as the 
+#' \href{https://github.com/matthieugomez/FixedEffectModels.jl}{FixedEffectModels.jl} 
+#' implementation in Julia. To match results from these packages exactly, use
+#' \code{cmethod = 'cgm2'} (or its alias, \code{cmethod = 'reghdfe'}). It is
+#' possible that some residual differences may still remain; see discussion 
+#' \href{https://github.com/sgaure/lfe/issues/1#issuecomment-530561314}{here}.
 #' 
 #' The old syntax with a single part formula with the \code{G()} syntax for the
 #' factors to transform away is still supported, as well as the
@@ -916,6 +949,12 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' squares is used with weights \code{weights} (that is, minimizing
 #' \code{sum(w*e^2)}); otherwise ordinary least squares is used.
 #' @param ... other arguments.  \itemize{
+#' 
+#' \item \code{cmethod} character. Which clustering method to use. Known 
+#' arguments are \code{'cgm'} (the default), \code{'cgm2'} (or \code{'reghdfe'},
+#' its alias), or \code{'gaure'}. These alternate methods will generally 
+#' yield equivalent results, except in the case of multiway clustering with few
+#' clusters along at least one dimension. 
 #' 
 #' \item \code{keepX} logical. To include a copy of the expanded data matrix in
 #' the return value, as needed by \code{\link{bccorr}} and \code{\link{fevcov}}
@@ -1060,48 +1099,72 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' @examples
 #' 
 #' oldopts <- options(lfe.threads=1)
-#' ## create covariates
+#' 
+#' ## Simulate data
+#' 
+#' # Covariates
 #' x <- rnorm(1000)
 #' x2 <- rnorm(length(x))
-#' 
-#' ## individual and firm
+#' # Individuals and firms
 #' id <- factor(sample(20,length(x),replace=TRUE))
 #' firm <- factor(sample(13,length(x),replace=TRUE))
-#' 
-#' ## effects for them
+#' # Effects for them
 #' id.eff <- rnorm(nlevels(id))
 #' firm.eff <- rnorm(nlevels(firm))
-#' 
-#' ## left hand side
+#' # Left hand side
 #' u <- rnorm(length(x))
 #' y <- x + 0.5*x2 + id.eff[id] + firm.eff[firm] + u
 #' 
-#' ## estimate and print result
-#' est <- felm(y ~ x+x2| id + firm)
+#' ## Estimate the model and print the results
+#' est <- felm(y ~ x + x2 | id + firm)
 #' summary(est)
-#' \dontrun{
-#' ## compare with lm
-#' summary(lm(y ~ x + x2 + id + firm-1))
-#' }
 #' 
-#' # make an example with 'reverse causation'
-#' # Q and W are instrumented by x3 and the factor x4. Report robust s.e.
+#' \dontrun{
+#' # Compare with lm
+#' summary(lm(y ~ x + x2 + id + firm-1))}
+#' 
+#' ## Example with 'reverse causation' (IV regression)
+#' 
+#' # Q and W are instrumented by x3 and the factor x4.
 #' x3 <- rnorm(length(x))
 #' x4 <- sample(12,length(x),replace=TRUE)
-#' 
 #' Q <- 0.3*x3 + x + 0.2*x2 + id.eff[id] + 0.3*log(x4) - 0.3*y + rnorm(length(x),sd=0.3)
 #' W <- 0.7*x3 - 2*x + 0.1*x2 - 0.7*id.eff[id] + 0.8*cos(x4) - 0.2*y+ rnorm(length(x),sd=0.6)
-#' 
-#' # add them to the outcome
+#' # Add them to the outcome variable
 #' y <- y + Q + W
 #' 
-#' ivest <- felm(y ~ x + x2 | id+firm | (Q|W ~x3+factor(x4)))
-#' summary(ivest,robust=TRUE)
+#' ## Estimate the IV model and report robust SEs
+#' ivest <- felm(y ~ x + x2 | id + firm | (Q|W ~ x3 + factor(x4)))
+#' summary(ivest, robust=TRUE)
 #' condfstat(ivest)
+#' 
 #' \dontrun{
-#' # compare with the not instrumented fit:
-#' summary(felm(y ~ x + x2 +Q + W |id+firm))
+#' # Compare with the not instrumented fit:
+#' summary(felm(y ~ x + x2 + Q + W | id + firm))}
+#' 
+#' ## Example with multiway clustering
+#' 
+#' # Create a large cluster group (500 clusters) and a small one (20 clusters)
+#' cl1 <- factor(sample(rep(1:500, length.out=length(x))))
+#' cl2 <- factor(sample(rep(1:20, length.out=length(x))))
+#' # Function for adding clustered noise to our outcome variable 
+#' cl_noise <- function(cl) {
+#'  obs_per_cluster <- length(x)/nlevels(cl)
+#'  unlist(replicate(nlevels(cl), rnorm(obs_per_cluster, mean=rnorm(1), sd=runif(1)), simplify=FALSE))
 #' }
+#' # New outcome variable
+#' y_cl <- x + 0.5*x2 + id.eff[id] + firm.eff[firm] + cl_noise(cl1) + cl_noise(cl2)
+#' 
+#' ## Estimate and print the model with cluster-robust SEs (default)
+#' est_cl <- felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2)
+#' summary(est_cl)
+#' 
+#' \dontrun{
+#' # Print ordinary standard errors:
+#' summary(est_cl, robust = FALSE)
+#' # Match cluster-robust SEs from Stata's reghdfe package:
+#' summary(felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2, cmethod="reghdfe"))}
+#' 
 #' options(oldopts)
 #' 
 #' @export felm
@@ -1148,7 +1211,7 @@ felm <- function(formula, data, exactDOF=FALSE, subset, na.action,
   env <- environment()
   lapply(intersect(knownargs,ka), function(arg) assign(arg,args[[arg]], pos=env))
 
-  if(!(cmethod %in% c('cgm','reghdfe','gaure'))) stop('Unknown cmethod: ',cmethod)
+  if(!(cmethod %in% c('cgm','cgm2','reghdfe','gaure'))) stop('Unknown cmethod: ',cmethod)
 
   # also implement a check for unknown arguments
   unk <- setdiff(names(args), knownargs)
