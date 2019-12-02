@@ -141,5 +141,4 @@ SEXP MY_named(SEXP x, SEXP n);
 SEXP Crowsum(SEXP Rmat, SEXP Rfactor, SEXP Rmean);
 
 // SEXP MY_ppf(SEXP flist, SEXP Rtype);
-SEXP df_string;
-int LFE_GLOBAL_THREADS;
+

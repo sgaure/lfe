@@ -37,7 +37,7 @@ typedef struct {
 #endif
 } PTARG;
 
-
+extern SEXP df_string;
 /*
   Centre on all factors in succession.  Vector v. In place.
  */

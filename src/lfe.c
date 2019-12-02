@@ -2,6 +2,9 @@
  $Id: lfe.c 2020 2016-04-27 05:13:51Z sgaure $
 */
 #include "lfe.h"
+SEXP df_string;
+int LFE_GLOBAL_THREADS = 1;
+
 SEXP MY_threads(SEXP rt) {
   if(LENGTH(rt) < 1) return R_NilValue;
   LFE_GLOBAL_THREADS = INTEGER(rt)[0];
