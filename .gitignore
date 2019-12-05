@@ -11,4 +11,8 @@
 *.Rcheck
 *.cache
 # emacs backup
-*~
+config.log
+config.status
+src/config.h
+src/texput.log
+src/Makevars
