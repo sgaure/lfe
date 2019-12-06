@@ -573,10 +573,13 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
 
   if(IS_NUMERIC(vlist) || IS_LOGICAL(vlist) || IS_INTEGER(vlist)) {
     // Just put it in a list to avoid tests further down.
+    Rprintf("vector ref: %d\n",REFCNT(vlist));
     SEXP tmp = PROTECT(allocVector(VECSXP,1));
     protectcount++;
     SET_VECTOR_ELT(tmp,0,vlist);
+#    DECREMENT_LINKS(vlist);
     vlist = tmp;
+    Rprintf("wrapper ref: %d, vector ref: %d\n",REFCNT(vlist),REFCNT(VECTOR_ELT(vlist,0)));
     wraplist = 1;
   }
   PROTECT(vlist = AS_LIST(vlist)); protectcount++;
@@ -635,6 +638,7 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
       /* It's a vector */
       SEXP resvec;
       vectors[cnt] = REAL(elt);
+      Rprintf("refs: %d %d\n",REFCNT(elt), REFCNT(vlist));
       if( NO_REFERENCES(elt) && NO_REFERENCES(vlist) && !domeans) {
 	// in place centering
 	SET_VECTOR_ELT(reslist,i,elt);
