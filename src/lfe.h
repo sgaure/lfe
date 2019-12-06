@@ -137,7 +137,8 @@ SEXP MY_setdimnames(SEXP obj, SEXP nm);
 SEXP MY_dsyrk(SEXP inbeta, SEXP inC, SEXP inalpha, SEXP inA);
 SEXP MY_sandwich(SEXP inalpha, SEXP inbread, SEXP inmeat);
 SEXP MY_address(SEXP x);
-SEXP MY_named(SEXP x, SEXP n);
+//SEXP MY_named(SEXP x, SEXP n);
+SEXP inplace(SEXP x);
 SEXP Crowsum(SEXP Rmat, SEXP Rfactor, SEXP Rmean);
 
 // SEXP MY_ppf(SEXP flist, SEXP Rtype);

@@ -487,6 +487,19 @@ static int demeanlist(double **vp, int N, int K, double **res, double *weights,i
 }
 
 
+SEXP inplace(SEXP x) {
+  setAttrib(x,install("LFE_inplace"),R_QuoteSymbol);  // Just set it to something non-NULL
+  return x;
+}
+SEXP outplace(SEXP x) {
+  setAttrib(x,install("LFE_inplace"),R_NilValue);  // Just set it to something non-NULL
+  return x;
+}
+
+int isinplace(SEXP x) {
+  return getAttrib(x,install("LFE_inplace")) != R_NilValue;
+}
+
 /*
  Now, for the R-interface.  We only export a demeanlist function
  It should be called from R with 
@@ -523,10 +536,10 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
   int protectcount=0;
   int scale[2];
   int wraplist = 0;
-
+  int inplacelist = 0;
+  
   // Find the length of the data
   // We are never called with length(flist) == 0
-  //  if(NAMED(vlist) == 0) Rprintf("inplace %p\n",vlist); else Rprintf("out of place %p\n",vlist);
   if(!isNewList(flist)) error("flist is not a list");
   if(LENGTH(flist) == 0) {
     warning("demeanlist called with length(fl)==0, internal error?");
@@ -535,6 +548,10 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
     N = LENGTH(VECTOR_ELT(flist,0));
   }
 
+  if(isinplace(vlist) || (!isNewList(vlist) && NO_REFERENCES(vlist))) {
+    inplacelist = 1;
+    outplace(vlist);
+  }
   if(LENGTH(Rscale) == 1) {
     scale[0] = LOGICAL(AS_LOGICAL(Rscale))[0];
     scale[1] = scale[0];
@@ -571,15 +588,12 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
     icpt = -1;
   }
 
-  if(IS_NUMERIC(vlist) || IS_LOGICAL(vlist) || IS_INTEGER(vlist)) {
+  if(!isNewList(vlist)) {
     // Just put it in a list to avoid tests further down.
-    Rprintf("vector ref: %d\n",REFCNT(vlist));
     SEXP tmp = PROTECT(allocVector(VECSXP,1));
     protectcount++;
     SET_VECTOR_ELT(tmp,0,vlist);
-#    DECREMENT_LINKS(vlist);
     vlist = tmp;
-    Rprintf("wrapper ref: %d, vector ref: %d\n",REFCNT(vlist),REFCNT(VECTOR_ELT(vlist,0)));
     wraplist = 1;
   }
   PROTECT(vlist = AS_LIST(vlist)); protectcount++;
@@ -628,18 +642,23 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
 
   for(i = 0; i < listlen; i++) {
     SEXP elt = VECTOR_ELT(vlist,i);
+    int inplaceelt = 0;
+    if(isinplace(elt)) {
+      outplace(elt);
+      inplaceelt = 1;
+    }
     if(isNull(elt)) continue;
 
     if(!isReal(elt)) {
       PROTECT(elt = coerceVector(elt, REALSXP)); protectcount++;
+      inplaceelt = 1;
     }
 
     if(!isMatrix(elt)) {
       /* It's a vector */
       SEXP resvec;
       vectors[cnt] = REAL(elt);
-      Rprintf("refs: %d %d\n",REFCNT(elt), REFCNT(vlist));
-      if( NO_REFERENCES(elt) && NO_REFERENCES(vlist) && !domeans) {
+      if(!domeans && (inplacelist || inplaceelt) ) {
 	// in place centering
 	SET_VECTOR_ELT(reslist,i,elt);
 	target[cnt] = vectors[cnt];
@@ -663,7 +682,7 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
       if(icptlen != 1) icpt = vicpt[i]-1;
       if(icpt >= 0 && icpt < cols) rcols--;
       
-      if(NO_REFERENCES(vlist) && NO_REFERENCES(elt) && rcols == cols && !domeans) {
+      if(!domeans && (inplacelist || inplaceelt) ) {
 	// in place centering
 	SET_VECTOR_ELT(reslist,i,elt);
 	for(int j=0; j < cols; j++) {
@@ -712,7 +731,9 @@ SEXP MY_demeanlist(SEXP vlist, SEXP flist, SEXP Ricpt, SEXP Reps,
     }
   }
   SEXP ret = reslist;
-  if(wraplist) ret = VECTOR_ELT(reslist,0);
+  if(wraplist) {
+    ret = VECTOR_ELT(reslist,0);
+  }
   if(INTEGER(badconv)[0] > 0) setAttrib(ret,install("badconv"),badconv);
   // Now, there may be more attributes to set
   if(!isNull(attrs) && LENGTH(attrs) > 0) {
