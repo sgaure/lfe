@@ -4,8 +4,7 @@
 \alias{varvars}
 \title{Compute the variance of the fixed effect variance estimate}
 \usage{
-varvars(est, alpha = getfe(est), tol = 0.01, biascorrect = FALSE,
-  lhs = NULL)
+varvars(est, alpha = getfe(est), tol = 0.01, biascorrect = FALSE, lhs = NULL)
 }
 \arguments{
 \item{est}{an object of class '"felm"', the result of a call to

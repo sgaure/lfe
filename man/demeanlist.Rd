@@ -4,10 +4,21 @@
 \alias{demeanlist}
 \title{Centre vectors on multiple groups}
 \usage{
-demeanlist(mtx, fl, icpt = 0L, eps = getOption("lfe.eps"),
-  threads = getOption("lfe.threads"), progress = getOption("lfe.pint"),
-  accel = getOption("lfe.accel"), randfact = TRUE, means = FALSE,
-  weights = NULL, scale = TRUE, na.rm = FALSE, attrs = NULL)
+demeanlist(
+  mtx,
+  fl,
+  icpt = 0L,
+  eps = getOption("lfe.eps"),
+  threads = getOption("lfe.threads"),
+  progress = getOption("lfe.pint"),
+  accel = getOption("lfe.accel"),
+  randfact = TRUE,
+  means = FALSE,
+  weights = NULL,
+  scale = TRUE,
+  na.rm = FALSE,
+  attrs = NULL
+)
 }
 \arguments{
 \item{mtx}{matrix whose columns form vectors to be group-centred. mtx

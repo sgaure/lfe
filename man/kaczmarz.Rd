@@ -4,8 +4,13 @@
 \alias{kaczmarz}
 \title{Solve a linear system defined by factors}
 \usage{
-kaczmarz(fl, R, eps = getOption("lfe.eps"), init = NULL,
-  threads = getOption("lfe.threads"))
+kaczmarz(
+  fl,
+  R,
+  eps = getOption("lfe.eps"),
+  init = NULL,
+  threads = getOption("lfe.threads")
+)
 }
 \arguments{
 \item{fl}{A list of arbitrary factors of the same length}

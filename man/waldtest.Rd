@@ -4,8 +4,15 @@
 \alias{waldtest}
 \title{Compute Wald test for joint restrictions on coefficients}
 \usage{
-waldtest(object, R, r, type = c("default", "iid", "robust", "cluster"),
-  lhs = NULL, df1, df2)
+waldtest(
+  object,
+  R,
+  r,
+  type = c("default", "iid", "robust", "cluster"),
+  lhs = NULL,
+  df1,
+  df2
+)
 }
 \arguments{
 \item{object}{object of class \code{"felm"}, a result of a call to
