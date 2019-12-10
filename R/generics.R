@@ -29,6 +29,12 @@ logLik.felm <- function(object, ...) {
   val
 }
 
+#' @method nobs felm
+#' @export
+nobs.felm <- function(object, ...) {
+  object$N
+}
+
 #' @method print felm
 #' @export
 print.felm <- function(x,digits=max(3,getOption('digits')-3),...) {
