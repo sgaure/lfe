@@ -4,8 +4,7 @@
 \alias{cgsolve}
 \title{Solve a symmetric linear system with the conjugate gradient method}
 \usage{
-cgsolve(A, b, eps = 0.001, init = NULL, symmtest = FALSE,
-  name = "")
+cgsolve(A, b, eps = 0.001, init = NULL, symmtest = FALSE, name = "")
 }
 \arguments{
 \item{A}{matrix, Matrix or function.}

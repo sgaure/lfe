@@ -4,8 +4,14 @@
 \alias{is.estimable}
 \title{Verify estimability of function}
 \usage{
-is.estimable(ef, fe, R = NULL, nowarn = FALSE, keepdiff = FALSE,
-  threshold = 500 * getOption("lfe.eps"))
+is.estimable(
+  ef,
+  fe,
+  R = NULL,
+  nowarn = FALSE,
+  keepdiff = FALSE,
+  threshold = 500 * getOption("lfe.eps")
+)
 }
 \arguments{
 \item{ef}{function.  The function to be verified.}

@@ -5,8 +5,14 @@
 \title{Compute limited mobility bias corrected covariance matrix between fixed
 effects}
 \usage{
-fevcov(est, alpha = getfe(est), tol = 0.01,
-  robust = !is.null(est$clustervar), maxsamples = Inf, lhs = NULL)
+fevcov(
+  est,
+  alpha = getfe(est),
+  tol = 0.01,
+  robust = !is.null(est$clustervar),
+  maxsamples = Inf,
+  lhs = NULL
+)
 }
 \arguments{
 \item{est}{an object of class '"felm"', the result of a call to

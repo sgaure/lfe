@@ -2,6 +2,9 @@
  $Id: lfe.c 2020 2016-04-27 05:13:51Z sgaure $
 */
 #include "lfe.h"
+SEXP df_string;
+int LFE_GLOBAL_THREADS = 1;
+
 SEXP MY_threads(SEXP rt) {
   if(LENGTH(rt) < 1) return R_NilValue;
   LFE_GLOBAL_THREADS = INTEGER(rt)[0];
@@ -19,7 +22,8 @@ static R_CallMethodDef callMethods[] = {
   {"piproduct", (DL_FUNC) &MY_piproduct, 2},
   {"dsyrk", (DL_FUNC) &MY_dsyrk, 4},
   {"address", (DL_FUNC) &MY_address, 1},
-  {"named", (DL_FUNC) &MY_named, 2},
+  //  {"named", (DL_FUNC) &MY_named, 2},
+  {"inplace", (DL_FUNC) &inplace, 1},
   {"rowsum", (DL_FUNC) &Crowsum, 3},
   //  {"ppf", (DL_FUNC) &MY_ppf, 2},
   //  {"threads", (DL_FUNC) &MY_threads, 1},

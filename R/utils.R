@@ -19,22 +19,13 @@ orthonormalize <- function(V) {
   structure(V %*% solve(chol(crossprod(V))), ortho=TRUE)
 }
 
-# CAREFUL with this one. It sets NAMED=0 on x
-# which means the return value can be treated as unnamed, and being used for in place computations
-# by internal routines. This is a way to save memory.
-# If e.g. is a large matrix which should be scaled by e.g. a column-vector s,
-# it can be done in place with x <- unnamed(x)*s (or even with just 'unnamed(x)*s' without assignment)
-# (it will be named again after the assignment, so it's not a permanent thing)
-# Also useful for passing args to compiled routines
-# This has the potential to mess things up very seriously. Make sure you know what NAMED means.
-# E.g. you should understand why the following happens:
-# > a <- b <- 2
-# > unnamed(a)*2  # yields a and b equal to 4
-# > a[1] <- 1   # yields a and b equal to 1
-# > a <- 1 # instead would yield a equal to 1 and b equal to 4
-
+# This function sets an attribute 'inplace' on the argument
+# It is checked in the C-function demeanlist, and then removed
+# If set, the centering will be inplace. It can mess things
+# up seriously if used in the wrong manner, so it's not public
+# except as in an argument to demeanlist (through eval-trickery).
 unnamed <- function(x) {
-  .Call(C_named,x,0L);
+  .Call(C_inplace,x)
 }
 
 wmean <- function(x,w) sum(w*x)/sum(w)

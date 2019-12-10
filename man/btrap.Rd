@@ -4,9 +4,17 @@
 \alias{btrap}
 \title{Bootstrap standard errors for the group fixed effects}
 \usage{
-btrap(alpha, obj, N = 100, ef = NULL, eps = getOption("lfe.eps"),
-  threads = getOption("lfe.threads"), robust = FALSE, cluster = NULL,
-  lhs = NULL)
+btrap(
+  alpha,
+  obj,
+  N = 100,
+  ef = NULL,
+  eps = getOption("lfe.eps"),
+  threads = getOption("lfe.threads"),
+  robust = FALSE,
+  cluster = NULL,
+  lhs = NULL
+)
 }
 \arguments{
 \item{alpha}{data frame returned from \code{\link{getfe}}}

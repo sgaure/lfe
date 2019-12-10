@@ -1,6 +1,6 @@
 Package: lfe
 Version: 2.8-4
-Date: 2019-04-02
+Date: 2019-12-10
 Title: Linear Group Fixed Effects
 Authors@R: person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut","cre"),
         comment=c(ORCID="https://orcid.org/0000-0001-7251-8747"))
@@ -30,4 +30,4 @@ Classification/MSC: 62J05, 65F10, 65F50
 URL: https://github.com/sgaure/lfe
 BugReports: https://github.com/sgaure/lfe/issues
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2

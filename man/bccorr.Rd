@@ -4,9 +4,15 @@
 \alias{bccorr}
 \title{Compute limited mobility bias corrected correlation between fixed effects}
 \usage{
-bccorr(est, alpha = getfe(est), corrfactors = 1L:2L,
-  nocovar = (length(est$X) == 0) && length(est$fe) == 2, tol = 0.01,
-  maxsamples = Inf, lhs = NULL)
+bccorr(
+  est,
+  alpha = getfe(est),
+  corrfactors = 1L:2L,
+  nocovar = (length(est$X) == 0) && length(est$fe) == 2,
+  tol = 0.01,
+  maxsamples = Inf,
+  lhs = NULL
+)
 }
 \arguments{
 \item{est}{an object of class '"felm"', the result of a call to
