@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2019-05-02 r76454) -- "Unsuffered Consequences"
+R Under development (unstable) (2019-12-10 r77548) -- "Unsuffered Consequences"
 Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -439,8 +439,8 @@ function (v, addnames)
     }
     v
 }
-<bytecode: 0x5574497341e0>
-<environment: 0x55744a0c2f18>
+<bytecode: 0xb0e9f88>
+<environment: 0xbbe5790>
 > is.estimable(ef,fl)
 Warning in is.estimable(ef, fl) :
   non-estimable function, largest error 0.003 in coordinate 1050 ("id.1050")
@@ -462,8 +462,8 @@ function (v, addnames)
     }
     v
 }
-<bytecode: 0x557447d789a8>
-<environment: 0x557449232850>
+<bytecode: 0x97a95c8>
+<environment: 0xbbf6468>
 attr(,"verified")
 [1] TRUE
 > is.estimable(ef,fl)
@@ -490,24 +490,24 @@ attr(,"verified")
 > 
 > 
 > oldopts <- options(lfe.threads=1)
-> ## create covariates
+> 
+> ## Simulate data
+> 
+> # Covariates
 > x <- rnorm(1000)
 > x2 <- rnorm(length(x))
-> 
-> ## individual and firm
+> # Individuals and firms
 > id <- factor(sample(20,length(x),replace=TRUE))
 > firm <- factor(sample(13,length(x),replace=TRUE))
-> 
-> ## effects for them
+> # Effects for them
 > id.eff <- rnorm(nlevels(id))
 > firm.eff <- rnorm(nlevels(firm))
-> 
-> ## left hand side
+> # Left hand side
 > u <- rnorm(length(x))
 > y <- x + 0.5*x2 + id.eff[id] + firm.eff[firm] + u
 > 
-> ## estimate and print result
-> est <- felm(y ~ x+x2| id + firm)
+> ## Estimate the model and print the results
+> est <- felm(y ~ x + x2 | id + firm)
 > summary(est)
 
 Call:
@@ -531,24 +531,25 @@ F-statistic(full model):85.78 on 33 and 966 DF, p-value: < 2.2e-16
 F-statistic(proj model): 602.1 on 2 and 966 DF, p-value: < 2.2e-16 
 
 
+> 
 > ## Not run: 
-> ##D ## compare with lm
+> ##D # Compare with lm
 > ##D summary(lm(y ~ x + x2 + id + firm-1))
 > ## End(Not run)
 > 
-> # make an example with 'reverse causation'
-> # Q and W are instrumented by x3 and the factor x4. Report robust s.e.
+> ## Example with 'reverse causation' (IV regression)
+> 
+> # Q and W are instrumented by x3 and the factor x4.
 > x3 <- rnorm(length(x))
 > x4 <- sample(12,length(x),replace=TRUE)
-> 
 > Q <- 0.3*x3 + x + 0.2*x2 + id.eff[id] + 0.3*log(x4) - 0.3*y + rnorm(length(x),sd=0.3)
 > W <- 0.7*x3 - 2*x + 0.1*x2 - 0.7*id.eff[id] + 0.8*cos(x4) - 0.2*y+ rnorm(length(x),sd=0.6)
-> 
-> # add them to the outcome
+> # Add them to the outcome variable
 > y <- y + Q + W
 > 
-> ivest <- felm(y ~ x + x2 | id+firm | (Q|W ~x3+factor(x4)))
-> summary(ivest,robust=TRUE)
+> ## Estimate the IV model and report robust SEs
+> ivest <- felm(y ~ x + x2 | id + firm | (Q|W ~ x3 + factor(x4)))
+> summary(ivest, robust=TRUE)
 
 Call:
    felm(formula = y ~ x + x2 | id + firm | (Q | W ~ x3 + factor(x4))) 
@@ -579,10 +580,58 @@ F-statistic(endog. vars):681.6 on 2 and 964 DF, p-value: < 2.2e-16
 iid F 40.07999 66.90775
 attr(,"df1")
 [1] 11
+> 
 > ## Not run: 
-> ##D # compare with the not instrumented fit:
-> ##D summary(felm(y ~ x + x2 +Q + W |id+firm))
+> ##D # Compare with the not instrumented fit:
+> ##D summary(felm(y ~ x + x2 + Q + W | id + firm))
 > ## End(Not run)
+> 
+> ## Example with multiway clustering
+> 
+> # Create a large cluster group (500 clusters) and a small one (20 clusters)
+> cl1 <- factor(sample(rep(1:500, length.out=length(x))))
+> cl2 <- factor(sample(rep(1:20, length.out=length(x))))
+> # Function for adding clustered noise to our outcome variable 
+> cl_noise <- function(cl) {
++  obs_per_cluster <- length(x)/nlevels(cl)
++  unlist(replicate(nlevels(cl), rnorm(obs_per_cluster, mean=rnorm(1), sd=runif(1)), simplify=FALSE))
++ }
+> # New outcome variable
+> y_cl <- x + 0.5*x2 + id.eff[id] + firm.eff[firm] + cl_noise(cl1) + cl_noise(cl2)
+> 
+> ## Estimate and print the model with cluster-robust SEs (default)
+> est_cl <- felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2)
+> summary(est_cl)
+
+Call:
+   felm(formula = y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.8756 -0.9697  0.0232  1.0041  5.2598 
+
+Coefficients:
+   Estimate Cluster s.e. t value Pr(>|t|)    
+x   0.97330      0.05007   19.44   <2e-16 ***
+x2  0.53359      0.03043   17.54   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.528 on 966 degrees of freedom
+Multiple R-squared(full model): 0.5746   Adjusted R-squared: 0.5601 
+Multiple R-squared(proj model): 0.3633   Adjusted R-squared: 0.3415 
+F-statistic(full model, *iid*):39.54 on 33 and 966 DF, p-value: < 2.2e-16 
+F-statistic(proj model): 252.8 on 2 and 499 DF, p-value: < 2.2e-16 
+
+
+> 
+> ## Not run: 
+> ##D # Print ordinary standard errors:
+> ##D summary(est_cl, robust = FALSE)
+> ##D # Match cluster-robust SEs from Stata's reghdfe package:
+> ##D summary(felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2, cmethod="reghdfe"))
+> ## End(Not run)
+> 
 > options(oldopts)
 > 
 > 
@@ -1245,7 +1294,7 @@ firm -0.004334716  0.060817078 -0.002995544
 foo  -0.002472491 -0.002995544  0.044123684
 > # estimate variances of the diagonal
 > varvars(est, alpha)
-[1] 0.008598521 0.043820908 0.057656021
+[1] 0.008598521 0.043820907 0.057656021
 > 
 > 
 > 
@@ -1294,7 +1343,7 @@ F-statistic:  5219 on 2 and 9997 DF,  p-value: < 2.2e-16
    0.9019639    0.5757362    3.0000000    0.9019611    0.1919121 9997.0000000 
 attr(,"formula")
 ~x - 1 | x2 + 0.2 | `(Intercept)`
-<environment: 0x5574473dadf0>
+<environment: 0xb0e3b60>
 > # The Delta-method coincides when the function is linear:
 > waldtest(est, function(x) x - c(0, 1, -0.2))
            p         chi2          df1          p.F            F          df2 
@@ -1302,7 +1351,7 @@ attr(,"formula")
 attr(,"formula")
 function (x) 
 x - c(0, 1, -0.2)
-<bytecode: 0x557448c67da0>
+<bytecode: 0x747d710>
 > 
 > 
 > 
@@ -1312,7 +1361,7 @@ x - c(0, 1, -0.2)
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  16.177 3.862 15.587 0 0 
+Time elapsed:  25.676 0.647 13.514 0 0 
 > grDevices::dev.off()
 null device 
           1 

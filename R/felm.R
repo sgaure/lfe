@@ -952,7 +952,7 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' 
 #' \item \code{cmethod} character. Which clustering method to use. Known 
 #' arguments are \code{'cgm'} (the default), \code{'cgm2'} (or \code{'reghdfe'},
-#' its alias), or \code{'gaure'}. These alternate methods will generally 
+#' its alias). These alternate methods will generally 
 #' yield equivalent results, except in the case of multiway clustering with few
 #' clusters along at least one dimension. 
 #' 
