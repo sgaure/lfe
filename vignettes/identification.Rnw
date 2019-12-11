@@ -110,17 +110,21 @@ is.estimable(ef,est$fe)
 getfe(est)
 @ 
 
-As we can see from the \code{comp} entry, there are two components, with \code{f1=0.2}, \code{f1=0.7} and
-\code{f2=0.4}. A reference is introduced in each of the components, i.e. \code{f2.0.2=0} and \code{f2.0.4=0}.
+As we can see from the \code{comp} entry, there are two components, 
+the second one with \code{f1=0.1}, \code{f1=0.3}, \code{f1=0.5}, and
+\code{f2=0.5} and \code{f2=0.7}. 
+A reference is introduced in each of the components, i.e. \code{f2.0.2=0} and \code{f2.0.5=0}.
 If we look at the dataset, the component structure becomes clearer:
 <<>>=
 data.frame(f1,f2,comp=est$cfactor)
 @ 
 
-Observation 14 and 18 belong to component 2; no other observation has \code{f1=0.7}, \code{f1=0.2} or
-\code{f2=0.4}, thus it is clear that coefficients for these can not be compared to other coefficients.
-\code{lm} is silent about this component structure, hence coefficients are hard to interpret. Though, predictive
-properties and residuals are the same:
+Observations 1, 10, 12, 17, and 20 belong to component 2; no other
+observation has \code{f1 \%in\% c(0.1,0.3,0.5)} or
+\code{f2 \%in\% c(c0.5,0.7)}, thus it is clear that coefficients for these can not be
+compared to other coefficients.  \code{lm} is silent about this
+component structure, hence coefficients are hard to interpret. Though,
+predictive properties and residuals are the same:
 <<>>=
 f1 <- factor(f1); f2 <- factor(f2)
 summary(lm(y ~ x1 + f1 + f2))
@@ -324,7 +328,7 @@ non-estimability which may occur in much larger datasets, the author
 does not endorse using this kind of model for the kind of data you find below.
 
 <<>>=
-set.seed(128)
+set.seed(55)
 x1 <- rnorm(25)
 f1 <- sample(9,length(x1),replace=TRUE)
 f2 <- sample(8,length(x1),replace=TRUE)
@@ -396,7 +400,7 @@ getfe(est)
 
 Below is the same estimation in \code{lm}. We see that the coefficient
 for \code{x1} is identical to the one from \code{felm}, but there is no obvious
-relation between e.g. the coefficients for \code{f1}; the difference \code{f15-f16} is
+relation between e.g. the coefficients for \code{f1}; the difference \code{f14-f15} is
 not the same for \code{lm} and \code{felm}.  Since these are in different components, they
 are not comparable.
 But of course, if we compare in the same component, e.g. \code{f16-f17} or take
@@ -404,9 +408,12 @@ a combination which actually occurs in the dataset, it is unique (estimable):
 <<>>=
 data.frame(f1,f2,f3)[1,]
 @ 
-I.e.\ if we add the coefficients \code{f1.1 + f2.6 + f3.7}
+I.e.\ if we add the coefficients \code{f1.2 + f2.6 + f3.3}
 and include the intercept for \code{lm}, we will get the same number
-for both \code{lm} and \code{felm}.
+for both \code{lm} and \code{felm}. That is, for predicting the actual dataset, 
+estimability plays no role, we obtain the same residuals anyway. 
+It is only for predicting outside of the dataset estimability
+is important.
 <<>>=
 summary(est <- lm(y ~ x1 + f1 + f2 + f3))
 @ 
@@ -448,6 +455,8 @@ nlevels(interaction(compfactor(fe),wwcomp))
 wwdata <- data.frame(y, x1, f1, f2, f3)[wwcomp==1, ]
 print(wwdata)
 @ 
+That is, we can start in one of the observations and travel through all of them
+by changing just one of \code{f1,f2,f3} at a time.
 Though, in this particular example, there are more parameters than there are observations,
 so an estimation would not be feasible.
 
@@ -516,10 +525,10 @@ nrow(wwalpha <- getfe(wwest))
 
 We may compare effects which are common to the two methods:
 <<>>=
-head(alpha)
 head(wwalpha)
+alpha[c(35,38,40:43),]
 @ 
-but there is no obvious relation between e.g. \code{f1.1 - f1.2}, they are very different
+but there is no obvious relation between e.g. \code{f1.35 - f1.36}, they are very different
 in the two estimations. The coefficients are from different datasets, and the
 standard errors are large  (\(\approx 0.7\)) with this few observations for each factor level.
 The number of identified coefficients for each factor varies (these figures contain the two references):
