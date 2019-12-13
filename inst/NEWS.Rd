@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{lfe news}
+\section{Changes in version 2.8-5}{
+  \itemize{
+    \item Corrected the vignette about estimable functions. The 
+    change in the \code{base::sample()} function made the examples meaningless, and I
+    forgot to fix it in 2.8-3.
+  }
+}
 \section{Changes in version 2.8-4}{
   \itemize{
     \item Support for nested clusters and reghdfe-option by Grant McDermott and Karl
