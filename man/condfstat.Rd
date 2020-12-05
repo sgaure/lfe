@@ -93,10 +93,10 @@ condfstat(est, quantiles=c(0.05, 0.95))
 Sanderson, E. and F. Windmeijer (2014) \cite{A weak instrument
 F-test in linear IV models with multiple endogenous variables}, Journal of
 Econometrics, 2015.
-\url{http://www.sciencedirect.com/science/article/pii/S0304407615001736}
+\url{https://www.sciencedirect.com/science/article/pii/S0304407615001736}
 
 Stock, J.H. and M. Yogo (2004) \cite{Testing for weak instruments in linear
-IV regression}, \url{http://ssrn.com/abstract=1734933} in
+IV regression}, \url{https://ssrn.com/abstract=1734933} in
 \cite{Identification and inference for econometric models: Essays in honor
 of Thomas Rothenberg}, 2005.
 }

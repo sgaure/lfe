@@ -135,7 +135,7 @@
 #' 
 #' Croissant, Y. and G. Millo (2008) \cite{Panel Data Econometrics in R: The
 #' plm Package}, Journal of Statistical Software, 27(2).
-#' \url{http://www.jstatsoft.org/v27/i02/}
+#' \url{https://www.jstatsoft.org/v27/i02/}
 #' 
 #' Gaure, S. (2013) \cite{OLS with Multiple High Dimensional Category
 #' Variables.} Computational Statistics and Data Analysis, 66:8--18, 2013
@@ -152,17 +152,17 @@
 #' Guimaraes, P. and Portugal, P. (2010) \cite{A simple feasible procedure to
 #' fit models with high-dimensional fixed effects.} The Stata Journal,
 #' 10(4):629--649, 2010.
-#' \url{http://www.stata-journal.com/article.html?article=st0212}
+#' \url{https://www.stata-journal.com/article.html?article=st0212}
 #' 
 #' Ouazad, A. (2008) \cite{A2REG: Stata module to estimate models with two
 #' fixed effects.} Statistical Software Components S456942, Boston College
 #' Department of Economics.
-#' \url{http://ideas.repec.org/c/boc/bocode/s456942.html}
+#' \url{https://ideas.repec.org/c/boc/bocode/s456942.html}
 #' 
 #' Sanderson, E. and F. Windmeijer (2014) \cite{A weak instrument F-test in
 #' linear IV models with multiple endogenous variables}, Journal of
 #' Econometrics, 2015.
-#' \url{http://www.sciencedirect.com/science/article/pii/S0304407615001736}
+#' \url{https://www.sciencedirect.com/science/article/pii/S0304407615001736}
 #' @keywords regression models
 #' @examples
 #' 
