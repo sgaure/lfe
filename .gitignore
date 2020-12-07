@@ -14,10 +14,13 @@
 # emacs backup
 # Rproj files
 .Rproj.user
-*.Rproj
-*.Rbuildignore
 # Build files
 config.*
 src/config.h
 src/texput.log
 src/Makevars
+
+## Comment
+#*.Rproj
+#*.Rbuildignore
+
