@@ -43,7 +43,7 @@ The convergence rate has been analysed in \cite{DH97} and references
 cited therein; there are also newer elaborations, e.g.\ in
 \cite{BGM12}. The convergence rate theory is in terms of
 generalized angles between subspaces, i.e. the ranges of the projections.
-The angle concept may not be immediately intuitive to practioners of linear
+The angle concept may not be immediately intuitive to practitioners of linear
 regression methods, so let's have a look at some examples.
 
 \section{Examples}
@@ -99,7 +99,7 @@ system.time(alpha <- getfe(est))
 @ 
 
 The estimation now takes a lot more time.
-Indeed, in this case, it is worthwile
+Indeed, in this case, it is worthwhile
 to consider coding \code{f2} as 300 dummies, i.e.\ as an ordinary factor, 
 even though there now are \(\approx 300\) vectors to centre, as opposed to two
 in the previous examples.

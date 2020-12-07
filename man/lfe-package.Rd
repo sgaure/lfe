@@ -60,7 +60,7 @@ correlations and variances with the method described in \cite{Gaure
 Instrumental variable estimations are supported with 2SLS. Conditional F
 statistics for testing reduced rank weak instruments as in \cite{Sanderson
 and Windmeijer (2015)} are available in \code{\link{condfstat}}.  Joint
-signficance testing of coefficients is available in \code{\link{waldtest}}.
+significance testing of coefficients is available in \code{\link{waldtest}}.
 
 The centering on the means is done with a tolerance which is set by
 \code{options(lfe.eps=1e-8)} (the default).  This is a somewhat conservative

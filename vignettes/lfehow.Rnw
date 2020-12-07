@@ -60,7 +60,7 @@ sparse-versions of the same.
 
 \(g\) is the sum of the number of levels in the factors.
 Now, suppose \(g\approx 10^6\), indeed, assume that all the factors
-have many levels, so that an unmanagable number of dummies will be created
+have many levels, so that an unmanageable number of dummies will be created
 when we try to estimate, even if we sweep out the largest with a within
 transformation.
 
@@ -196,7 +196,7 @@ felm(Y ~ X1 + X2 + ... + Xk | D1 + D2 + ... + De)
 If there is only one factor (i.e. \(e=1\)), this reduces to the within-groups model.
 
 \section{The dummies?}
-To find \(\hat\alpha\), the coefficents of all the dummies, we may write \eqref{resid} as 
+To find \(\hat\alpha\), the coefficients of all the dummies, we may write \eqref{resid} as 
 \[
 D\hat\alpha = (Y-X\hat\beta) - (PY - PX\hat\beta)
 \]
