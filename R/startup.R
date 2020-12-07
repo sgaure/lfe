@@ -29,7 +29,8 @@ setoption <- function(...) {
     if(is.na(cr)) cr <- as.integer(Sys.getenv('OMP_NUM_THREADS'))
     if(is.na(cr)) cr <- as.integer(Sys.getenv('OMP_THREAD_LIMIT'))
     if(is.na(cr)) cr <- as.integer(Sys.getenv('NUMBER_OF_PROCESSORS'))
-    if(is.na(cr)) cr <- parallel::detectCores(all.tests=TRUE)
+    ## all.tests=TRUE is unsafe for batch use (addefd by ripley)
+    if(is.na(cr)) cr <- parallel::detectCores() #all.tests=TRUE)
     if(is.na(cr) || cr < 1) {
       cr <- 1
     }
