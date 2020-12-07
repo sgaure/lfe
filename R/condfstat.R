@@ -143,7 +143,7 @@ ivbootstrap <- function(z, x, y, quantiles=0.95, N=100L, cluster=NULL) {
 #' \url{https://www.sciencedirect.com/science/article/pii/S0304407615001736}
 #' 
 #' Stock, J.H. and M. Yogo (2004) \cite{Testing for weak instruments in linear
-#' IV regression}, \url{https://ssrn.com/abstract=1734933} in
+#' IV regression}, \url{https://www.ssrn.com/abstract=1734933} in
 #' \cite{Identification and inference for econometric models: Essays in honor
 #' of Thomas Rothenberg}, 2005.
 #' @examples
