@@ -79,8 +79,10 @@ F-statistic(proj model): 1.21e+03 on 6 and 1980 DF, p-value: <2e-16
 > firmeff <- alpha[paste('firm',firm,sep='.'),'effect']
 > 
 > ## verify that id and firm coefficients are 1
-> cat('accuracy:',sprintf('%.8e',coef(lm(y ~ x + x2 + x3 + x4 + x5 + x6 + ideff + firmeff-1))[7:8],'\n'))
-accuracy: 1.00000000e+00 1.00000000e+00> 
+> co <- coef(lm(y ~ x + x2 + x3 + x4 + x5 + x6 + ideff + firmeff-1))[7:8]
+> cat('accuracy:', formatC(co, digits=8, format="f"),'\n')
+accuracy: 1.00000000 1.00000000 
+> 
 > 
 > 
 > proc.time()
