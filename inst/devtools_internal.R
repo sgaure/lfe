@@ -1,8 +1,10 @@
 
 
 ## Initiate some docs
-# usethis::use_news_md()
 # usethis::use_cran_comments(open = FALSE)
+
+## Spell check
+devtools::spell_check()
 
 ### Tests
 devtools::check_win_devel()
