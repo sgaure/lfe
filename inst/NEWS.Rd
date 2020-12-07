@@ -1,5 +1,17 @@
 \name{NEWS}
 \title{lfe news}
+
+
+\section{Changes in version 2.8-6}{
+  \itemize{
+   \item Package is archived from CRAN and temporarily adopted by Matthieu Stigler.
+   \item Fix a sprintf issue, apaprently \code{sprintf('\%.8e', 1)} is not legal in future R -devel.
+   \item Backport changes by CRAN maintainers (2.8.5-1): remove \code{all.tests=TRUE} in \code{parallel::detectCores()}
+   \item Backport changes by CRAN maintainers (2.8.5-1): delete file \code{examples/lfe-Ex.Rout.save}
+   \item Fix a few typos with \code{devtools::spell_check()}
+   \item Added an internal \code{devtools_internal.R} with few testing calls.
+  }
+}
 \section{Changes in version 2.8-5}{
   \itemize{
     \item Corrected the vignette about estimable functions. The 
