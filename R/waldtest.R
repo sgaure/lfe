@@ -165,7 +165,11 @@ waldtest <- function(object, R, r, type=c('default','iid','robust','cluster'), l
   if(missing(df2)) {
     df2 <- object$df
     if((!is.null(object$clustervar) && type %in% c('default','cluster')) ) {
-      df2 <- min(nlevels(object$clustervar[[1]])-1, df2)
+      min_clustvar <- min(vapply(seq_along(object$clustervar),
+                                 function(i) nlevels(object$clustervar[[i]]),
+                                 FUN.VALUE = integer(1)
+      ))
+      df2 <- min(min_clustvar-1, df2)
     }
   }
 
