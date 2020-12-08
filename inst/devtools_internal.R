@@ -12,6 +12,8 @@ devtools::check_win_release()
 devtools::check_win_oldrelease()
 
 devtools::check_rhub(interactive = FALSE)
+devtools::check_rhub(platform = c("solaris-x86-patched", "solaris-x86-patched-ods"),
+                     interactive = FALSE)
 
 ### Upload to CRAN
 devtools::release_checks()
