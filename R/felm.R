@@ -184,10 +184,28 @@ makematrix <- function(mf, contrasts=NULL, pf=parent.frame(),
       if(length(namref) == 1 && sum(noref&isfac) == 0)
           rflist <- list(gv(namref))
       else
-          rflist <- lapply(namref, function(n) {f <- gv(n); levels(f)[[reflev[[n]]]] <- NA; f})
+        ## GRM: Precursor to larger change below (i.e. don't replace individual
+        ## FEs with NA yet, lest it creates too many reference cases once we
+        ## interact them).
+        # rflist <- lapply(namref, function(n) {f <- gv(n); levels(f)[[reflev[[n]]]] <- NA; f})
+        rflist <- lapply(namref, function(n) {f <- gv(n); f})
       names(rflist) <- namref
-      f <- addNA(do.call(interaction,c(rflist,lapply(names(vars[noref&isfac]), function(n) gv(n)), drop=TRUE)),
-                 ifany=TRUE)
+      ## GRM: Changed this next section of code to account for single reference 
+      ## case in the case of interacted FEs
+      if (length(rflist)==1) {
+        f <- addNA(do.call(interaction,
+                           c(rflist,lapply(names(vars[noref&isfac]), 
+                                           function(n) gv(n)), drop=TRUE)),
+                   ifany=TRUE)
+        
+      } else {
+        f <- do.call(interaction, c(rflist, lapply(names(vars[noref & isfac]), 
+                                                   function(n) gv(n)), 
+                                    drop = TRUE))
+        reflevcomb <- paste(reflev, collapse = ".")
+        levels(f)[which(f==reflevcomb)] <- NA
+        f <- addNA(f, ifany = TRUE) 
+      }
       refnam <- paste(sapply(namref, function(n) levels(gv(n))[reflev[n]]), collapse='+')
       levels(f)[is.na(levels(f))] <- refnam
 #      structure(f, fnam=names(vars)[1], xnam=paste(names(vars)[-1],collapse=':'))
