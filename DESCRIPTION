@@ -1,6 +1,6 @@
 Package: lfe
 Version: 2.8-6
-Date: 2020-12-07
+Date: 2020-12-08
 Title: Linear Group Fixed Effects
 Authors@R: c(person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut"),
            comment=c(ORCID="https://orcid.org/0000-0001-7251-8747")),
@@ -26,9 +26,10 @@ VignetteBuilder: knitr
 ByteCompile: yes
 Description: Transforms away factors with many levels prior to doing an OLS.
   Useful for estimating linear models with multiple group fixed effects, and for
-  estimating linear models which uses factors with many levels as pure control variables.
+  estimating linear models which uses factors with many levels as pure control variables. See Gaure (2013) <doi:10.1016/j.csda.2013.03.024>
   Includes support for instrumental variables, conditional F statistics for weak instruments,
-  robust and multi-way clustered standard errors, as well as limited mobility bias correction.
+  robust and multi-way clustered standard errors, as well as limited mobility bias correction (Gaure 2014 <doi:10.1002/sta4.68>). 
+  WARNING: This package is NOT under active development anymore, no further improvements are to be expected, and the package is at risk of being removed from CRAN.
 License: Artistic-2.0
 Classification/JEL: C13, C23, C60
 Classification/MSC: 62J05, 65F10, 65F50
