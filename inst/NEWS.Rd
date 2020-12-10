@@ -5,7 +5,7 @@
 \section{Changes in version 2.8-6}{
   \itemize{
    \item Package is archived from CRAN and temporarily adopted by Matthieu Stigler.
-   \item Change code in waldtest.R to be more robust to variable ordering with multi-way clistering, as suggested by @grantmcdermott
+   \item Change code in waldtest.R to be more robust to variable ordering with multi-way clustering, as suggested by @grantmcdermott
    \item Accept Pull request "Catch duplicate (false) reference levels for interacted FEs" @grantmcdermott
    \item Fix a sprintf issue, apparently \code{sprintf('\%.8e', 1)} is not legal in future R -devel.
    \item Backport changes by CRAN maintainers (2.8.5-1): remove \code{all.tests=TRUE} in \code{parallel::detectCores()}
