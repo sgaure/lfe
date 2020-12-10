@@ -82,7 +82,7 @@ Residual standard error: 1.97 on 990 degrees of freedom
 Multiple R-squared(full model): 0.372   Adjusted R-squared: 0.366 
 Multiple R-squared(proj model): 0.372   Adjusted R-squared: 0.366 
 F-statistic(full model, *iid*):65.1 on 9 and 990 DF, p-value: <2e-16 
-F-statistic(proj model): 1.31e+04 on 9 and 79 DF, p-value: <2e-16 
+F-statistic(proj model): 1.31e+04 on 9 and 11 DF, p-value: <2e-16 
 
 
 > #gclu <- structure(clu, method='gaure')
