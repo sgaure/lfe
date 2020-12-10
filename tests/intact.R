@@ -11,10 +11,20 @@ data <- data.frame(x=x, y=y, time_id=time_id, group=group)
 model_1<-felm(y~x|group:time_id,data=data)
 model_2<-felm(y~x|time_id+group:time_id,data=data)
 model_3<-felm(y~x|group:time_id+ time_id+group,data=data)
+model_4<-felm(y~x|group*time_id,data=data)
 
 lm_1 <- lm(y ~ x + group:time_id, data=data)
 lm_2 <- lm(y ~ x + time_id + group:time_id, data=data)
 lm_3 <- lm(y ~ x + group:time_id + time_id + group,data=data)
+lm_4 <- lm(y ~ x + group*time_id,data=data)
+
+all.equal(coef(lm_1)["x"], coef(model_1))
+all.equal(coef(lm_2)["x"], coef(model_2))
+all.equal(coef(lm_3)["x"], coef(model_3))
+all.equal(coef(lm_4)["x"], coef(model_4))
+
+all.equal(coef(model_1), coef(model_2))
+all.equal(coef(model_3), coef(model_4))
 
 message('felm 1'); print(model_1)
 message('lm 1'); print(lm_1)

@@ -29,10 +29,26 @@ Loading required package: Matrix
 > model_1<-felm(y~x|group:time_id,data=data)
 > model_2<-felm(y~x|time_id+group:time_id,data=data)
 > model_3<-felm(y~x|group:time_id+ time_id+group,data=data)
+> model_4<-felm(y~x|group*time_id,data=data)
 > 
 > lm_1 <- lm(y ~ x + group:time_id, data=data)
 > lm_2 <- lm(y ~ x + time_id + group:time_id, data=data)
 > lm_3 <- lm(y ~ x + group:time_id + time_id + group,data=data)
+> lm_4 <- lm(y ~ x + group*time_id,data=data)
+> 
+> all.equal(coef(lm_1)["x"], coef(model_1))
+[1] TRUE
+> all.equal(coef(lm_2)["x"], coef(model_2))
+[1] TRUE
+> all.equal(coef(lm_3)["x"], coef(model_3))
+[1] TRUE
+> all.equal(coef(lm_4)["x"], coef(model_4))
+[1] TRUE
+> 
+> all.equal(coef(model_1), coef(model_2))
+[1] TRUE
+> all.equal(coef(model_3), coef(model_4))
+[1] TRUE
 > 
 > message('felm 1'); print(model_1)
 felm 1
@@ -123,7 +139,7 @@ groupM:time_id5  groupP:time_id5  groupQ:time_id5
 > m <- felm(y~x|`time+id`+group + group:`time+id`,data=data)
 > print(getfe(model_3))
 Warning in is.estimable(ef, obj$fe) :
-  non-estimable function, largest error 0.7 in coordinate 18 ("time_id:group.2.B")
+  non-estimable function, largest error 0.7 in coordinate 39 ("time_id:group.3.Q")
 Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
   Supplied function seems non-estimable
                     effect  obs comp            fe idx
@@ -170,7 +186,7 @@ time_id:group.4.Q  0.06805  339    2 time_id:group 4.Q
 time_id:group.5.Q -0.08363  316    2 time_id:group 5.Q
 > print(getfe(m))
 Warning in is.estimable(ef, obj$fe) :
-  non-estimable function, largest error 0.5 in coordinate 22 ("`time+id`:group.1.C")
+  non-estimable function, largest error 0.4 in coordinate 30 ("`time+id`:group.4.M")
 Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
   Supplied function seems non-estimable
                       effect  obs comp              fe idx
