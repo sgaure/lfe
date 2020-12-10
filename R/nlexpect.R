@@ -30,7 +30,7 @@
 #' two cheap 2-dimensional integrals if you do them separately. There is nothing to gain
 #' from using vector-valued functions compared to multiple calls to \code{nlexpect()}.
 #' 
-#' You may of course also integrate inequalites like \code{quote(abs(x1-0.2) >
+#' You may of course also integrate inequalities like \code{quote(abs(x1-0.2) >
 #' 0.2)} to simulate the probability from t-tests or Wald-tests. See the
 #' examples.
 #' 

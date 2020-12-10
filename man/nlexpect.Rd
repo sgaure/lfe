@@ -77,7 +77,7 @@ The list of coefficients used by \code{fun} must be specified in
 
 If the function is simple, it can be specified as a quoted expression like
 \code{quote(a*b+log(abs(d)))}. In this case, if \code{coefs} is not
-specified, it will be set to the list of all the variables occuring in the
+specified, it will be set to the list of all the variables occurring in the
 expression which are also names of coefficients.
 
 \code{fun} may return a vector of values, in which case a vector of

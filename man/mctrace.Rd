@@ -41,7 +41,7 @@ or the sum of the eigenvalues. However, if the size of the matrix is very
 large, we may not have a matrix representation, so the diagonal is not
 immediately available.  In that case we can use the formula \eqn{tr(A) =
 E(x^t A x)}{tr(A) = E(x'Ax)} where \eqn{x} is a random vector with zero
-expectation and \eqn{Var(x) = I}. We estimate the expecation with sample
+expectation and \eqn{Var(x) = I}. We estimate the expectation with sample
 means.  \code{mctrace} draws \eqn{x} in \eqn{\{-1,1\}^N}{{-1,1}}, and
 evaluates \code{mat} on these vectors.
 
