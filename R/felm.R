@@ -1503,3 +1503,27 @@ felm.mm <- function(mm,nostats,exactDOF,keepX,keepCX,keepModel,kclass=NULL,fulle
   z2$call <- match.call()
   z2
 }
+
+#' Check if formula contains redundant FEs
+#' 
+#' Print warning when there is something like fe1+fe1:fe2
+#' @param formula a formula
+#' @examples 
+#' check_redundant_fe(y~ x)
+#' check_redundant_fe(y~ x |fe1 +fe2)
+#' check_redundant_fe(y~ x |fe1 +fe2:fe1)
+#' check_redundant_fe(y~ x |fe2*fe1)
+#' @author Grant McDermott, small adaptation by Matthieu Stigler
+check_redundant_fe <- function(formula){
+  fml_chk <- Formula::Formula(formula)
+  has_FE <- length(attr(fml_chk, "rhs"))>1 && !is.null(attr(fml_chk, "rhs")[[2]])
+  if (has_FE) {
+    fes_chk <- attr(terms(formula(fml_chk, rhs=2)), "term.labels")
+    if (any(duplicated(unlist(strsplit(fes_chk, ":"))))) {
+      warning(paste("Duplicated terms detected in the fixed effects slot.",
+                    "If you are interacting factor variables, consider excluding", 
+                    "the parents terms, since these strictly nest the interactions",
+                    "and are thus redundant. See ?felm 'Details'.\n"))
+    }
+  }
+}
