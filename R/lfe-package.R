@@ -166,7 +166,8 @@
 #' @keywords regression models
 #' @examples
 #' 
-#'   oldopts <- options(lfe.threads=1)
+#'   oldopts <- options("lfe.threads")
+#'   options(lfe.threads = 2)
 #'   x <- rnorm(1000)
 #'   x2 <- rnorm(length(x))
 #'   id <- factor(sample(10,length(x),replace=TRUE))

@@ -77,7 +77,8 @@
 #' @keywords regression models
 #' @examples
 #' 
-#' oldopts <- options(lfe.threads=2)
+#' oldopts <- options('lfe.threads')
+#' options(lfe.threads=2)
 #' ## create covariates
 #' x <- rnorm(4000)
 #' x2 <- rnorm(length(x))
@@ -128,7 +129,8 @@ getfe <- function(obj,references=NULL,se=FALSE,method='kaczmarz',ef='ref',bN=100
     if(!is.character(ef) && !is.function(ef))
       stop('ef must be a function when using the Kaczmarz method')
     if(method == 'cg') {
-      oldopt <- options(lfe.usecg=TRUE)
+      oldopt <- options("lfe.usecg")
+      options(lfe.usecg=TRUE)
       on.exit(options(oldopt))
     }
     return(getfe.kaczmarz(obj,se,ef=ef,bN=bN, robust=robust, cluster=cluster, lhs=lhs))
