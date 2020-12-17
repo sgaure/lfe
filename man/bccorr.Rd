@@ -71,7 +71,7 @@ There are three bias corrections, for the variances of \eqn{D\theta} (\code{vD})
 relative tolerance specified by the argument \code{tol}. The covariance
 bias is estimated to an absolute tolerance in the correlation \code{rho}
 (conditional on the already bias corrected \code{vD} and \code{vF}) specified by
-\code{tol}.  The CG algortithm does not need to be exceedingly precise,
+\code{tol}.  The CG algorithm does not need to be exceedingly precise,
 it is terminated when the solution reaches a precision which is
 sufficient for the chosen precision in \code{vD, vF, vDF}.
 

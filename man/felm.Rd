@@ -296,73 +296,88 @@ in the data frame instead of the local environment where they are defined.
 }
 \examples{
 
-oldopts <- options(lfe.threads=1)
+## Default is to use all cores. We'll limit it to 2 for this example.
+oldopts <- options("lfe.threads")
+options(lfe.threads = 2)
 
 ## Simulate data
+set.seed(42)
+n <- 1e3
 
-# Covariates
-x <- rnorm(1000)
-x2 <- rnorm(length(x))
-# Individuals and firms
-id <- factor(sample(20,length(x),replace=TRUE))
-firm <- factor(sample(13,length(x),replace=TRUE))
-# Effects for them
-id.eff <- rnorm(nlevels(id))
-firm.eff <- rnorm(nlevels(firm))
+d <- data.frame(
+  # Covariates
+  x1 = rnorm(n),
+  x2 = rnorm(n),
+  # Individuals and firms
+  id = factor(sample(20, n, replace=TRUE)),
+  firm = factor(sample(13, n, replace=TRUE)),
+  # Noise
+  u = rnorm(n)
+  )
+  
+# Effects for individuals and firms
+id.eff <- rnorm(nlevels(d$id))
+firm.eff <- rnorm(nlevels(d$firm))
+
 # Left hand side
-u <- rnorm(length(x))
-y <- x + 0.5*x2 + id.eff[id] + firm.eff[firm] + u
+d$y <- d$x1 + 0.5*d$x2 + id.eff[d$id] + firm.eff[d$firm] + d$u
 
 ## Estimate the model and print the results
-est <- felm(y ~ x + x2 | id + firm)
+est <- felm(y ~ x1 + x2 | id + firm, data = d)
 summary(est)
-
-\dontrun{
+\donttest{
 # Compare with lm
-summary(lm(y ~ x + x2 + id + firm-1))}
+summary(lm(y ~ x1 + x2 + id + firm- 1, data = d))}
 
 ## Example with 'reverse causation' (IV regression)
 
 # Q and W are instrumented by x3 and the factor x4.
-x3 <- rnorm(length(x))
-x4 <- sample(12,length(x),replace=TRUE)
-Q <- 0.3*x3 + x + 0.2*x2 + id.eff[id] + 0.3*log(x4) - 0.3*y + rnorm(length(x),sd=0.3)
-W <- 0.7*x3 - 2*x + 0.1*x2 - 0.7*id.eff[id] + 0.8*cos(x4) - 0.2*y+ rnorm(length(x),sd=0.6)
+d$x3 <- rnorm(n)
+d$x4 <- sample(12, n, replace=TRUE)
+d$Q <- 0.3*d$x3 + d$x1 + 0.2*d$x2 + id.eff[d$id] + 0.3*log(d$x4) - 0.3*d$y + 
+  rnorm(n, sd=0.3)
+d$W <- 0.7*d$x3 - 2*d$x1 + 0.1*d$x2 - 0.7*id.eff[d$id] + 0.8*cos(d$x4) - 
+  0.2*d$y + rnorm(n, sd=0.6)
+
 # Add them to the outcome variable
-y <- y + Q + W
+d$y <- d$y + d$Q + d$W
 
 ## Estimate the IV model and report robust SEs
-ivest <- felm(y ~ x + x2 | id + firm | (Q|W ~ x3 + factor(x4)))
-summary(ivest, robust=TRUE)
+ivest <- felm(y ~ x1 + x2 | id + firm | (Q|W ~ x3 + factor(x4)), data = d)
+summary(ivest, robust = TRUE)
 condfstat(ivest)
-
-\dontrun{
+\donttest{
 # Compare with the not instrumented fit:
-summary(felm(y ~ x + x2 + Q + W | id + firm))}
+summary(felm(y ~ x1 + x2 + Q + W | id + firm, data = d))}
 
 ## Example with multiway clustering
 
 # Create a large cluster group (500 clusters) and a small one (20 clusters)
-cl1 <- factor(sample(rep(1:500, length.out=length(x))))
-cl2 <- factor(sample(rep(1:20, length.out=length(x))))
+d$cl1 <- factor(sample(rep(1:500, length.out=n)))
+d$cl2 <- factor(sample(rep(1:20, length.out=n)))
 # Function for adding clustered noise to our outcome variable 
 cl_noise <- function(cl) {
- obs_per_cluster <- length(x)/nlevels(cl)
- unlist(replicate(nlevels(cl), rnorm(obs_per_cluster, mean=rnorm(1), sd=runif(1)), simplify=FALSE))
+ obs_per_cluster <- n/nlevels(cl)
+ unlist(replicate(nlevels(cl), 
+                  rnorm(obs_per_cluster, mean=rnorm(1), sd=runif(1)), 
+                  simplify=FALSE))
 }
+
 # New outcome variable
-y_cl <- x + 0.5*x2 + id.eff[id] + firm.eff[firm] + cl_noise(cl1) + cl_noise(cl2)
+d$y_cl <- d$x1 + 0.5*d$x2 + id.eff[d$id] + firm.eff[d$firm] + 
+  cl_noise(d$cl1) + cl_noise(d$cl2)
 
 ## Estimate and print the model with cluster-robust SEs (default)
-est_cl <- felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2)
+est_cl <- felm(y_cl ~ x1 + x2 | id + firm | 0 | cl1 + cl2, data = d)
 summary(est_cl)
 
-\dontrun{
 # Print ordinary standard errors:
 summary(est_cl, robust = FALSE)
 # Match cluster-robust SEs from Stata's reghdfe package:
-summary(felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2, cmethod="reghdfe"))}
+summary(felm(y_cl ~ x1 + x2 | id + firm | 0 | cl1 + cl2, data = d, 
+             cmethod = "reghdfe"))
 
+## Restore default options
 options(oldopts)
 
 }

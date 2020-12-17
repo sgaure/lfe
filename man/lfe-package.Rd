@@ -150,12 +150,12 @@ J.R. Stat. Soc.(A) 171(3), 673--697.
 Cornelissen, T. (2008) \cite{The stata command felsdvreg to fit a linear
 model with two high-dimensional fixed effects.} Stata Journal,
 8(2):170--189, 2008.
-\url{https://econpapers.repec.org/RePEc:tsj:stataj:v:8:y:2008:i:2:p:170-189}
+\url{http://econpapers.repec.org/RePEc:tsj:stataj:v:8:y:2008:i:2:p:170-189}
 
 Correia, S. (2014) \cite{REGHDFE: Stata module to perform linear or
 instrumental-variable regression absorbing any number of high-dimensional
 fixed effects}, Statistical Software Components, Boston College Department
-of Economics. \url{https://econpapers.repec.org/RePEc:boc:bocode:s457874}
+of Economics. \url{http://econpapers.repec.org/RePEc:boc:bocode:s457874}
 
 Croissant, Y. and G. Millo (2008) \cite{Panel Data Econometrics in R: The
 plm Package}, Journal of Statistical Software, 27(2).
