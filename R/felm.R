@@ -1116,9 +1116,12 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' \url{http://dx.doi.org/10.1080/07350015.2014.978175}
 #' @examples
 #' 
-#' oldopts <- options(lfe.threads=1)
+#' ## Default is to use all cores. We'll limit it to 2 for this example.
+#' oldopts <- options("lfe.threads")
+#' options(lfe.threads = 2)
 #' 
 #' ## Simulate data
+#' set.seed(42)
 #' 
 #' # Covariates
 #' x <- rnorm(1000)
@@ -1137,7 +1140,7 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' est <- felm(y ~ x + x2 | id + firm)
 #' summary(est)
 #' 
-#' \dontrun{
+#' \donttest{
 #' # Compare with lm
 #' summary(lm(y ~ x + x2 + id + firm-1))}
 #' 
@@ -1156,7 +1159,7 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' summary(ivest, robust=TRUE)
 #' condfstat(ivest)
 #' 
-#' \dontrun{
+#' \donttest{
 #' # Compare with the not instrumented fit:
 #' summary(felm(y ~ x + x2 + Q + W | id + firm))}
 #' 
@@ -1177,12 +1180,12 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' est_cl <- felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2)
 #' summary(est_cl)
 #' 
-#' \dontrun{
 #' # Print ordinary standard errors:
 #' summary(est_cl, robust = FALSE)
 #' # Match cluster-robust SEs from Stata's reghdfe package:
-#' summary(felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2, cmethod="reghdfe"))}
+#' summary(felm(y_cl ~ x + x2 | id + firm | 0 | cl1 + cl2, cmethod="reghdfe"))
 #' 
+#' ## Restore default options
 #' options(oldopts)
 #' 
 #' @export felm
