@@ -1,7 +1,7 @@
 # $Id: bccorr.R 2004 2016-04-21 10:31:20Z sgaure $
 narowsum <- function(x, group) {
   # opt <- options(warn=-1) ## CRAN request to rather use suppressWarnings()
-  res <- try(rowsum(x,group), silent=TRUE)
+  res <- suppressWarnings(try(rowsum(x,group), silent=TRUE))
   # options(opt)
   narow <- is.na(rownames(res))
   if(any(narow))
@@ -11,7 +11,7 @@ narowsum <- function(x, group) {
 }
 
 # try without reference
-suppressWarnings(narowsum) <- rowsum
+narowsum <- rowsum
 # to estimate the bias of the D-variance we need to find tr(D' P_1 D (D' P_{X,F} D)^{-1})
 # where P_1 projects out the mean, P_{X,F} projects out X and F. Let's make function
 # which evaluates the matrix inside the trace on a vector.
