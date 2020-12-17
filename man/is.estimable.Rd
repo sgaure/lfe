@@ -51,7 +51,8 @@ estimable, whereas the others are not.
 }
 \examples{
 
-oldopts <- options(lfe.threads=1)
+oldopts <- options("lfe.threads")
+options(lfe.threads = 2)
 ## create individual and firm
 id <- factor(sample(5000,50000,replace=TRUE))
 firm <- factor(sample(3000,50000,replace=TRUE))

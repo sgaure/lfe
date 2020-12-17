@@ -149,7 +149,8 @@ do \code{bar <- demeanlist(fun(x[v,]),...)}. However, demeanlist allows a constr
 will be modified, quite contrary to the usual semantics of R.
 }
 \examples{
-oldopts <- options(lfe.threads=1)
+oldopts <- options('lfe.threads')
+options(lfe.threads=2)
 ## create a matrix
 mtx <- data.frame(matrix(rnorm(999),ncol=3))
 # a list of factors

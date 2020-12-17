@@ -61,7 +61,8 @@ I.e. if the model is \code{y ~ ... |id + firm}, we have
 }
 \examples{
 
-oldopts <- options(lfe.threads=1)
+oldopts <- options("lfe.threads")
+options(lfe.threads = 2)
 id <- factor(sample(5000,50000,replace=TRUE))
 firm <- factor(sample(3000,50000,replace=TRUE))
 fl <- list(id=id,firm=firm)

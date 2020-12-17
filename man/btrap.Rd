@@ -62,7 +62,8 @@ be a list of factors.
 }
 \examples{
 
-oldopts <- options(lfe.threads=2)
+oldopts <- options('lfe.threads')
+options(lfe.threads=2)
 ## create covariates
 x <- rnorm(3000)
 x2 <- rnorm(length(x))

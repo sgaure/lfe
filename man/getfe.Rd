@@ -104,7 +104,8 @@ is used for the cluster definition.
 }
 \examples{
 
-oldopts <- options(lfe.threads=2)
+oldopts <- options('lfe.threads')
+options(lfe.threads=2)
 ## create covariates
 x <- rnorm(4000)
 x2 <- rnorm(length(x))
