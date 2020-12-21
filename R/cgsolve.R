@@ -102,7 +102,7 @@ newmus <- function(oldmus, i, alpha, beta) {
 #' @seealso \code{\link{kaczmarz}}
 #' @references Kaasschieter, E. (1988) \cite{A practical termination criterion
 #' for the conjugate gradient method}, BIT Numerical Mathematics,
-#' 28(2):308-322.  \url{http://link.springer.com/article/10.1007\%2FBF01934094}
+#' 28(2):308-322.  \url{https://link.springer.com/article/10.1007/BF01934094}
 #' @examples
 #' 
 #'   N <- 100000

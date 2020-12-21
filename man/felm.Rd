@@ -325,9 +325,8 @@ d$y <- d$x1 + 0.5*d$x2 + id.eff[d$id] + firm.eff[d$firm] + d$u
 ## Estimate the model and print the results
 est <- felm(y ~ x1 + x2 | id + firm, data = d)
 summary(est)
-\donttest{
 # Compare with lm
-summary(lm(y ~ x1 + x2 + id + firm- 1, data = d))}
+summary(lm(y ~ x1 + x2 + id + firm- 1, data = d))
 
 ## Example with 'reverse causation' (IV regression)
 
@@ -346,9 +345,8 @@ d$y <- d$y + d$Q + d$W
 ivest <- felm(y ~ x1 + x2 | id + firm | (Q|W ~ x3 + factor(x4)), data = d)
 summary(ivest, robust = TRUE)
 condfstat(ivest)
-\donttest{
 # Compare with the not instrumented fit:
-summary(felm(y ~ x1 + x2 + Q + W | id + firm, data = d))}
+summary(felm(y ~ x1 + x2 + Q + W | id + firm, data = d))
 
 ## Example with multiway clustering
 
