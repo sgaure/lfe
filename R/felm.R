@@ -1145,9 +1145,8 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' ## Estimate the model and print the results
 #' est <- felm(y ~ x1 + x2 | id + firm, data = d)
 #' summary(est)
-#' \donttest{
 #' # Compare with lm
-#' summary(lm(y ~ x1 + x2 + id + firm- 1, data = d))}
+#' summary(lm(y ~ x1 + x2 + id + firm- 1, data = d))
 #' 
 #' ## Example with 'reverse causation' (IV regression)
 #' 
@@ -1166,9 +1165,8 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' ivest <- felm(y ~ x1 + x2 | id + firm | (Q|W ~ x3 + factor(x4)), data = d)
 #' summary(ivest, robust = TRUE)
 #' condfstat(ivest)
-#' \donttest{
 #' # Compare with the not instrumented fit:
-#' summary(felm(y ~ x1 + x2 + Q + W | id + firm, data = d))}
+#' summary(felm(y ~ x1 + x2 + Q + W | id + firm, data = d))
 #' 
 #' ## Example with multiway clustering
 #' 
