@@ -17,11 +17,12 @@ ivbootstrap <- function(z, x, y, quantiles=0.95, N=100L, cluster=NULL) {
 
   n <- 0
   bias <- replicate(N,{
-    n <<- n + 1
+    n_temp <- n + 1
+    assign("n", n_temp, inherits = TRUE) ## replaces n <<- n+1
     now <- Sys.time()
     if(is.numeric(pint) && pint > 0 && now-last > pint) {
       message(date(), ' Iteration ', n , ' of ', N , ' in IV bootstrap')
-      last <<- now
+      assign("last", now, inherits = TRUE) # replaces: last <<- now
     }
     if(is.null(cluster)) {
       # resampling observations for indep residuals

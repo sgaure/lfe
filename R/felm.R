@@ -1289,10 +1289,12 @@ felm <- function(formula, data, exactDOF=FALSE, subset, na.action,
     if(!is.null(attr(nostats,'boot'))) bootstat <- attr(nostats,'boot')
     iii <- 0
     bootfun <- function() {
-      now <<- Sys.time()
-      iii <<- iii+1
+      assign("now", Sys.time(), inherits = TRUE) # replaces: now <<- Sys.time()
+      iii_tmp <- iii+1 # replaces: iii <<- iii+1
+      assign("iii", iii_tmp, inherits = TRUE)
       if(now > last + pint) {
-        last <<- now; message(date(), ' done boot iter ',iii)
+        assign("last", now, inherits = TRUE) # replaces last <<- now
+        message(date(), ' done boot iter ',iii)
       }
       bootenv <- new.env()
       # we delay assign to avoid unnecessary estimating and copying
