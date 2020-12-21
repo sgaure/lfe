@@ -1529,6 +1529,7 @@ felm.mm <- function(mm,nostats,exactDOF,keepX,keepCX,keepModel,kclass=NULL,fulle
 #' check_redundant_fe(y~ x |fe1 +fe2:fe1)
 #' check_redundant_fe(y~ x |fe2*fe1)
 #' @author Grant McDermott, small adaptation by Matthieu Stigler
+#' @noRd
 check_redundant_fe <- function(formula){
   fml_chk <- Formula::Formula(formula)
   has_FE <- length(attr(fml_chk, "rhs"))>1 && !is.null(attr(fml_chk, "rhs")[[2]])
