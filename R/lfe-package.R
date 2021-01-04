@@ -111,7 +111,7 @@
 #' @docType package
 #' @references Abowd, J.M., F. Kramarz and D.N. Margolis (1999) \cite{High Wage
 #' Workers and High Wage Firms}, Econometrica 67 (1999), no. 2, 251--333.
-#' \url{http://dx.doi.org/10.1111/1468-0262.00020}
+#' \doi{10.1111/1468-0262.00020}
 #' 
 #' Abowd, J.M., R. Creecy and F. Kramarz (2002) \cite{Computing Person and Firm
 #' Effects Using Linked Longitudinal Employer-Employee Data.} Technical Report
@@ -121,7 +121,7 @@
 #' Andrews, M., L. Gill, T. Schank and R. Upward (2008) \cite{High wage workers
 #' and low wage firms: negative assortative matching or limited mobility bias?}
 #' J.R. Stat. Soc.(A) 171(3), 673--697.
-#' \url{https://doi.org/10.1111/j.1467-985X.2007.00533.x}
+#' \doi{10.1111/j.1467-985X.2007.00533.x}
 #' 
 #' Cornelissen, T. (2008) \cite{The stata command felsdvreg to fit a linear
 #' model with two high-dimensional fixed effects.} Stata Journal,
@@ -139,7 +139,7 @@
 #' 
 #' Gaure, S. (2013) \cite{OLS with Multiple High Dimensional Category
 #' Variables.} Computational Statistics and Data Analysis, 66:8--18, 2013
-#' \url{http://dx.doi.org/10.1016/j.csda.2013.03.024}
+#' \doi{10.1016/j.csda.2013.03.024}
 #' 
 #' Gaure, S. (2014a) \cite{lfe: Linear Group Fixed Effects.} The R Journal,
 #' 5(2):104-117, Dec 2013.
@@ -147,7 +147,7 @@
 #' 
 #' Gaure, S. (2014b), \cite{Correlation bias correction in two-way
 #' fixed-effects linear regression}, Stat 3(1):379-390, 2014.
-#' \url{http://dx.doi.org/10.1002/sta4.68}
+#' \doi{10.1002/sta4.68}
 #' 
 #' Guimaraes, P. and Portugal, P. (2010) \cite{A simple feasible procedure to
 #' fit models with high-dimensional fixed effects.} The Stata Journal,

@@ -383,12 +383,12 @@ options(oldopts)
 Cameron, A.C., J.B. Gelbach and D.L. Miller (2011) \cite{Robust
 inference with multiway clustering}, Journal of Business & Economic
 Statistics 29 (2011), no. 2, 238--249.
-\url{http://dx.doi.org/10.1198/jbes.2010.07136}
+\doi{10.1198/jbes.2010.07136}
 
 Kolesar, M., R. Chetty, J. Friedman, E. Glaeser, and G.W. Imbens (2014)
 \cite{Identification and Inference with Many Invalid Instruments}, Journal
 of Business & Economic Statistics (to appear).
-\url{http://dx.doi.org/10.1080/07350015.2014.978175}
+\doi{10.1080/07350015.2014.978175}
 }
 \seealso{
 \code{\link{getfe}} \code{\link{summary.felm}}

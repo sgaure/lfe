@@ -798,7 +798,7 @@ varvars <- function(est, alpha=getfe(est), tol=0.01, biascorrect=FALSE, lhs=NULL
 #' @seealso \code{\link{varvars}} \code{\link{bccorr}}
 #' @references Gaure, S. (2014), \cite{Correlation bias correction in two-way
 #' fixed-effects linear regression}, Stat 3(1):379-390, 2014.
-#' \url{http://dx.doi.org/10.1002/sta4.68}
+#' \doi{10.1002/sta4.68}
 #' @examples
 #' 
 #' x <- rnorm(5000)
