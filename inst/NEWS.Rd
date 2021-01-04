@@ -5,6 +5,7 @@
 \section{Changes in version 2.8-6}{
   \itemize{
    \item Package is archived from CRAN and temporarily adopted by Matthieu Stigler.
+   \item Use now doi function 
    \item CRAN request: do not use 'dontrun' or 'donttest'
    \item CRAN request: remove <<-
    \item CRAN request: reset options to defaults
