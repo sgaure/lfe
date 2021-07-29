@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 rm -rf src/Makevars acaux config.* aclocal.m4 autom4te.cache
 
 

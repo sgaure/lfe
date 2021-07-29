@@ -1,6 +1,5 @@
-#define USE_RINTERNALS 1 // needed because SET_REFCNT use in MY_named
-#include <Rinternals.h>  // needed because SET_REFCNT use in MY_named
 #include "lfe.h"
+
 SEXP MY_scalecols(SEXP mat, SEXP vec) {
   if(!isMatrix(mat)) error("first argument should be a matrix");
   mybigint_t col = ncols(mat), row = nrows(mat);
@@ -169,21 +168,13 @@ SEXP MY_named(SEXP x, SEXP n) {
     // return NAMED status
     SEXP res = allocVector(INTSXP, 1);
     PROTECT(res);
-#if defined(COMPUTE_REFCNT_VALUES)
-    INTEGER(res)[0] = REFCNT(x);
-#else
     INTEGER(res)[0] = NAMED(x);
-#endif
     setAttrib(res,install("x"),x);
     UNPROTECT(1);
     return(res);
   }
   // set named status. Use this at your own peril. Seriously. Things may ...
-#if defined(COMPUTE_REFCNT_VALUES)
-  SET_REFCNT(x,INTEGER(n)[0]);
-#else
   SET_NAMED(x,INTEGER(n)[0]);
-#endif
   return(x);
 }
 
