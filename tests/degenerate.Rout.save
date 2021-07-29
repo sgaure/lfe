@@ -56,12 +56,12 @@ Residuals:
 
 Coefficients:
    Estimate Std. Error t value Pr(>|t|)    
-x        NA         NA      NA       NA    
+x       NaN         NA     NaN      NaN    
 x2  -0.4175     0.0281   -14.8   <2e-16 ***
 x3   1.4086     0.0188    75.1   <2e-16 ***
-x4       NA         NA      NA       NA    
-x5       NA         NA      NA       NA    
-x6       NA         NA      NA       NA    
+x4      NaN         NA     NaN      NaN    
+x5      NaN         NA     NaN      NaN    
+x6      NaN         NA     NaN      NaN    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
