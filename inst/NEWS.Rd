@@ -1,10 +1,15 @@
 \name{NEWS}
 \title{lfe news}
 
+\section{Changes in version 2.8-7}{
+  \itemize{
+  \item Adapt code for changes in R 4.1 and SET_REFCNT, revert previous commit, as suggested by @SebKrantz on Issue https://github.com/sgaure/lfe/issues/49
+  }
+}
 
 \section{Changes in version 2.8-6}{
   \itemize{
-   \item Package is archived from CRAN and temporarily adopted by Matthieu Stigler.
+   \item Package is un-archived from CRAN and temporarily adopted by Matthieu Stigler.
    \item Use now doi function 
    \item CRAN request: do not use 'dontrun' or 'donttest'
    \item CRAN request: remove <<-
