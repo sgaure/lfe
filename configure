@@ -1897,6 +1897,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+
 ac_config_headers="$ac_config_headers src/config.h"
 
 ac_aux_dir=
@@ -2051,6 +2052,7 @@ ac_config_files="$ac_config_files src/Makevars"
 
 
 
+# AC_LANG(C)
 # Check whether --enable-threads was given.
 if test "${enable_threads+set}" = set; then :
   enableval=$enable_threads; do_threads=$enableval
@@ -2067,6 +2069,7 @@ $as_echo "#define HUGE_INT 1" >>confdefs.h
 fi
 
 
+# local debug
 # Check whether --enable-pedantry was given.
 if test "${enable_pedantry+set}" = set; then :
   enableval=$enable_pedantry; DFLAGS='-Wall -Wextra -Wpedantic'
@@ -3957,6 +3960,7 @@ See \`config.log' for more details" "$LINENO" 5; }
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
+
 #include <semaphore.h>
  #include <stdlib.h>
  #include <stdio.h>
