@@ -1,5 +1,10 @@
 #include "lfe.h"
 
+#define USE_FC_LEN_T
+#ifndef FCONE
+# define FCONE
+#endif
+
 SEXP MY_scalecols(SEXP mat, SEXP vec) {
   if(!isMatrix(mat)) error("first argument should be a matrix");
   mybigint_t col = ncols(mat), row = nrows(mat);
@@ -120,8 +125,8 @@ SEXP MY_sandwich(SEXP inalpha, SEXP inbread, SEXP inmeat) {
   double zero = 0.0;
   double one = 1.0;
 
-  F77_CALL(dsymm)("R","U",&N,&N,&one,bread,&N,meat,&N,&zero,tmp,&N);
-  F77_CALL(dsymm)("L","U",&N,&N,&alpha,bread,&N,tmp,&N,&zero,out,&N);
+  F77_CALL(dsymm)("R","U",&N,&N,&one,bread,&N,meat,&N,&zero,tmp,&N FCONE FCONE);
+  F77_CALL(dsymm)("L","U",&N,&N,&alpha,bread,&N,tmp,&N,&zero,out,&N FCONE FCONE);
 
   UNPROTECT(1);
   return ret;
@@ -145,7 +150,7 @@ SEXP MY_dsyrk(SEXP inbeta, SEXP inC, SEXP inalpha, SEXP inA) {
   }
   int K = nrows(inA);
   double *A = REAL(inA);
-  F77_CALL(dsyrk)("U","T",&N, &K, &alpha, A, &K, &beta, C, &N);
+  F77_CALL(dsyrk)("U","T",&N, &K, &alpha, A, &K, &beta, C, &N FCONE FCONE);
   // fill in the lower triangular part
   for(mybigint_t row=0; row < N; row++) {
     for(mybigint_t col=0; col < row; col++) {
