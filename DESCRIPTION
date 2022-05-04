@@ -1,10 +1,15 @@
 Package: lfe
-Version: 2.8-7.1
-Date: 2021-07-20
+Version: 2.8-8
+Date: 2022-05-04
 Title: Linear Group Fixed Effects
 Authors@R: c(person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut"),
            comment=c(ORCID="https://orcid.org/0000-0001-7251-8747")),
 	   person("Grant","McDermott", email="grantmcd@uoregon.edu", role="ctb"),
+	   person(given = "Mauricio",
+            family = "Vargas",
+            role = "ctb",
+            email = "mavargas11@uc.cl",
+            comment = c(ORCID = "0000-0003-1017-7574")),
 	   person("Karl", "Dunkle Werner", role="ctb"),
 	   person("Matthieu","Stigler", email = "Matthieu.Stigler@gmail.com", role= c("ctb", "cre"),
 	          comment =c(ORCID="0000-0002-6802-4290")),

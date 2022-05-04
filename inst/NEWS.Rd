@@ -1,6 +1,12 @@
 \name{NEWS}
 \title{lfe news}
 
+\section{Changes in version 2.8-8}{
+  \itemize{
+  \item Adapt code for changes in R 4.2 USE_FC_LEN_T, fixed by @pachadotdev 
+  }
+}
+
 \section{Changes in version 2.8-7}{
   \itemize{
   \item Adapt code for changes in R 4.1 and SET_REFCNT, revert previous commit, as suggested by @SebKrantz on Issue https://github.com/sgaure/lfe/issues/49
