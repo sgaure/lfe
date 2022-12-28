@@ -1,32 +1,32 @@
 #' Bootstrap standard errors for the group fixed effects
 #' 
 #' Bootstrap standard errors for the group fixed effects which were swept out
-#' during an estimation with \code{\link{felm}}.
+#' during an estimation with [felm()].
 #' 
-#' The bootstrapping is done in parallel if \code{threads > 1}.
-#' \code{\link{btrap}} is run automatically from \code{\link{getfe}} if
-#' \code{se=TRUE} is specified.  To save some overhead, the individual
+#' The bootstrapping is done in parallel if `threads > 1`.
+#' [btrap()] is run automatically from [getfe()] if
+#' `se=TRUE` is specified.  To save some overhead, the individual
 #' iterations are grouped together, the memory available for this grouping is
-#' fetched with \code{getOption('lfe.bootmem')}, which is initialized upon
-#' loading of \pkg{lfe} to \code{options(lfe.bootmem=500)} (MB).
+#' fetched with `getOption('lfe.bootmem')`, which is initialized upon
+#' loading of \pkg{lfe} to `options(lfe.bootmem=500)` (MB).
 #' 
-#' If \code{robust=TRUE}, heteroskedastic robust standard errors are estimated.
-#' If \code{robust=FALSE} and \code{cluster=TRUE}, clustered standard errors
-#' with the cluster specified to \code{felm()} are estimated. If \code{cluster}
-#' is a factor, it is used for the cluster definition.  \code{cluster may} also
+#' If `robust=TRUE`, heteroskedastic robust standard errors are estimated.
+#' If `robust=FALSE` and `cluster=TRUE`, clustered standard errors
+#' with the cluster specified to `felm()` are estimated. If `cluster`
+#' is a factor, it is used for the cluster definition.  `cluster may` also
 #' be a list of factors.
 #' 
-#' @param alpha data frame returned from \code{\link{getfe}}
-#' @param obj object of class \code{"felm"}, usually, a result of a call to
-#' \code{\link{felm}}
+#' @param alpha data frame returned from [getfe()]
+#' @param obj object of class `"felm"`, usually, a result of a call to
+#' [felm()]
 #' @param N integer.  The number of bootstrap iterations
-#' @param ef function.  An estimable function such as in \code{\link{getfe}}.
-#' The default is to use the one used on \code{alpha}
+#' @param ef function.  An estimable function such as in [getfe()].
+#' The default is to use the one used on `alpha`
 #' @param eps double. Tolerance for centering, as in getfe
 #' @param threads integer.  The number of threads to use
 #' @param robust logical. Should heteroskedastic standard errors be estimated?
 #' @param cluster logical or factor. Estimate clustered standard errors.
-#' @param lhs character vector. Specify which left hand side if \code{obj} has
+#' @param lhs character vector. Specify which left hand side if `obj` has
 #' multiple lhs.
 #' @return A data-frame of the same size as alpha is returned, with standard
 #' errors filled in.

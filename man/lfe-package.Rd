@@ -16,7 +16,7 @@ limited mobility bias is also included.
 \details{
 This package is intended for linear models with multiple group fixed
 effects, i.e. with 2 or more factors with a large number of levels.  It
-performs similar functions as \code{\link[stats]{lm}}, but it uses a special
+performs similar functions as \code{\link[stats:lm]{stats::lm()}}, but it uses a special
 method for projecting out multiple group fixed effects from the normal
 equations, hence it is faster. It is a generalization of the within
 estimator.  This may be required if the groups have high cardinality (many
@@ -27,8 +27,8 @@ errors for the group effects by bootstrapping, but this is a very time- and
 memory-consuming process compared to finding the point estimates.  If you
 only have a single huge factor, the package \pkg{plm} is probably better
 suited.  If your factors don't have thousands of levels,
-\code{\link[stats]{lm}} or other packages are probably better suited.
-\pkg{lfe} is designed to produce the same results as \code{\link[stats]{lm}}
+\code{\link[stats:lm]{stats::lm()}} or other packages are probably better suited.
+\pkg{lfe} is designed to produce the same results as \code{\link[stats:lm]{stats::lm()}}
 will do if run with the full set of dummies.
 
 Projecting out interactions between continuous covariates and factors is
@@ -39,28 +39,28 @@ The package does not support non-linear models. For GLMs with many dummies there
 is a package \pkg{alpaca} which uses similar methods to project them out.
 
 The estimation is done in two steps.  First the other coefficients are
-estimated with the function \code{\link{felm}} by centering on all the group
+estimated with the function \code{\link[=felm]{felm()}} by centering on all the group
 means, followed by an OLS (similar to lm).  Then the group effects are
-extracted (if needed) with the function \code{\link{getfe}}.  This method is
+extracted (if needed) with the function \code{\link[=getfe]{getfe()}}.  This method is
 described by \cite{Gaure (2013)}, but also appears in \cite{Guimaraes and
 Portugal (2010)}, disguised as the Gauss-Seidel algorithm.
 
-There's also a function \code{\link{demeanlist}} which just does the
+There's also a function \code{\link[=demeanlist]{demeanlist()}} which just does the
 centering on an arbitrary matrix or data frame, and there's a function
-\code{\link{compfactor}} which computes the connected components which are
+\code{\link[=compfactor]{compfactor()}} which computes the connected components which are
 used for interpreting the group effects when there are only two factors (see
-the Abowd et al references), they are also returned by \code{\link{getfe}}.
+the Abowd et al references), they are also returned by \code{\link[=getfe]{getfe()}}.
 
 For those who study the correlation between the fixed effects, like in
-\cite{Abowd et al. (1999)}, there are functions \code{\link{bccorr}} and
-\code{\link{fevcov}} for computing limited mobility bias corrected
+\cite{Abowd et al. (1999)}, there are functions \code{\link[=bccorr]{bccorr()}} and
+\code{\link[=fevcov]{fevcov()}} for computing limited mobility bias corrected
 correlations and variances with the method described in \cite{Gaure
 (2014b)}.
 
 Instrumental variable estimations are supported with 2SLS. Conditional F
 statistics for testing reduced rank weak instruments as in \cite{Sanderson
-and Windmeijer (2015)} are available in \code{\link{condfstat}}.  Joint
-significance testing of coefficients is available in \code{\link{waldtest}}.
+and Windmeijer (2015)} are available in \code{\link[=condfstat]{condfstat()}}.  Joint
+significance testing of coefficients is available in \code{\link[=waldtest]{waldtest()}}.
 
 The centering on the means is done with a tolerance which is set by
 \code{options(lfe.eps=1e-8)} (the default).  This is a somewhat conservative
@@ -74,7 +74,7 @@ of threads is fetched upon loading the package from the environment variable
 \env{LFE_THREADS}, \env{OMP_THREAD_LIMIT}, \env{OMP_NUM_THREADS} or
 \env{NUMBER_OF_PROCESSORS} (for Windows), and stored by
 \code{options(lfe.threads=n)}.  This option can be changed prior to calling
-\code{\link{felm}}, if so desired.  Note that, typically, \pkg{lfe} is
+\code{\link[=felm]{felm()}}, if so desired.  Note that, typically, \pkg{lfe} is
 limited by memory bandwidth, not cpu speed, thus fast memory and large cache
 is more important than clock frequency. It is therefore also not always true
 that running on all available cores is much better than running on half of
@@ -91,7 +91,7 @@ interval in seconds is \code{options(lfe.pint=1800)}.
 
 The package has been tested on datasets with approx 20,000,000 observations
 with 15 covariates and approx 2,300,000 and 270,000 group levels (the
-\code{\link{felm}} took about 50 minutes on 8 cpus, the \code{\link{getfe}}
+\code{\link[=felm]{felm()}} took about 50 minutes on 8 cpus, the \code{\link[=getfe]{getfe()}}
 takes 5 minutes).  Though, beware that not only the size of the dataset
 matters, but also its structure, as demonstrated by \cite{Gaure (2014a)}.
 

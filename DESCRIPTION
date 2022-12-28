@@ -41,4 +41,5 @@ Classification/MSC: 62J05, 65F10, 65F50
 URL: https://github.com/MatthieuStigler/lfe
 BugReports: https://github.com/MatthieuStigler/lfe/issues
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
+Roxygen: list(markdown = TRUE)

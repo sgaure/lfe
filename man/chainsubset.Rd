@@ -33,9 +33,8 @@ find the ones with \code{x > mean(y)}.  The last \code{mean(y)} is now condition
 \note{
 Some trickery is done to make this work directly in the subset argument of functions like
 \code{felm()} and \code{lm()}. It might possibly fail with an error message in some situations.
-If this happens, it should be done in two steps: \code{ss <- eval(chainsubset(...),data); 
-lm(...,data=data, subset=ss)}. In particular, the arguments are taken literally, 
-constructions like \code{function(...) {chainsubset(...)}} or \code{a <- quote(x < y); chainsubset(a)} do
+If this happens, it should be done in two steps: \verb{ss <- eval(chainsubset(...),data);  lm(...,data=data, subset=ss)}. In particular, the arguments are taken literally,
+constructions like \code{function(...) {chainsubset(...)}} or \verb{a <- quote(x < y); chainsubset(a)} do
 not work, but \code{do.call(chainsubset,list(a))} does.
 }
 \examples{

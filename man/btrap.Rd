@@ -17,14 +17,14 @@ btrap(
 )
 }
 \arguments{
-\item{alpha}{data frame returned from \code{\link{getfe}}}
+\item{alpha}{data frame returned from \code{\link[=getfe]{getfe()}}}
 
 \item{obj}{object of class \code{"felm"}, usually, a result of a call to
-\code{\link{felm}}}
+\code{\link[=felm]{felm()}}}
 
 \item{N}{integer.  The number of bootstrap iterations}
 
-\item{ef}{function.  An estimable function such as in \code{\link{getfe}}.
+\item{ef}{function.  An estimable function such as in \code{\link[=getfe]{getfe()}}.
 The default is to use the one used on \code{alpha}}
 
 \item{eps}{double. Tolerance for centering, as in getfe}
@@ -44,11 +44,11 @@ errors filled in.
 }
 \description{
 Bootstrap standard errors for the group fixed effects which were swept out
-during an estimation with \code{\link{felm}}.
+during an estimation with \code{\link[=felm]{felm()}}.
 }
 \details{
 The bootstrapping is done in parallel if \code{threads > 1}.
-\code{\link{btrap}} is run automatically from \code{\link{getfe}} if
+\code{\link[=btrap]{btrap()}} is run automatically from \code{\link[=getfe]{getfe()}} if
 \code{se=TRUE} is specified.  To save some overhead, the individual
 iterations are grouped together, the memory available for this grouping is
 fetched with \code{getOption('lfe.bootmem')}, which is initialized upon
@@ -57,7 +57,7 @@ loading of \pkg{lfe} to \code{options(lfe.bootmem=500)} (MB).
 If \code{robust=TRUE}, heteroskedastic robust standard errors are estimated.
 If \code{robust=FALSE} and \code{cluster=TRUE}, clustered standard errors
 with the cluster specified to \code{felm()} are estimated. If \code{cluster}
-is a factor, it is used for the cluster definition.  \code{cluster may} also
+is a factor, it is used for the cluster definition.  \verb{cluster may} also
 be a list of factors.
 }
 \examples{

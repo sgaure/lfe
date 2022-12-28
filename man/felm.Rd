@@ -55,14 +55,14 @@ squares is used with weights \code{weights} (that is, minimizing
 
 \item{...}{other arguments.  \itemize{
 
-\item \code{cmethod} character. Which clustering method to use. Known 
+\item \code{cmethod} character. Which clustering method to use. Known
 arguments are \code{'cgm'} (the default), \code{'cgm2'} (or \code{'reghdfe'},
-its alias). These alternate methods will generally 
+its alias). These alternate methods will generally
 yield equivalent results, except in the case of multiway clustering with few
-clusters along at least one dimension. 
+clusters along at least one dimension.
 
 \item \code{keepX} logical. To include a copy of the expanded data matrix in
-the return value, as needed by \code{\link{bccorr}} and \code{\link{fevcov}}
+the return value, as needed by \code{\link[=bccorr]{bccorr()}} and \code{\link[=fevcov]{fevcov()}}
 for proper limited mobility bias correction.
 
 \item \code{keepCX} logical. Keep a copy of the centred expanded data matrix
@@ -83,14 +83,13 @@ correct, this should only have an effect when the clustering factors have
 very few levels.
 
 \item \code{kclass} character. For use with instrumental variables. Use a
-k-class estimator rather than 2SLS/IV. Currently, the values \code{'nagar',
-'b2sls', 'mb2sls', 'liml'} are accepted, where the names are from
+k-class estimator rather than 2SLS/IV. Currently, the values \verb{'nagar', 'b2sls', 'mb2sls', 'liml'} are accepted, where the names are from
 \cite{Kolesar et al (2014)}, as well as a numeric value for the 'k' in
 k-class. With \code{kclass='liml'}, \code{felm} also accepts the argument
-\code{fuller=<numeric>}, for using a Fuller adjustment of the
+\verb{fuller=<numeric>}, for using a Fuller adjustment of the
 liml-estimator.
 
-\item \code{Nboot, bootexpr, bootcluster} Since \code{felm} has quite a bit
+\item \verb{Nboot, bootexpr, bootcluster} Since \code{felm} has quite a bit
 of overhead in the creation of the model matrix, if one wants confidence
 intervals for some function of the estimated parameters, it is possible to
 bootstrap internally in \code{felm}.  That is, the model matrix is resampled
@@ -109,7 +108,7 @@ needed in the bootstrap. If you need the covariance matrices in the full
 estimate, but not in the bootstrap, you can specify it in an attribute
 \code{"boot"} as \code{nostats=structure(FALSE, boot=TRUE)}.
 
-\item \code{iv, clustervar} deprecated.  These arguments will be removed at
+\item \verb{iv, clustervar} deprecated.  These arguments will be removed at
 a later time, but are still supported in this field. Users are
 \emph{STRONGLY} encouraged to use multipart formulas instead.  In
 particular, not all functionality is supported with the deprecated syntax;
@@ -168,7 +167,7 @@ the unrestricted model.}
 \item{X}{matrix. The expanded data matrix, i.e. from the first part of the
 formula. To save memory with large datasets, it is only included if
 \code{felm(keepX=TRUE)} is specified.  Must be included if
-\code{\link{bccorr}} or \code{\link{fevcov}} is to be used for correcting
+\code{\link[=bccorr]{bccorr()}} or \code{\link[=fevcov]{fevcov()}} is to be used for correcting
 limited mobility bias.  }
 
 \item{cX, cY}{matrix. The centred expanded data matrix. Only included if
@@ -187,22 +186,20 @@ remaining coefficients with OLS.
 This function is intended for use with large datasets with multiple group
 effects of large cardinality.  If dummy-encoding the group effects results
 in a manageable number of coefficients, you are probably better off by using
-\code{\link{lm}}.
+\code{\link[=lm]{lm()}}.
 
 The formula specification is a response variable followed by a four part
 formula. The first part consists of ordinary covariates, the second part
 consists of factors to be projected out. The third part is an
 IV-specification. The fourth part is a cluster specification for the
-standard errors.  I.e. something like \code{y ~ x1 + x2 | f1 + f2 | (Q|W ~
-x3+x4) | clu1 + clu2} where \code{y} is the response, \code{x1,x2} are
-ordinary covariates, \code{f1,f2} are factors to be projected out, \code{Q}
+standard errors.  I.e. something like \code{y ~ x1 + x2 | f1 + f2 | (Q|W ~ x3+x4) | clu1 + clu2} where \code{y} is the response, \verb{x1,x2} are
+ordinary covariates, \verb{f1,f2} are factors to be projected out, \code{Q}
 and \code{W} are covariates which are instrumented by \code{x3} and
-\code{x4}, and \code{clu1,clu2} are factors to be used for computing cluster
+\code{x4}, and \verb{clu1,clu2} are factors to be used for computing cluster
 robust standard errors. Parts that are not used should be specified as
 \code{0}, except if it's at the end of the formula, where they can be
 omitted.  The parentheses are needed in the third part since \code{|} has
-higher precedence than \code{~}. Multiple left hand sides like \code{y|w|x ~
-x1 + x2 |f1+f2|...} are allowed.
+higher precedence than \code{~}. Multiple left hand sides like \code{y|w|x ~ x1 + x2 |f1+f2|...} are allowed.
 
 Interactions between a covariate \code{x} and a factor \code{f} can be
 projected out with the syntax \code{x:f}.  The terms in the second and
@@ -214,17 +211,19 @@ parser does not keep the order.  This means that in interactions, the factor
 a factor. I.e. in \code{y ~ x1 | x:f1 + f2}, the \code{f1} must be a factor,
 whereas it will work as expected if \code{f2} is an integer vector.
 
-In older versions of \pkg{lfe} the syntax was \code{felm(y ~ x1 + x2 + G(f1)
-+ G(f2), iv=list(Q ~ x3+x4, W ~ x3+x4), clustervar=c('clu1','clu2'))}. This
+In older versions of \pkg{lfe} the syntax was `felm(y ~ x1 + x2 + G(f1)
+\itemize{
+\item G(f2), iv=list(Q ~ x3+x4, W ~ x3+x4), clustervar=c('clu1','clu2'))`. This
 syntax still works, but yields a warning. Users are \emph{strongly}
 encouraged to change to the new multipart formula syntax.  The old syntax
 will be removed at a later time.
+}
 
 The standard errors are adjusted for the reduced degrees of freedom coming
 from the dummies which are implicitly present.  (An exception occurs in the
-case of clustered standard errors and, specifically, where clusters are 
-nested within fixed effects; see 
-\href{https://github.com/sgaure/lfe/issues/1#issuecomment-528643802}{here}.) 
+case of clustered standard errors and, specifically, where clusters are
+nested within fixed effects; see
+\href{https://github.com/sgaure/lfe/issues/1#issuecomment-528643802}{here}.)
 In the case of two factors,
 the exact number of implicit dummies is easy to compute.  If there are more
 factors, the number of dummies is estimated by assuming there's one
@@ -242,33 +241,33 @@ The \code{contrasts} argument is similar to the one in \code{lm()}, it is
 used for factors in the first part of the formula. The factors in the second
 part are analyzed as part of a possible subsequent \code{getfe()} call.
 
-The \code{cmethod} argument may affect the clustered covariance matrix (and 
-thus regressor standard errors), either directly or via adjustments to a 
+The \code{cmethod} argument may affect the clustered covariance matrix (and
+thus regressor standard errors), either directly or via adjustments to a
 degrees of freedom scaling factor. In particular, Cameron, Gelbach and Miller
-(CGM2011, sec. 2.3) describe two possible small cluster corrections that are 
+(CGM2011, sec. 2.3) describe two possible small cluster corrections that are
 relevant in the case of multiway clustering. \itemize{
-\item The first approach adjusts each component of the cluster-robust 
-variance estimator (CRVE) by its own \eqn{c_i} adjustment factor. For 
-example, the first component (with \eqn{G} clusters) is adjusted by 
-\eqn{c_1=\frac{G}{G-1}\frac{N-1}{N-K}}{c_1 = G/(G-1)*(N-1)/(N-K)}, 
+\item The first approach adjusts each component of the cluster-robust
+variance estimator (CRVE) by its own \eqn{c_i} adjustment factor. For
+example, the first component (with \eqn{G} clusters) is adjusted by
+\eqn{c_1=\frac{G}{G-1}\frac{N-1}{N-K}}{c_1 = G/(G-1)*(N-1)/(N-K)},
 the second component (with \eqn{H} clusters) is adjusted
 by \eqn{c_2=\frac{H}{H-1}\frac{N-1}{N-K}}{c_2 = H/(H-1)*(N-1)/(N-K)}, etc.
 \item The second approach applies the same adjustment to all CRVE components:
 \eqn{c=\frac{J}{J-1}\frac{N-1}{N-K}}{c = J/(J-1)*(N-1)/(N-K)}, where
-\eqn{J=\min(G,H)}{J=min(G,H)} in the case of two-way clustering, for example. 
+\eqn{J=\min(G,H)}{J=min(G,H)} in the case of two-way clustering, for example.
 }
-Any differences resulting from these two approaches are likely to be minor, 
-and they will obviously yield exactly the same results when there is only one 
-cluster dimension. Still, CGM2011 adopt the former approach in their own 
-paper and simulations. This is also the default method that \code{felm} uses 
-(i.e. \code{cmethod = 'cgm'}). However, the latter approach has since been 
-adopted by several other packages that allow for robust inference with 
+Any differences resulting from these two approaches are likely to be minor,
+and they will obviously yield exactly the same results when there is only one
+cluster dimension. Still, CGM2011 adopt the former approach in their own
+paper and simulations. This is also the default method that \code{felm} uses
+(i.e. \code{cmethod = 'cgm'}). However, the latter approach has since been
+adopted by several other packages that allow for robust inference with
 multiway clustering. This includes the popular Stata package
-\href{http://scorreia.com/software/reghdfe/}{reghdfe}, as well as the 
-\href{https://github.com/matthieugomez/FixedEffectModels.jl}{FixedEffectModels.jl} 
+\href{http://scorreia.com/software/reghdfe/}{reghdfe}, as well as the
+\href{https://github.com/matthieugomez/FixedEffectModels.jl}{FixedEffectModels.jl}
 implementation in Julia. To match results from these packages exactly, use
 \code{cmethod = 'cgm2'} (or its alias, \code{cmethod = 'reghdfe'}). It is
-possible that some residual differences may still remain; see discussion 
+possible that some residual differences may still remain; see discussion
 \href{https://github.com/sgaure/lfe/issues/1#issuecomment-530561314}{here}.
 
 The old syntax with a single part formula with the \code{G()} syntax for the
@@ -391,6 +390,6 @@ of Business & Economic Statistics (to appear).
 \doi{10.1080/07350015.2014.978175}
 }
 \seealso{
-\code{\link{getfe}} \code{\link{summary.felm}}
-\code{\link{condfstat}} \code{\link{waldtest}}
+\code{\link[=getfe]{getfe()}} \code{\link[=summary.felm]{summary.felm()}}
+\code{\link[=condfstat]{condfstat()}} \code{\link[=waldtest]{waldtest()}}
 }

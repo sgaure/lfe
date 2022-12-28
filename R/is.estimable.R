@@ -1,32 +1,32 @@
 
 #' Verify estimability of function
 #' 
-#' Verify that a function you have written for \code{\link{getfe}} is indeed
+#' Verify that a function you have written for [getfe()] is indeed
 #' estimable.
 #' 
-#' When writing custom estimable functions for \code{\link{getfe}}, the
-#' function \code{is.estimable} can be used to test it for estimability.
-#' \code{is.estimable()} solves the sparse residual system with the Kaczmarz
-#' method, using two different initial values. Then \code{ef()} is applied to
-#' the two solutions. If the value of \code{ef()} differs by more than
-#' \code{1e-5} in any coordinate, \code{FALSE} is returned, otherwise
-#' \code{TRUE} is returned.  If \code{keepdiff=TRUE}, the vector of differences
-#' is attached as an attribute \code{'diff'} to the returned logical value.  If
+#' When writing custom estimable functions for [getfe()], the
+#' function `is.estimable` can be used to test it for estimability.
+#' `is.estimable()` solves the sparse residual system with the Kaczmarz
+#' method, using two different initial values. Then `ef()` is applied to
+#' the two solutions. If the value of `ef()` differs by more than
+#' `1e-5` in any coordinate, `FALSE` is returned, otherwise
+#' `TRUE` is returned.  If `keepdiff=TRUE`, the vector of differences
+#' is attached as an attribute `'diff'` to the returned logical value.  If
 #' you have problems with estimability, it is a fair guess that those entries
-#' with a difference in absolute values smaller than, say, \code{1e-5} are
+#' with a difference in absolute values smaller than, say, `1e-5` are
 #' estimable, whereas the others are not.
 #' 
 #' @param ef function.  The function to be verified.
 #' @param fe list of factors.
-#' @param R numeric.  Vector of residuals, if \code{NULL}, a random one is
+#' @param R numeric.  Vector of residuals, if `NULL`, a random one is
 #' created.
-#' @param nowarn logical. Set to \code{TRUE} if \code{is.estimable} should not
+#' @param nowarn logical. Set to `TRUE` if `is.estimable` should not
 #' throw a warning for non-estimable functions.
 #' @param keepdiff logical. Return differences between two different runs of
 #' the Kaczmarz method.
 #' @param threshold numeric. Threshold for determining estimability.
 #' @return Returns a logical.
-#' @seealso \code{\link{getfe}}
+#' @seealso [getfe()]
 #' @examples
 #' 
 #' oldopts <- options("lfe.threads")

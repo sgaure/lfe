@@ -8,14 +8,14 @@ efactory(obj, opt = "ref", ...)
 }
 \arguments{
 \item{obj}{object of class \code{"felm"}, usually, a result of a call to
-\code{\link{felm}}.}
+\code{\link[=felm]{felm()}}.}
 
 \item{opt}{character.  Which type of estimable function.}
 
 \item{...}{various.}
 }
 \value{
-A function of two parameters \code{function(v,addnames)}.  An
+A function of two parameters \verb{function(v,addnames)}.  An
 estimable function (i.e. the result is the vector of some length \code{N})
 of the input vector \code{v}. When \code{addnames==TRUE} the returned vector
 should have names, and optionally an attribute \code{"extra"} which is a
@@ -28,7 +28,7 @@ Creates an estimable function for a factor-structure.
 \details{
 There are several possibilities for the input parameter \code{opt}.
 \itemize{ \item \code{"ref"} yields an estimable function which is similar
-to the default one in \code{\link{lm}}, one reference is forced to \code{0}
+to the default one in \code{\link[=lm]{lm()}}, one reference is forced to \code{0}
 in each connected component.  \item \code{"zm"} Similar to \code{"ref"}, but
 the factor which does not contain a reference is made to have zero mean, and
 an intercept is added.  \item \code{"zm2"} Similar to \code{"zm"}, but both

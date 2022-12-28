@@ -21,7 +21,7 @@ nlexpect(
 }
 \arguments{
 \item{est}{object of class \code{"felm"} or \code{"lm"}, a result of a call to
-\code{\link{felm}} or \code{lm}.}
+\code{\link[=felm]{felm()}} or \code{lm}.}
 
 \item{fun}{function of coefficients to be integrated. Can also be a
 \code{quote}d expression.}
@@ -46,7 +46,7 @@ package \pkg{R2Cuba} disappeared.}
 
 \item{max.eval}{integer. Maximum number of integral evaluations.}
 
-\item{method}{character. A method specification usable by \code{cubature::cubintegrate}. 
+\item{method}{character. A method specification usable by \code{cubature::cubintegrate}.
 The documentation there says that \code{"pcubature"} is good for smooth integrands of low dimensions.}
 
 \item{vectorize}{logical or numeric. Use vectorized function evaluation from package
@@ -87,15 +87,14 @@ quite compute intensive 4-dimensional integral will be computed, compared to
 two cheap 2-dimensional integrals if you do them separately. There is nothing to gain
 from using vector-valued functions compared to multiple calls to \code{nlexpect()}.
 
-You may of course also integrate inequalities like \code{quote(abs(x1-0.2) >
-0.2)} to simulate the probability from t-tests or Wald-tests. See the
+You may of course also integrate inequalities like \code{quote(abs(x1-0.2) > 0.2)} to simulate the probability from t-tests or Wald-tests. See the
 examples.
 
 The function you provide will get an argument \code{...} if it does not have
 one already.  It will also be passed an argument \code{.z} which contains
 the actual coefficients in normalized coordinates, i.e. if \code{ch} is the
 Cholesky decomposition of the covariance matrix, and \code{pt} are the point
-estimates, the coefficients will be \code{pt + ch \%*\% .z}. The first argument
+estimates, the coefficients will be \verb{pt + ch \\\%*\\\% .z}. The first argument
 is a vector with names corresponding to the coefficients.
 
 If you specify \code{vectorized=TRUE}, your function will be passed a list with vectors
@@ -116,7 +115,7 @@ routine \code{cubature::cubintegrate} and the function to be integrated.
 }
 \note{
 An alternative to this method is to use the \code{bootexpr} argument
-with \code{\link{felm}}, to do a Monte Carlo integration.
+with \code{\link[=felm]{felm()}}, to do a Monte Carlo integration.
 }
 \examples{
 
@@ -171,5 +170,5 @@ nlexpect(est, function(x) f(x)-Ef < -abs(Pf), c('x1','x2'), vectorize=TRUE)
 
 }
 \seealso{
-\code{\link{waldtest}}
+\code{\link[=waldtest]{waldtest()}}
 }

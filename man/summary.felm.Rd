@@ -44,14 +44,14 @@ and corresponding (two-sided) p-value.}
 \item{fstat}{F-statistic.}
 \item{pval}{P-values.}
 \item{P.fstat}{Projected F-statistic. The result of a
-call to \code{\link{waldtest}}}
+call to \code{\link[=waldtest]{waldtest()}}}
 \item{fe}{list of factors. A list of the
 terms in the second part of the model.}
 \item{lhs.}{character. If
 \code{object} is the result of an estimation with multiple left hand sides,
 the actual argument \code{lhs} will be copied to this field.}
 \item{iv1fstat}{F-statistic for excluded instruments in 1. step IV, see
-\code{\link{felm}}.}
+\code{\link[=felm]{felm()}}.}
 \item{iv1pval}{P-value for \code{iv1fstat}.}
 }
 \description{
@@ -79,5 +79,5 @@ For a 1st stage IV-regression, an F-statistic against the model with
 excluded instruments is also computed.
 }
 \seealso{
-\code{\link{waldtest}}
+\code{\link[=waldtest]{waldtest()}}
 }

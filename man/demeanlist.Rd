@@ -42,30 +42,30 @@ vector is centered, but not more often than every \code{progress} minutes).}
 This may improve convergence.}
 
 \item{means}{logical. Should the means instead of the demeaned matrix be
- returned? Setting \code{means=TRUE} will return \code{mtx -  demeanlist(mtx,...)},
+returned? Setting \code{means=TRUE} will return \code{mtx -  demeanlist(mtx,...)},
 but without the extra copy.}
 
 \item{weights}{numeric. For weighted demeaning.}
 
 \item{scale}{logical. Specify scaling for weighted demeaning.}
 
-\item{na.rm}{logical which indicates what should happen when the data 
+\item{na.rm}{logical which indicates what should happen when the data
 contain \code{NA}s. If TRUE, rows in the input \code{mtx} are removed
 prior to centering. If FALSE, they are kept, leading to entire groups becoming NA
 in the output.}
 
-\item{attrs}{list. List of attributes which should be attached to the output. 
+\item{attrs}{list. List of attributes which should be attached to the output.
 Used internally.}
 }
 \value{
-If \code{mtx} is a matrix, a matrix of the same shape, possibly with 
+If \code{mtx} is a matrix, a matrix of the same shape, possibly with
 column \code{icpt} deleted.
 
 If \code{mtx} is a list of vectors and matrices, a list of the same
 length is returned, with the same vector and matrix-pattern, but the
-matrices have the column \code{icpt} deleted.  
+matrices have the column \code{icpt} deleted.
 
-If \code{mtx} is a \code{'data.frame'}, a \code{'data.frame'} 
+If \code{mtx} is a \code{'data.frame'}, a \code{'data.frame'}
 with the same names is returned; the \code{icpt} argument is ignored.
 
 If \code{na.rm} is specified, the return value has an attribute \code{'na.rm'} with a vector of
@@ -75,9 +75,9 @@ memory usage is an issue and many runs are done, one might consider removing NAs
 }
 \description{
 Uses the method of alternating projections to centre
- a (model) matrix on multiple groups, as specified by a list of factors.
- This function is called by \code{\link{felm}}, but it has been
- made available as standalone in case it's needed. In particular, if
+a (model) matrix on multiple groups, as specified by a list of factors.
+This function is called by \code{\link[=felm]{felm()}}, but it has been
+made available as standalone in case it's needed. In particular, if
 one does not need transformations provided by R-formulas but have the covariates present
 as a matrix or a data.frame, a substantial amount of time can be saved in the centering.
 }
@@ -100,7 +100,7 @@ covariate \code{x} and a factor \code{f}, it is like projecting out the
 interaction \code{x:f}.  The \code{'x'} attribute can also be a matrix of column
 vectors, in this case it can be beneficial to orthogonalize the columns,
 either with a stabilized Gram-Schmidt method, or with the simple
-method \code{x \%*\% solve(chol(crossprod(x)))}.
+method \verb{x \\\%*\\\% solve(chol(crossprod(x)))}.
 
 The \code{weights} argument is used if a weighted projection is
 computed.  If \eqn{W} is the diagonal matrix with \code{weights} on the
@@ -117,13 +117,13 @@ the input should be scaled by \eqn{W}, and \code{scale[2]} specifies
 whether the output should be scaled by \eqn{W^{-1}}.  This is just
 a convenience to save some memory copies in other functions in the package.
 
-Note that for certain large datasets the overhead in \code{\link{felm}}
+Note that for certain large datasets the overhead in \code{\link[=felm]{felm()}}
 is large compared to the time spent in \code{demeanlist}. If the data
 are present directly without having to use the formula-interface to
 \code{felm} for transformations etc, it is possible to run
 \code{demeanlist} directly on a matrix or \code{"data.frame"} and do the
 OLS "manually", e.g. with something like
-\code{cx <- demeanlist(x,...); beta <- solve(crossprod(cx), crossprod(cx,y))}
+\verb{cx <- demeanlist(x,...); beta <- solve(crossprod(cx), crossprod(cx,y))}
 
 In some applications it is known that a single centering iteration is
 sufficient. In particular, if \code{length(fl)==1} and there is no
@@ -131,8 +131,7 @@ interaction attribute \code{x}.  In this case the centering algorithm is
 terminated after the first iteration. There may be other cases, e.g. if
 there is a single factor with a matrix \code{x} with orthogonal columns. If
 you have such prior knowledge, it is possible to force termination after
-the first iteration by adding an attribute \code{attr(fl, 'oneiter') <-
-TRUE}.  Convergence will be reached in the second iteration anyway, but
+the first iteration by adding an attribute \code{attr(fl, 'oneiter') <- TRUE}.  Convergence will be reached in the second iteration anyway, but
 you save one iteration, i.e. you double the speed.
 }
 \note{
@@ -143,7 +142,7 @@ Trans. Amer. Math. Soc. 355 pp 3433-3461 (2003).
 
 \code{demeanlist} will use an in place transform to save memory, provided the \code{mtx}
 argument is unnamed. Thus, as always in R, you shouldn't use temporary variables
-like \code{tmp <- fun(x[v,]); bar <- demeanlist(tmp,...); rm(tmp)}, it will be much better to
+like \verb{tmp <- fun(x[v,]); bar <- demeanlist(tmp,...); rm(tmp)}, it will be much better to
 do \code{bar <- demeanlist(fun(x[v,]),...)}. However, demeanlist allows a construction like
 \code{bar <- demeanlist(unnamed(tmp),...)} which will use an in place transformation, i.e. tmp
 will be modified, quite contrary to the usual semantics of R.

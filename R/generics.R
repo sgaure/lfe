@@ -75,11 +75,11 @@ coef.felm <- function(object, ..., lhs=NULL) {
 
 #' Compute Sargan's S
 #'
-#' @param object and object type '"felm"', the return value from \code{\link{felm}}.
+#' @param object and object type '"felm"', the return value from [felm()].
 #' @param lhs in case of multiple left hand sides, specify the name of the left 
 #' hand side for which you want to compute Sargan's S.
 #' @param ... Not used at the moment.
-#' @return \code{sargan} returns a numeric, the Sargan's S. The Basmann statistic is
+#' @return `sargan` returns a numeric, the Sargan's S. The Basmann statistic is
 #' returned in the '"basmann"' attribute.
 #' @export
 sargan <- function(object, ..., lhs=object$lhs[1]) {
@@ -360,21 +360,21 @@ model.matrix.felm <- function(object, centred=TRUE, ...) {
 
 #' Summarize felm model fits
 #' 
-#' \code{summary} method for class \code{"felm"}.
+#' `summary` method for class `"felm"`.
 #' 
 #' 
 #' @method summary felm
-#' @param object an object of class \code{"felm"}, a result of a call to
-#' \code{felm}.
+#' @param object an object of class `"felm"`, a result of a call to
+#' `felm`.
 #' @param ... further arguments passed to or from other methods.
 #' @param robust logical. Use robust standard errors. See notes.
 #' @param lhs character. If multiple left hand sides, specify the name of the
 #' one to obtain a summary for.
-#' @return The function \code{summary.felm} returns an object of \code{class}
-#' \code{"summary.felm"}.  It is quite similar to en \code{"summary.lm"}
+#' @return The function `summary.felm` returns an object of `class`
+#' `"summary.felm"`.  It is quite similar to en `"summary.lm"`
 #' object, but not entirely compatible.
 #' 
-#' The \code{"summary.felm"} object is a list containing the following fields:
+#' The `"summary.felm"` object is a list containing the following fields:
 #' 
 #' \item{residuals}{a numerical vector. The residuals of the full system, with
 #' dummies.}
@@ -391,36 +391,36 @@ model.matrix.felm <- function(object, centred=TRUE, ...) {
 #' \item{fstat}{F-statistic.}
 #' \item{pval}{P-values.}
 #' \item{P.fstat}{Projected F-statistic. The result of a
-#' call to \code{\link{waldtest}}}
+#' call to [waldtest()]}
 #' \item{fe}{list of factors. A list of the
 #' terms in the second part of the model.}
 #' \item{lhs.}{character. If
-#' \code{object} is the result of an estimation with multiple left hand sides,
-#' the actual argument \code{lhs} will be copied to this field.}
+#' `object` is the result of an estimation with multiple left hand sides,
+#' the actual argument `lhs` will be copied to this field.}
 #' \item{iv1fstat}{F-statistic for excluded instruments in 1. step IV, see
-#' \code{\link{felm}}.}
-#' \item{iv1pval}{P-value for \code{iv1fstat}.}
+#' [felm()].}
+#' \item{iv1pval}{P-value for `iv1fstat`.}
 
 #' @note The standard errors are adjusted for the reduced degrees of freedom
 #' coming from the dummies which are implicitly present.  They are also
 #' small-sample corrected.
 #' 
-#' If the \code{robust} parameter is \code{FALSE}, the returned object will
-#' contain ordinary standard errors. If the \code{robust} parameter is
-#' \code{TRUE}, clustered standard errors are reported if a cluster was
-#' specified in the call to \code{felm}; if not, heteroskedastic robust
+#' If the `robust` parameter is `FALSE`, the returned object will
+#' contain ordinary standard errors. If the `robust` parameter is
+#' `TRUE`, clustered standard errors are reported if a cluster was
+#' specified in the call to `felm`; if not, heteroskedastic robust
 #' standard errors are reported.
 #' 
-#' Several F-statistics reported. The \code{P.fstat} is for the projected
-#' system.  I.e. a joint test on whether all the \code{Pp} coefficients in
-#' \code{coefficients} are zero.  Then there are \code{fstat} and \code{pval}
+#' Several F-statistics reported. The `P.fstat` is for the projected
+#' system.  I.e. a joint test on whether all the `Pp` coefficients in
+#' `coefficients` are zero.  Then there are `fstat` and `pval`
 #' which is a test on all the coefficients including the ones projected out,
 #' except for an intercept.  This statistic assumes i.i.d. errors and is not
 #' reliable for robust or clustered data.
 #' 
 #' For a 1st stage IV-regression, an F-statistic against the model with
 #' excluded instruments is also computed.
-#' @seealso \code{\link{waldtest}}
+#' @seealso [waldtest()]
 #' @export
 summary.felm <- function(object,...,robust=!is.null(object$clustervar)||getOption('lfe.robust'),
                          lhs=NULL) {

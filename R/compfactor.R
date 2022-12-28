@@ -10,10 +10,10 @@
 #' 'compfactor' computes the connected components of the dummy-part of the
 #' model.
 #' 
-#' If there are more than two factors and \code{WW=FALSE}, only the first two
+#' If there are more than two factors and `WW=FALSE`, only the first two
 #' will be used.
 #' 
-#' If \code{WW=TRUE} and \code{length(fl) > 2}, the component structure will be
+#' If `WW=TRUE` and `length(fl) > 2`, the component structure will be
 #' as in "A Note on the Determination of Connectedness in an N-Way Cross
 #' Classification" by D.L. Weeks and D.R. Williams, Technometrics, vol 6 no 3,
 #' August 1964. I.e. in each component, the coefficients within each factor are
@@ -26,7 +26,7 @@
 #' @param fl a list of factors defining the dummies
 #' @param WW logical. Use Weeks and Williams components
 #' @return A factor of the same length as the factors in the input argument.
-#' It defines the connected components. E.g. \code{nlevels(compfactor(fl))}
+#' It defines the connected components. E.g. `nlevels(compfactor(fl))`
 #' will yield the number of connected components.
 #' @examples
 #' 

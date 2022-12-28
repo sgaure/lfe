@@ -9,47 +9,47 @@
 #' 
 #' Creates an estimable function for a factor-structure.
 #' 
-#' There are several possibilities for the input parameter \code{opt}.
-#' \itemize{ \item \code{"ref"} yields an estimable function which is similar
-#' to the default one in \code{\link{lm}}, one reference is forced to \code{0}
-#' in each connected component.  \item \code{"zm"} Similar to \code{"ref"}, but
+#' There are several possibilities for the input parameter `opt`.
+#' \itemize{ \item `"ref"` yields an estimable function which is similar
+#' to the default one in [lm()], one reference is forced to `0`
+#' in each connected component.  \item `"zm"` Similar to `"ref"`, but
 #' the factor which does not contain a reference is made to have zero mean, and
-#' an intercept is added.  \item \code{"zm2"} Similar to \code{"zm"}, but both
-#' factors are made to have zero mean.  \item \code{"ln"} Least norm function.
+#' an intercept is added.  \item `"zm2"` Similar to `"zm"`, but both
+#' factors are made to have zero mean.  \item `"ln"` Least norm function.
 #' This will yield the raw coefficients from the Kaczmarz-method, i.e. the
 #' solution with smallest norm. This function is not estimable.  } Note that in
 #' the case with more than two factors, it is not known how to analyze the
 #' factors to find the structure of the rank-deficiencies, i.e. the estimable
 #' functions.  In this case, the factors beyond the first two are assumed not
 #' to contribute to the rank-deficiency beyond a single dimension in each.
-#' Both \code{"ref"} and \code{"zm"} keep one such reference at zero in each of
+#' Both `"ref"` and `"zm"` keep one such reference at zero in each of
 #' these factors.  This is the common method when using dummies.
 #' 
 #' In the case that interactions are specified in the model, i.e. with
-#' \code{x:f} in the second part of the formula, these terms are not analyzed
-#' to create an estimable function. Only the pure \code{f} terms are used for
-#' this purpose.  It is assumed that the \code{x:f} terms are all identified.
-#' Note that in this case, all the levels of \code{f} are included.
+#' `x:f` in the second part of the formula, these terms are not analyzed
+#' to create an estimable function. Only the pure `f` terms are used for
+#' this purpose.  It is assumed that the `x:f` terms are all identified.
+#' Note that in this case, all the levels of `f` are included.
 #' 
-#' @param obj object of class \code{"felm"}, usually, a result of a call to
-#' \code{\link{felm}}.
+#' @param obj object of class `"felm"`, usually, a result of a call to
+#' [felm()].
 #' @param opt character.  Which type of estimable function.
 #' @param ... various.
-#' @return A function of two parameters \code{function(v,addnames)}.  An
-#' estimable function (i.e. the result is the vector of some length \code{N})
-#' of the input vector \code{v}. When \code{addnames==TRUE} the returned vector
-#' should have names, and optionally an attribute \code{"extra"} which is a
-#' list of vectors of length \code{N} which may be used to code additional
+#' @return A function of two parameters `function(v,addnames)`.  An
+#' estimable function (i.e. the result is the vector of some length `N`)
+#' of the input vector `v`. When `addnames==TRUE` the returned vector
+#' should have names, and optionally an attribute `"extra"` which is a
+#' list of vectors of length `N` which may be used to code additional
 #' information.
 #' @note The author is open to suggestions for other estimable functions, i.e.
 #' other useful normalizations of the solutions.
 #' 
-#' It is not strictly necessary that the \code{obj} argument is of class
-#' \code{"felm"}, any list with entries \code{"fe"} and \code{"cfactor"} of the
-#' appropriate form will do. That is, \code{list(fe=fl,cfactor=compfactor(fl))}
-#' where \code{fl} is the list of factors defining the component structure.
-#' I.e. if the model is \code{y ~ ... |id + firm}, we have
-#' \code{fl=list(id=id,firm=firm)}.
+#' It is not strictly necessary that the `obj` argument is of class
+#' `"felm"`, any list with entries `"fe"` and `"cfactor"` of the
+#' appropriate form will do. That is, `list(fe=fl,cfactor=compfactor(fl))`
+#' where `fl` is the list of factors defining the component structure.
+#' I.e. if the model is `y ~ ... |id + firm`, we have
+#' `fl=list(id=id,firm=firm)`.
 #' @examples
 #' 
 #' oldopts <- options("lfe.threads")

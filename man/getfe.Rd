@@ -18,7 +18,7 @@ getfe(
 }
 \arguments{
 \item{obj}{object of class \code{"felm"}, usually, a result of a call to
-\code{\link{felm}}}
+\code{\link[=felm]{felm()}}}
 
 \item{references}{a vector of strings.  If there are more than two factors
 and you have prior knowledge of what the reference levels should be like
@@ -30,18 +30,18 @@ it as FALSE unless absolutely needed.}
 
 \item{method}{character string.  Either 'cholesky', 'cg', or the default
 'kaczmarz'.  The latter is often very fast and consumes little memory, it
-requires an estimable function to be specified, see \code{\link{efactory}}.
+requires an estimable function to be specified, see \code{\link[=efactory]{efactory()}}.
 The 'cholesky' method is no longer maintained as the author sees no use for
 it.}
 
 \item{ef}{function. A function of two variables, a vector of group fixed
-effects and a logical, i.e. \code{function(v,addnames)}.  This function
+effects and a logical, i.e. \verb{function(v,addnames)}.  This function
 should be estimable and is used to transform the raw-coefficients \code{v}
 from the kaczmarz-method.  The second variable indicates whether the
 function must return a named vector (if this is FALSE, one may skip the
 names, saving memory allocations and time).
 
-If a string is specified, it is fed to the \code{\link{efactory}}-function.
+If a string is specified, it is fed to the \code{\link[=efactory]{efactory()}}-function.
 The default function is one which picks one reference in each component.
 
 Can be set to \code{ef="ln"} to yield the minimal-norm solution from the
@@ -76,11 +76,11 @@ function.
 }
 \description{
 Compute the group fixed effects, i.e. the dummy parameters, which were swept
-out during an estimation with \code{\link{felm}}.
+out during an estimation with \code{\link[=felm]{felm()}}.
 }
 \details{
 For the case with two factors (the terms in the second part of the formula
-supplied to \code{\link{felm}}), one reference in each connected component
+supplied to \code{\link[=felm]{felm()}}), one reference in each connected component
 is adequate when interpreting the results.
 
 For three or more factors, no such easy method is known; for the
@@ -95,7 +95,7 @@ report connected components.  In this case, it is not known which graph
 theoretic concept may be used to analyze the rank-deficiency.
 
 The standard errors returned by the Kaczmarz-method are bootstrapped,
-keeping the other coefficients (from \code{\link{felm}}) constant, i.e. they
+keeping the other coefficients (from \code{\link[=felm]{felm()}}) constant, i.e. they
 are from the variance when resampling the residuals.  If \code{robust=TRUE},
 heteroskedastic robust standard errors are estimated. If \code{robust=FALSE}
 and \code{cluster=TRUE}, clustered standard errors with the cluster

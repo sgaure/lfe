@@ -33,11 +33,11 @@ the Kaczmarz method.}
 Returns a logical.
 }
 \description{
-Verify that a function you have written for \code{\link{getfe}} is indeed
+Verify that a function you have written for \code{\link[=getfe]{getfe()}} is indeed
 estimable.
 }
 \details{
-When writing custom estimable functions for \code{\link{getfe}}, the
+When writing custom estimable functions for \code{\link[=getfe]{getfe()}}, the
 function \code{is.estimable} can be used to test it for estimability.
 \code{is.estimable()} solves the sparse residual system with the Kaczmarz
 method, using two different initial values. Then \code{ef()} is applied to
@@ -78,5 +78,5 @@ options(oldopts)
 
 }
 \seealso{
-\code{\link{getfe}}
+\code{\link[=getfe]{getfe()}}
 }
