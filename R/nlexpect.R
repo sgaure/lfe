@@ -9,84 +9,84 @@
 #' expectation of some function of the coefficients.  Can be used for
 #' non-linear inference tests.
 #' 
-#' The function \code{nlexpect} integrates the function \code{fun(x)} over the
+#' The function `nlexpect` integrates the function `fun(x)` over the
 #' multivariate normal distribution specified by the point estimates and the
-#' covariance matrix \code{vcov(est)}.  This is the expectation of
-#' \code{fun(beta)} if we were to bootstrap the data (e.g. by drawing the
+#' covariance matrix `vcov(est)`.  This is the expectation of
+#' `fun(beta)` if we were to bootstrap the data (e.g. by drawing the
 #' residuals anew) and do repeated estimations.
 #' 
-#' The list of coefficients used by \code{fun} must be specified in
-#' \code{coefs}.
+#' The list of coefficients used by `fun` must be specified in
+#' `coefs`.
 #' 
 #' If the function is simple, it can be specified as a quoted expression like
-#' \code{quote(a*b+log(abs(d)))}. In this case, if \code{coefs} is not
+#' `quote(a*b+log(abs(d)))`. In this case, if `coefs` is not
 #' specified, it will be set to the list of all the variables occurring in the
 #' expression which are also names of coefficients.
 #' 
-#' \code{fun} may return a vector of values, in which case a vector of
-#' expectations is computed, like \code{quote(c(a*b, a^3-b))}. However, if the
-#' expressions contain different variables, like \code{quote(c(a*b, d*e))}, a
+#' `fun` may return a vector of values, in which case a vector of
+#' expectations is computed, like `quote(c(a*b, a^3-b))`. However, if the
+#' expressions contain different variables, like `quote(c(a*b, d*e))`, a
 #' quite compute intensive 4-dimensional integral will be computed, compared to
 #' two cheap 2-dimensional integrals if you do them separately. There is nothing to gain
-#' from using vector-valued functions compared to multiple calls to \code{nlexpect()}.
+#' from using vector-valued functions compared to multiple calls to `nlexpect()`.
 #' 
-#' You may of course also integrate inequalities like \code{quote(abs(x1-0.2) >
-#' 0.2)} to simulate the probability from t-tests or Wald-tests. See the
+#' You may of course also integrate inequalities like `quote(abs(x1-0.2) >
+#' 0.2)` to simulate the probability from t-tests or Wald-tests. See the
 #' examples.
 #' 
-#' The function you provide will get an argument \code{...} if it does not have
-#' one already.  It will also be passed an argument \code{.z} which contains
-#' the actual coefficients in normalized coordinates, i.e. if \code{ch} is the
-#' Cholesky decomposition of the covariance matrix, and \code{pt} are the point
-#' estimates, the coefficients will be \code{pt + ch \%*\% .z}. The first argument
+#' The function you provide will get an argument `...` if it does not have
+#' one already.  It will also be passed an argument `.z` which contains
+#' the actual coefficients in normalized coordinates, i.e. if `ch` is the
+#' Cholesky decomposition of the covariance matrix, and `pt` are the point
+#' estimates, the coefficients will be `pt + ch \%*\% .z`. The first argument
 #' is a vector with names corresponding to the coefficients.
 #'
-#' If you specify \code{vectorized=TRUE}, your function will be passed a list with vectors
+#' If you specify `vectorized=TRUE`, your function will be passed a list with vectors
 #' in its first argument. The function must
 #' be able to handle a list, and must return a vector of the same length as the vectors
-#' in the list.  If you pass an expression like \code{x < y}, each variable will be a vector.
+#' in the list.  If you pass an expression like `x < y`, each variable will be a vector.
 #' If your function is vector valued, it must return a matrix where each
 #' column is the values.
 #' 
-#' The \code{tol} argument specifies both the relative tolerance and the
-#' absolute tolerance. If these should not be the same, specify \code{tol} as a
+#' The `tol` argument specifies both the relative tolerance and the
+#' absolute tolerance. If these should not be the same, specify `tol` as a
 #' vector of length 2. The first value is the relative tolerance, the second is
 #' the absolute tolerance. Termination occurs when at least one of the
 #' tolerances is met.
 #' 
-#' The \code{...} can be used for passing other arguments to the integration
-#' routine \code{cubature::cubintegrate} and the function to be integrated.
+#' The `...` can be used for passing other arguments to the integration
+#' routine `cubature::cubintegrate` and the function to be integrated.
 #' 
-#' @param est object of class \code{"felm"} or \code{"lm"}, a result of a call to
-#' \code{\link{felm}} or \code{lm}.
+#' @param est object of class `"felm"` or `"lm"`, a result of a call to
+#' [felm()] or `lm`.
 #' @param fun function of coefficients to be integrated. Can also be a
-#' \code{quote}d expression.
+#' `quote`d expression.
 #' @param coefs character. Names of coefficients to test. Only needed if
-#' \code{fun} is a function.
+#' `fun` is a function.
 #' @param ... other arguments passed to fun or the integration routine.
 #' @param tol numeric. Tolerance for the computed integral.
-#' @param lhs character. Name of the left hand side, if \code{est} has more
+#' @param lhs character. Name of the left hand side, if `est` has more
 #' than one.
-#' @param cv Covariance matrix to use in place of \code{vcov(est)}
+#' @param cv Covariance matrix to use in place of `vcov(est)`
 #' @param istats logical. Should convergence information from the integration
 #' routine be included as attributes?
 #' @param flags list. Additional flags for the underlying integration routine. Not used after the
 #' package \pkg{R2Cuba} disappeared.
 #' @param max.eval integer. Maximum number of integral evaluations.
-#' @param method character. A method specification usable by \code{cubature::cubintegrate}. 
-#' The documentation there says that \code{"pcubature"} is good for smooth integrands of low dimensions.
+#' @param method character. A method specification usable by `cubature::cubintegrate`. 
+#' The documentation there says that `"pcubature"` is good for smooth integrands of low dimensions.
 #' @param vectorize logical or numeric. Use vectorized function evaluation from package
 #' \pkg{cubature}. This can speed up integration significantly. If method is from the Cuba library
-#' (i.e. not pcubature or hcubature), \code{vectorize} should be specified as a numeric, a vectorization
+#' (i.e. not pcubature or hcubature), `vectorize` should be specified as a numeric, a vectorization
 #' factor. The default is 128.
-#' @return The function \code{nlexpect} computes and returns the expectation of
-#' the function \code{fun(beta)}, with \code{beta} a vector of coefficients.
-#' I.e., if the coefficients \code{beta} are bootstrapped a large number of
-#' times, \code{nlexpect(est, fun)} should be equal to \code{mean(fun(beta))}.
-#' @note An alternative to this method is to use the \code{bootexpr} argument
-#' with \code{\link{felm}}, to do a Monte Carlo integration.
+#' @return The function `nlexpect` computes and returns the expectation of
+#' the function `fun(beta)`, with `beta` a vector of coefficients.
+#' I.e., if the coefficients `beta` are bootstrapped a large number of
+#' times, `nlexpect(est, fun)` should be equal to `mean(fun(beta))`.
+#' @note An alternative to this method is to use the `bootexpr` argument
+#' with [felm()], to do a Monte Carlo integration.
 #' 
-#' @seealso \code{\link{waldtest}}
+#' @seealso [waldtest()]
 #' @examples
 #' 
 #' N <- 100

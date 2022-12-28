@@ -39,12 +39,12 @@ Uses the Kaczmarz method to solve a system of the type Dx = R, where D is
 the matrix of dummies created from a list of factors.
 }
 \note{
-This function is used by \code{\link{getfe}}, it's quite specialized,
+This function is used by \code{\link[=getfe]{getfe()}}, it's quite specialized,
 but it might be useful for other purposes too.
 
 In case of convergence problems, setting \code{options(lfe.usecg=TRUE)} will
 cause the kaczmarz() function to dispatch to the more general conjugate
-gradient method of \code{\link{cgsolve}}.  This may or may not be faster.
+gradient method of \code{\link[=cgsolve]{cgsolve()}}.  This may or may not be faster.
 }
 \examples{
 
@@ -72,5 +72,5 @@ gradient method of \code{\link{cgsolve}}.  This may or may not be faster.
 
 }
 \seealso{
-\code{\link{cgsolve}}
+\code{\link[=cgsolve]{cgsolve()}}
 }

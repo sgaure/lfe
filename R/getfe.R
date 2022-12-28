@@ -3,16 +3,16 @@
 #' Retrieve the group fixed effects
 #' 
 #' Compute the group fixed effects, i.e. the dummy parameters, which were swept
-#' out during an estimation with \code{\link{felm}}.
+#' out during an estimation with [felm()].
 #' 
 #' For the case with two factors (the terms in the second part of the formula
-#' supplied to \code{\link{felm}}), one reference in each connected component
+#' supplied to [felm()]), one reference in each connected component
 #' is adequate when interpreting the results.
 #' 
 #' For three or more factors, no such easy method is known; for the
-#' \code{"cholesky"} method- reference levels are found by analyzing the
+#' `"cholesky"` method- reference levels are found by analyzing the
 #' pivoted Cholesky-decomposition of a slightly perturbed system.  The
-#' \code{"kaczmarz"} method provides no rank-deficiency analysis, it is assumed
+#' `"kaczmarz"` method provides no rank-deficiency analysis, it is assumed
 #' that the factors beyond the two first contribute nothing to the
 #' rank-deficiency, so one reference in each is used.
 #' 
@@ -21,56 +21,56 @@
 #' theoretic concept may be used to analyze the rank-deficiency.
 #' 
 #' The standard errors returned by the Kaczmarz-method are bootstrapped,
-#' keeping the other coefficients (from \code{\link{felm}}) constant, i.e. they
-#' are from the variance when resampling the residuals.  If \code{robust=TRUE},
-#' heteroskedastic robust standard errors are estimated. If \code{robust=FALSE}
-#' and \code{cluster=TRUE}, clustered standard errors with the cluster
-#' specified to \code{felm()} are estimated. If \code{cluster} is a factor, it
+#' keeping the other coefficients (from [felm()]) constant, i.e. they
+#' are from the variance when resampling the residuals.  If `robust=TRUE`,
+#' heteroskedastic robust standard errors are estimated. If `robust=FALSE`
+#' and `cluster=TRUE`, clustered standard errors with the cluster
+#' specified to `felm()` are estimated. If `cluster` is a factor, it
 #' is used for the cluster definition.
 #' 
-#' @param obj object of class \code{"felm"}, usually, a result of a call to
-#' \code{\link{felm}}
+#' @param obj object of class `"felm"`, usually, a result of a call to
+#' [felm()]
 #' @param references a vector of strings.  If there are more than two factors
 #' and you have prior knowledge of what the reference levels should be like
-#' \code{references='id.23'}.  Not used with \code{method='kaczmarz'}
+#' `references='id.23'`.  Not used with `method='kaczmarz'`
 #' @param se logical.  Set to TRUE if standard errors for the group effects are
-#' wanted.  This is \strong{very} time-consuming for large problems, so leave
+#' wanted.  This is **very** time-consuming for large problems, so leave
 #' it as FALSE unless absolutely needed.
 #' @param method character string.  Either 'cholesky', 'cg', or the default
 #' 'kaczmarz'.  The latter is often very fast and consumes little memory, it
-#' requires an estimable function to be specified, see \code{\link{efactory}}.
+#' requires an estimable function to be specified, see [efactory()].
 #' The 'cholesky' method is no longer maintained as the author sees no use for
 #' it.
 #' @param ef function. A function of two variables, a vector of group fixed
-#' effects and a logical, i.e. \code{function(v,addnames)}.  This function
-#' should be estimable and is used to transform the raw-coefficients \code{v}
+#' effects and a logical, i.e. `function(v,addnames)`.  This function
+#' should be estimable and is used to transform the raw-coefficients `v`
 #' from the kaczmarz-method.  The second variable indicates whether the
 #' function must return a named vector (if this is FALSE, one may skip the
 #' names, saving memory allocations and time).
 #' 
-#' If a string is specified, it is fed to the \code{\link{efactory}}-function.
+#' If a string is specified, it is fed to the [efactory()]-function.
 #' The default function is one which picks one reference in each component.
 #' 
-#' Can be set to \code{ef="ln"} to yield the minimal-norm solution from the
+#' Can be set to `ef="ln"` to yield the minimal-norm solution from the
 #' kaczmarz-method.
 #' 
-#' It can also be set to \code{ef="zm"} to get zero means (and intercept) in
+#' It can also be set to `ef="zm"` to get zero means (and intercept) in
 #' one of the factors, and a reference in the other.
 #' @param bN integer.  The number of bootstrap runs when standard errors are
 #' requested.
 #' @param robust logical. Should heteroskedastic standard errors be estimated?
 #' @param cluster logical or factor. Estimate clustered standard errors.
-#' @param lhs character vector. Specify which left hand side if \code{obj} has
+#' @param lhs character vector. Specify which left hand side if `obj` has
 #' multiple lhs.
-#' @return The function \code{getfe} computes and returns a data frame
+#' @return The function `getfe` computes and returns a data frame
 #' containing the group fixed effects.  It has the columns
-#' \code{c('effect','se','obs','comp','fe','idx')}
+#' `c('effect','se','obs','comp','fe','idx')`
 #' 
-#' \itemize{ \item \code{effect} is the estimated effect.  \item \code{se} is
-#' the standard error.  \item \code{obs} is the number of observations of this
-#' level.  \item \code{comp} is the graph-theoretic component number, useful
-#' for interpreting the effects.  \item \code{fe} is the name of factor.  \item
-#' \code{idx} is the level of the factor. }
+#' \itemize{ \item `effect` is the estimated effect.  \item `se` is
+#' the standard error.  \item `obs` is the number of observations of this
+#' level.  \item `comp` is the graph-theoretic component number, useful
+#' for interpreting the effects.  \item `fe` is the name of factor.  \item
+#' `idx` is the level of the factor. }
 #' 
 #' With the Kaczmarz-method it's possible to specify a different estimable
 #' function.

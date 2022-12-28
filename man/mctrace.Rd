@@ -32,8 +32,8 @@ product fairly easy, and this is utilized to estimate the trace of the
 matrix.
 }
 \details{
-\code{mctrace} is used internally by \code{\link{fevcov}} and
-\code{\link{bccorr}}, but has been made public since it might be useful for
+\code{mctrace} is used internally by \code{\link[=fevcov]{fevcov()}} and
+\code{\link[=bccorr]{bccorr()}}, but has been made public since it might be useful for
 other tasks as well.
 
 For any matrix \eqn{A}, the trace equals the sum of the diagonal elements,

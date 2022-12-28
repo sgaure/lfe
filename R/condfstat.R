@@ -108,43 +108,43 @@ ivbootstrap <- function(z, x, y, quantiles=0.95, N=100L, cluster=NULL) {
 #' (2014)} and \cite{Stock and Yogo (2004)}.  If F is small, the bias can be
 #' large compared to the standard error.
 #' 
-#' If \code{any(quantiles > 0.0)}, a bootstrap with \code{bN} samples will be
+#' If `any(quantiles > 0.0)`, a bootstrap with `bN` samples will be
 #' performed to estimate quantiles of the endogenous parameters which includes
 #' the variance both from the 1st and 2nd stage.  The result is returned in an
-#' array attribute \code{quantiles} of the value returned by \code{condfstat}.
-#' The argument \code{quantiles} can be a vector to estimate more than one
-#' quantile at once.  If \code{quantiles=NULL}, the bootstrapped estimates
+#' array attribute `quantiles` of the value returned by `condfstat`.
+#' The argument `quantiles` can be a vector to estimate more than one
+#' quantile at once.  If `quantiles=NULL`, the bootstrapped estimates
 #' themselves are returned.  The bootstrap is normally much faster than running
-#' \code{felm} over and over again. This is so because all exogenous variables
+#' `felm` over and over again. This is so because all exogenous variables
 #' are projected out of the equations before doing the bootstrap.
 #' 
-#' @param object object of class \code{"felm"}, a result of a call to
-#' \code{\link{felm}}.
-#' @param type character. Error structure. Passed to \code{\link{waldtest}}. If
-#' \code{NULL}, both iid and robust Fs are returned.
+#' @param object object of class `"felm"`, a result of a call to
+#' [felm()].
+#' @param type character. Error structure. Passed to [waldtest()]. If
+#' `NULL`, both iid and robust Fs are returned.
 #' @param quantiles numeric. Quantiles for bootstrap.
 #' @param bN integer. Number of bootstrap samples.
 #' @return A p x k matrix, where k is the number of endogenous variables. Each
 #' row are the conditional F statistics on a residual equation as described in
 #' \cite{Sanderson and Windmeijer (2014)}, for a certain error structure.  The
 #' default is to use iid, or cluster if a cluster was specified to
-#' \code{\link{felm}}. The third choice is \code{'robust'}, for heteroskedastic
-#' errors. If \code{type=NULL}, iid and robust Fs are returned, and cluster, if
-#' that was specified to \code{felm}.
+#' [felm()]. The third choice is `'robust'`, for heteroskedastic
+#' errors. If `type=NULL`, iid and robust Fs are returned, and cluster, if
+#' that was specified to `felm`.
 #' 
 #' Note that for these F statistics it is not the p-value that matters, it is
 #' the F statistic itself which (coincidentally) pops up in the denominator for
 #' the asymptotic bias of the IV estimates, and thus a large F is beneficial.
-#' @note Please note that \code{condfstat} does not work with the old syntax
-#' for IV in \code{\link{felm}(...,iv=)}. The new multipart syntax must be
+#' @note Please note that `condfstat` does not work with the old syntax
+#' for IV in `[felm](...,iv=)`. The new multipart syntax must be
 #' used.
 #' @references Sanderson, E. and F. Windmeijer (2014) \cite{A weak instrument
 #' F-test in linear IV models with multiple endogenous variables}, Journal of
 #' Econometrics, 2015.
-#' \url{https://www.sciencedirect.com/science/article/pii/S0304407615001736}
+#' <https://www.sciencedirect.com/science/article/pii/S0304407615001736>
 #' 
 #' Stock, J.H. and M. Yogo (2004) \cite{Testing for weak instruments in linear
-#' IV regression}, \url{https://www.ssrn.com/abstract=1734933} in
+#' IV regression}, <https://www.ssrn.com/abstract=1734933> in
 #' \cite{Identification and inference for econometric models: Essays in honor
 #' of Thomas Rothenberg}, 2005.
 #' @examples

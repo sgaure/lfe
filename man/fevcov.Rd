@@ -16,9 +16,9 @@ fevcov(
 }
 \arguments{
 \item{est}{an object of class '"felm"', the result of a call to
-\code{\link{felm}(keepX=TRUE)}.}
+\verb{[felm](keepX=TRUE)}.}
 
-\item{alpha}{a data frame, the result of a call to \code{\link{getfe}}.}
+\item{alpha}{a data frame, the result of a call to \code{\link[=getfe]{getfe()}}.}
 
 \item{tol}{numeric. The absolute tolerance for the bias-corrected
 correlation.}
@@ -64,15 +64,15 @@ effects.
 
 \code{alpha} must contain a full set of coefficients, and contain columns
 \code{'fe'} and \code{'effect'} like the default estimable functions from
-\code{\link{efactory}}.
+\code{\link[=efactory]{efactory()}}.
 
-In the case that the \code{\link{felm}}-estimation has weights, it is the
+In the case that the \code{\link[=felm]{felm()}}-estimation has weights, it is the
 weighted variances and covariance which are bias corrected.
 }
 \note{
 Bias correction for IV-estimates are not supported as of now.
 
-Note that if \code{est} is the result of a call to \code{\link{felm}} with
+Note that if \code{est} is the result of a call to \code{\link[=felm]{felm()}} with
 \code{keepX=FALSE} (the default), the biases will be computed as if the
 covariates X are independent of the factors. This will be faster (typically
 by a factor of approx. 4), and possibly wronger.  Note also that the
@@ -81,7 +81,7 @@ some time.  It would be wise to start out with quite liberal tolerances,
 e.g. \cite{tol=0.1}, to get an idea of the time requirements.
 
 If there are only two fixed effects, \code{fevcov} returns the same
-information as \code{\link{bccorr}}, though in a slightly different format.
+information as \code{\link[=bccorr]{bccorr()}}, though in a slightly different format.
 }
 \examples{
 
@@ -123,5 +123,5 @@ fixed-effects linear regression}, Stat 3(1):379-390, 2014.
 \doi{10.1002/sta4.68}
 }
 \seealso{
-\code{\link{varvars}} \code{\link{bccorr}}
+\code{\link[=varvars]{varvars()}} \code{\link[=bccorr]{bccorr()}}
 }

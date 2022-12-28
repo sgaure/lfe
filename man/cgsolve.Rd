@@ -25,8 +25,8 @@ A solution \eqn{x} of the linear system \eqn{A x = b} is returned.
 \description{
 \code{cgsolve} uses a conjugate gradient algorithm to solve the linear
 system \eqn{A x = b} where \eqn{A} is a symmetric matrix.  \code{cgsolve} is
-used internally in \pkg{lfe} in the routines \code{\link{fevcov}} and
-\code{\link{bccorr}}, but has been made public because it might be useful
+used internally in \pkg{lfe} in the routines \code{\link[=fevcov]{fevcov()}} and
+\code{\link[=bccorr]{bccorr()}}, but has been made public because it might be useful
 for other purposes as well.
 }
 \details{
@@ -50,7 +50,7 @@ tolerance.  The termination criterion for \code{cgsolve} is the one from
 Preconditioning is currently not supported.
 
 If \code{A} is a function, the test for symmetry is performed by drawing two
-random vectors \code{x,y}, and testing whether \eqn{|(Ax, y) - (x, Ay)| <
+random vectors \verb{x,y}, and testing whether \eqn{|(Ax, y) - (x, Ay)| <
 10^{-6} sqrt((||Ax||^2 + ||Ay||^2)/N)}, where \eqn{N} is the vector length.
 Thus, the test is neither deterministic nor perfect.
 }
@@ -77,5 +77,5 @@ for the conjugate gradient method}, BIT Numerical Mathematics,
 28(2):308-322.  \url{https://link.springer.com/article/10.1007/BF01934094}
 }
 \seealso{
-\code{\link{kaczmarz}}
+\code{\link[=kaczmarz]{kaczmarz()}}
 }

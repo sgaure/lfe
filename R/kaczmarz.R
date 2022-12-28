@@ -10,21 +10,21 @@
 #' @param eps a tolerance for the method
 #' @param init numeric. A vector to use as initial value for the Kaczmarz
 #' iterations. The algorithm converges to the solution closest to this
-#' @param threads integer. The number of threads to use when \code{R} is more
+#' @param threads integer. The number of threads to use when `R` is more
 #' than one vector
-#' @return A vector \code{x} of length equal to the sum of the number of levels
-#' of the factors in \code{fl}, which solves the system \eqn{Dx=R}. If the
+#' @return A vector `x` of length equal to the sum of the number of levels
+#' of the factors in `fl`, which solves the system \eqn{Dx=R}. If the
 #' system is inconsistent, the algorithm may not converge, it will give a
 #' warning and return something which may or may not be close to a solution. By
-#' setting \code{eps=0}, maximum accuracy (with convergence warning) will be
+#' setting `eps=0`, maximum accuracy (with convergence warning) will be
 #' achieved.
-#' @note This function is used by \code{\link{getfe}}, it's quite specialized,
+#' @note This function is used by [getfe()], it's quite specialized,
 #' but it might be useful for other purposes too.
 #' 
-#' In case of convergence problems, setting \code{options(lfe.usecg=TRUE)} will
+#' In case of convergence problems, setting `options(lfe.usecg=TRUE)` will
 #' cause the kaczmarz() function to dispatch to the more general conjugate
-#' gradient method of \code{\link{cgsolve}}.  This may or may not be faster.
-#' @seealso \code{\link{cgsolve}}
+#' gradient method of [cgsolve()].  This may or may not be faster.
+#' @seealso [cgsolve()]
 #' @examples
 #' 
 #' ## create factors

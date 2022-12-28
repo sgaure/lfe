@@ -147,26 +147,26 @@ diamgraph <- function(flist,approx=TRUE) {
 #' Find diameters of mobility graphs
 #' 
 #' 'diammatrix' computes the diameters of certain graphs related to convergence
-#' speed of \code{felm}.
+#' speed of `felm`.
 #' 
-#' Each pair of factors (f1,f2) from \code{flist} defines a bipartite graph in
+#' Each pair of factors (f1,f2) from `flist` defines a bipartite graph in
 #' which the vertices are the levels of the factors, and two vertices are
 #' adjacent if they are observed simultaneously. The connected components of
 #' this graph are important for identification of the coefficients for the
-#' factor levels, i.e. for \code{getfe}. But experience and some trials have
+#' factor levels, i.e. for `getfe`. But experience and some trials have
 #' led the author to speculate that the diameter of the graph (or its largest
 #' component) is also important for the convergence rate.  Specifically, the
 #' author suspects that under some assumptions, time to convergence goes like
 #' the square of the diameter.  At least in the case of two factors.  This
 #' function computes the diameter for each pair of factors.  If the graph is
-#' disconnected, the largest connected component is used. If \code{accel=TRUE}
+#' disconnected, the largest connected component is used. If `accel=TRUE`
 #' (the default), the diameter is approximated from below by drawing two sets
 #' of 10 random vertices and finding the maximum length of the shortest paths
 #' between them.
 #' 
 #' @param flist a list of factors defining the dummies.
 #' @param approx logical. Approximate diameters are computed.
-#' @return A matrix of dimension K x K where K is \code{length(flist)}.
+#' @return A matrix of dimension K x K where K is `length(flist)`.
 #' @note This function is not important to the operation of the package, it is
 #' included for easy experimentation with the convergence rate.  It requires
 #' that the suggested package \pkg{igraph} is attached.
@@ -470,19 +470,19 @@ getcomp <- function(est, alpha=NULL) {
 #'
 #' @param ... Logical conditions to be chained. 
 #' @param out.vars character. Variables not in data.frame, only needed if you use variables which
-#' are not in the frame.  If \code{out.vars} is not specified, it is assumed to match all variables
+#' are not in the frame.  If `out.vars` is not specified, it is assumed to match all variables
 #' starting with a dot ('.').
-#' @return Expression that can be \code{eval}'ed to yield a logical subset mask.
+#' @return Expression that can be `eval`'ed to yield a logical subset mask.
 #' @details
 #' A set of logical conditions are chained, not and'ed. That is, each argument to
-#' \code{chainsubset} is used as a filter to create a smaller dataset. Each subsequent
+#' `chainsubset` is used as a filter to create a smaller dataset. Each subsequent
 #' argument filters further.
 #' For independent conditions this will be the same as and'ing them. I.e.
-#' \code{chainsubset(x < 0 , y < 0)} will yield  the same subset as \code{(x < 0) & (y < 0)}.
-#' However, for aggregate filters like \code{chainsubset(x < mean(y), x > mean(y))}
-#' we first find all the observations with \code{x < mean(y)}, then among these we
-#' find the ones with \code{x > mean(y)}.  The last \code{mean(y)} is now conditional on
-#' \code{x < mean(y)}.
+#' `chainsubset(x < 0 , y < 0)` will yield  the same subset as `(x < 0) & (y < 0)`.
+#' However, for aggregate filters like `chainsubset(x < mean(y), x > mean(y))`
+#' we first find all the observations with `x < mean(y)`, then among these we
+#' find the ones with `x > mean(y)`.  The last `mean(y)` is now conditional on
+#' `x < mean(y)`.
 #' 
 #' @examples
 #' set.seed(48)
@@ -495,11 +495,11 @@ getcomp <- function(est, alpha=NULL) {
 #' lm(y ~ x, data=dat, subset=chainsubset(x < mean(y), x > mean(y)))
 #' @note
 #' Some trickery is done to make this work directly in the subset argument of functions like
-#' \code{felm()} and \code{lm()}. It might possibly fail with an error message in some situations.
-#' If this happens, it should be done in two steps: \code{ss <- eval(chainsubset(...),data); 
-#' lm(...,data=data, subset=ss)}. In particular, the arguments are taken literally, 
-#' constructions like \code{function(...) {chainsubset(...)}} or \code{a <- quote(x < y); chainsubset(a)} do
-#' not work, but \code{do.call(chainsubset,list(a))} does.
+#' `felm()` and `lm()`. It might possibly fail with an error message in some situations.
+#' If this happens, it should be done in two steps: `ss <- eval(chainsubset(...),data); 
+#' lm(...,data=data, subset=ss)`. In particular, the arguments are taken literally, 
+#' constructions like \code{function(...) {chainsubset(...)}} or `a <- quote(x < y); chainsubset(a)` do
+#' not work, but `do.call(chainsubset,list(a))` does.
 #' @export
 chainsubset <- function(..., out.vars) {
   if(sys.parent() != 0) {

@@ -59,34 +59,34 @@ newmus <- function(oldmus, i, alpha, beta) {
 #' Solve a symmetric linear system with the conjugate gradient method
 #' 
 #' 
-#' \code{cgsolve} uses a conjugate gradient algorithm to solve the linear
-#' system \eqn{A x = b} where \eqn{A} is a symmetric matrix.  \code{cgsolve} is
-#' used internally in \pkg{lfe} in the routines \code{\link{fevcov}} and
-#' \code{\link{bccorr}}, but has been made public because it might be useful
+#' `cgsolve` uses a conjugate gradient algorithm to solve the linear
+#' system \eqn{A x = b} where \eqn{A} is a symmetric matrix.  `cgsolve` is
+#' used internally in \pkg{lfe} in the routines [fevcov()] and
+#' [bccorr()], but has been made public because it might be useful
 #' for other purposes as well.
 #' 
 #' 
-#' The argument \code{A} can be a symmetric matrix or a symmetric sparse matrix
-#' inheriting from \code{"Matrix"} of the package \pkg{Matrix}.  It can also be
+#' The argument `A` can be a symmetric matrix or a symmetric sparse matrix
+#' inheriting from `"Matrix"` of the package \pkg{Matrix}.  It can also be
 #' a function which performs the matrix-vector product. If so, the function
 #' must be able to take as input a matrix of column vectors.
 #' 
-#' If the matrix \code{A} is rank deficient, some solution is returned.  If
+#' If the matrix `A` is rank deficient, some solution is returned.  If
 #' there is no solution, a vector is returned which may or may not be close to
-#' a solution.  If \code{symmtest} is \code{FALSE}, no check is performed that
-#' \code{A} is symmetric. If not symmetric, \code{cgsolve} is likely to raise
+#' a solution.  If `symmtest` is `FALSE`, no check is performed that
+#' `A` is symmetric. If not symmetric, `cgsolve` is likely to raise
 #' an error about divergence.
 #' 
-#' The tolerance \code{eps} is a relative tolerance, i.e.  \eqn{||x - x_0|| <
+#' The tolerance `eps` is a relative tolerance, i.e.  \eqn{||x - x_0|| <
 #' \epsilon ||x_0||} where \eqn{x_0} is the true solution and \eqn{x} is the
-#' solution returned by \code{cgsolve}. Use a negative \code{eps} for absolute
-#' tolerance.  The termination criterion for \code{cgsolve} is the one from
+#' solution returned by `cgsolve`. Use a negative `eps` for absolute
+#' tolerance.  The termination criterion for `cgsolve` is the one from
 #' \cite{Kaasschieter (1988)}, Algorithm 3.
 #' 
 #' Preconditioning is currently not supported.
 #' 
-#' If \code{A} is a function, the test for symmetry is performed by drawing two
-#' random vectors \code{x,y}, and testing whether \eqn{|(Ax, y) - (x, Ay)| <
+#' If `A` is a function, the test for symmetry is performed by drawing two
+#' random vectors `x,y`, and testing whether \eqn{|(Ax, y) - (x, Ay)| <
 #' 10^{-6} sqrt((||Ax||^2 + ||Ay||^2)/N)}, where \eqn{N} is the vector length.
 #' Thus, the test is neither deterministic nor perfect.
 #' 
@@ -99,10 +99,10 @@ newmus <- function(oldmus, i, alpha, beta) {
 #' @return
 #' 
 #' A solution \eqn{x} of the linear system \eqn{A x = b} is returned.
-#' @seealso \code{\link{kaczmarz}}
+#' @seealso [kaczmarz()]
 #' @references Kaasschieter, E. (1988) \cite{A practical termination criterion
 #' for the conjugate gradient method}, BIT Numerical Mathematics,
-#' 28(2):308-322.  \url{https://link.springer.com/article/10.1007/BF01934094}
+#' 28(2):308-322.  <https://link.springer.com/article/10.1007/BF01934094>
 #' @examples
 #' 
 #'   N <- 100000

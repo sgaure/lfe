@@ -845,36 +845,36 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' This function is intended for use with large datasets with multiple group
 #' effects of large cardinality.  If dummy-encoding the group effects results
 #' in a manageable number of coefficients, you are probably better off by using
-#' \code{\link{lm}}.
+#' [lm()].
 #' 
 #' The formula specification is a response variable followed by a four part
 #' formula. The first part consists of ordinary covariates, the second part
 #' consists of factors to be projected out. The third part is an
 #' IV-specification. The fourth part is a cluster specification for the
-#' standard errors.  I.e. something like \code{y ~ x1 + x2 | f1 + f2 | (Q|W ~
-#' x3+x4) | clu1 + clu2} where \code{y} is the response, \code{x1,x2} are
-#' ordinary covariates, \code{f1,f2} are factors to be projected out, \code{Q}
-#' and \code{W} are covariates which are instrumented by \code{x3} and
-#' \code{x4}, and \code{clu1,clu2} are factors to be used for computing cluster
+#' standard errors.  I.e. something like `y ~ x1 + x2 | f1 + f2 | (Q|W ~
+#' x3+x4) | clu1 + clu2` where `y` is the response, `x1,x2` are
+#' ordinary covariates, `f1,f2` are factors to be projected out, `Q`
+#' and `W` are covariates which are instrumented by `x3` and
+#' `x4`, and `clu1,clu2` are factors to be used for computing cluster
 #' robust standard errors. Parts that are not used should be specified as
-#' \code{0}, except if it's at the end of the formula, where they can be
-#' omitted.  The parentheses are needed in the third part since \code{|} has
-#' higher precedence than \code{~}. Multiple left hand sides like \code{y|w|x ~
-#' x1 + x2 |f1+f2|...} are allowed.
+#' `0`, except if it's at the end of the formula, where they can be
+#' omitted.  The parentheses are needed in the third part since `|` has
+#' higher precedence than `~`. Multiple left hand sides like `y|w|x ~
+#' x1 + x2 |f1+f2|...` are allowed.
 #' 
-#' Interactions between a covariate \code{x} and a factor \code{f} can be
-#' projected out with the syntax \code{x:f}.  The terms in the second and
+#' Interactions between a covariate `x` and a factor `f` can be
+#' projected out with the syntax `x:f`.  The terms in the second and
 #' fourth parts are not treated as ordinary formulas, in particular it is not
-#' possible with things like \code{y ~ x1 | x*f}, rather one would specify
-#' \code{y ~ x1 + x | x:f + f}. Note that \code{f:x} also works, since R's
+#' possible with things like `y ~ x1 | x*f`, rather one would specify
+#' `y ~ x1 + x | x:f + f`. Note that `f:x` also works, since R's
 #' parser does not keep the order.  This means that in interactions, the factor
-#' \emph{must} be a factor, whereas a non-interacted factor will be coerced to
-#' a factor. I.e. in \code{y ~ x1 | x:f1 + f2}, the \code{f1} must be a factor,
-#' whereas it will work as expected if \code{f2} is an integer vector.
+#' *must* be a factor, whereas a non-interacted factor will be coerced to
+#' a factor. I.e. in `y ~ x1 | x:f1 + f2`, the `f1` must be a factor,
+#' whereas it will work as expected if `f2` is an integer vector.
 #' 
-#' In older versions of \pkg{lfe} the syntax was \code{felm(y ~ x1 + x2 + G(f1)
-#' + G(f2), iv=list(Q ~ x3+x4, W ~ x3+x4), clustervar=c('clu1','clu2'))}. This
-#' syntax still works, but yields a warning. Users are \emph{strongly}
+#' In older versions of \pkg{lfe} the syntax was `felm(y ~ x1 + x2 + G(f1)
+#' + G(f2), iv=list(Q ~ x3+x4, W ~ x3+x4), clustervar=c('clu1','clu2'))`. This
+#' syntax still works, but yields a warning. Users are *strongly*
 #' encouraged to change to the new multipart formula syntax.  The old syntax
 #' will be removed at a later time.
 #' 
@@ -882,25 +882,25 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' from the dummies which are implicitly present.  (An exception occurs in the
 #' case of clustered standard errors and, specifically, where clusters are 
 #' nested within fixed effects; see 
-#' \href{https://github.com/sgaure/lfe/issues/1#issuecomment-528643802}{here}.) 
+#' [here](https://github.com/sgaure/lfe/issues/1#issuecomment-528643802).) 
 #' In the case of two factors,
 #' the exact number of implicit dummies is easy to compute.  If there are more
 #' factors, the number of dummies is estimated by assuming there's one
 #' reference-level for each factor, this may be a slight over-estimation,
-#' leading to slightly too large standard errors. Setting \code{exactDOF='rM'}
-#' computes the exact degrees of freedom with \code{rankMatrix()} in package
+#' leading to slightly too large standard errors. Setting `exactDOF='rM'`
+#' computes the exact degrees of freedom with `rankMatrix()` in package
 #' \pkg{Matrix}.
 #' 
 #' For the iv-part of the formula, it is only necessary to include the
 #' instruments on the right hand side.  The other explanatory covariates, from
-#' the first and second part of \code{formula}, are added automatically in the
+#' the first and second part of `formula`, are added automatically in the
 #' first stage regression.  See the examples.
 #' 
-#' The \code{contrasts} argument is similar to the one in \code{lm()}, it is
+#' The `contrasts` argument is similar to the one in `lm()`, it is
 #' used for factors in the first part of the formula. The factors in the second
-#' part are analyzed as part of a possible subsequent \code{getfe()} call.
+#' part are analyzed as part of a possible subsequent `getfe()` call.
 #' 
-#' The \code{cmethod} argument may affect the clustered covariance matrix (and 
+#' The `cmethod` argument may affect the clustered covariance matrix (and 
 #' thus regressor standard errors), either directly or via adjustments to a 
 #' degrees of freedom scaling factor. In particular, Cameron, Gelbach and Miller
 #' (CGM2011, sec. 2.3) describe two possible small cluster corrections that are 
@@ -918,22 +918,22 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' Any differences resulting from these two approaches are likely to be minor, 
 #' and they will obviously yield exactly the same results when there is only one 
 #' cluster dimension. Still, CGM2011 adopt the former approach in their own 
-#' paper and simulations. This is also the default method that \code{felm} uses 
-#' (i.e. \code{cmethod = 'cgm'}). However, the latter approach has since been 
+#' paper and simulations. This is also the default method that `felm` uses 
+#' (i.e. `cmethod = 'cgm'`). However, the latter approach has since been 
 #' adopted by several other packages that allow for robust inference with 
 #' multiway clustering. This includes the popular Stata package
-#' \href{http://scorreia.com/software/reghdfe/}{reghdfe}, as well as the 
-#' \href{https://github.com/matthieugomez/FixedEffectModels.jl}{FixedEffectModels.jl} 
+#' [reghdfe](http://scorreia.com/software/reghdfe/), as well as the 
+#' [FixedEffectModels.jl](https://github.com/matthieugomez/FixedEffectModels.jl) 
 #' implementation in Julia. To match results from these packages exactly, use
-#' \code{cmethod = 'cgm2'} (or its alias, \code{cmethod = 'reghdfe'}). It is
+#' `cmethod = 'cgm2'` (or its alias, `cmethod = 'reghdfe'`). It is
 #' possible that some residual differences may still remain; see discussion 
-#' \href{https://github.com/sgaure/lfe/issues/1#issuecomment-530561314}{here}.
+#' [here](https://github.com/sgaure/lfe/issues/1#issuecomment-530561314).
 #' 
-#' The old syntax with a single part formula with the \code{G()} syntax for the
+#' The old syntax with a single part formula with the `G()` syntax for the
 #' factors to transform away is still supported, as well as the
-#' \code{clustervar} and \code{iv} arguments, but users are encouraged to move
-#' to the new multi part formulas as described here.  The \code{clustervar} and
-#' \code{iv} arguments have been moved to the \code{...} argument list. They
+#' `clustervar` and `iv` arguments, but users are encouraged to move
+#' to the new multi part formulas as described here.  The `clustervar` and
+#' `iv` arguments have been moved to the `...` argument list. They
 #' will be removed in some future update.
 #' 
 #' @param formula an object of class '"formula"' (or one that can be coerced to
@@ -942,104 +942,104 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' @param data a data frame containing the variables of the model.
 #' @param exactDOF logical. If more than two factors, the degrees of freedom
 #' used to scale the covariance matrix (and the standard errors) is normally
-#' estimated. Setting \code{exactDOF=TRUE} causes \code{felm} to attempt to
+#' estimated. Setting `exactDOF=TRUE` causes `felm` to attempt to
 #' compute it, but this may fail if there are too many levels in the factors.
-#' \code{exactDOF='rM'} will use the exact method in
-#' \code{Matrix::rankMatrix()}, but this is slower. If neither of these methods
-#' works, it is possible to specify \code{exactDOF='mc'}, which utilizes a
+#' `exactDOF='rM'` will use the exact method in
+#' `Matrix::rankMatrix()`, but this is slower. If neither of these methods
+#' works, it is possible to specify `exactDOF='mc'`, which utilizes a
 #' Monte-Carlo method to estimate the expectation E(x' P x) = tr(P), the trace
 #' of a certain projection, a method which may be more accurate than the
 #' default guess.
 #' 
 #' If the degrees of freedom for some reason are known, they can be specified
-#' like \code{exactDOF=342772}.
+#' like `exactDOF=342772`.
 #' @param subset an optional vector specifying a subset of observations to be
 #' used in the fitting process.
 #' @param na.action a function which indicates what should happen when the data
-#' contain \code{NA}s.  The default is set by the \code{na.action} setting of
-#' \code{options}, and is \code{na.fail} if that is unset.  The 'factory-fresh'
-#' default is \code{na.omit}.  Another possible value is \code{NULL}, no
-#' action. \code{na.exclude} is currently not supported.
-#' @param contrasts an optional list. See the \code{contrasts.arg} of
-#' \code{model.matrix.default}.
+#' contain `NA`s.  The default is set by the `na.action` setting of
+#' `options`, and is `na.fail` if that is unset.  The 'factory-fresh'
+#' default is `na.omit`.  Another possible value is `NULL`, no
+#' action. `na.exclude` is currently not supported.
+#' @param contrasts an optional list. See the `contrasts.arg` of
+#' `model.matrix.default`.
 #' @param weights an optional vector of weights to be used in the fitting
 #' process.  Should be 'NULL' or a numeric vector.  If non-NULL, weighted least
-#' squares is used with weights \code{weights} (that is, minimizing
-#' \code{sum(w*e^2)}); otherwise ordinary least squares is used.
+#' squares is used with weights `weights` (that is, minimizing
+#' `sum(w*e^2)`); otherwise ordinary least squares is used.
 #' @param ... other arguments.  \itemize{
 #' 
-#' \item \code{cmethod} character. Which clustering method to use. Known 
-#' arguments are \code{'cgm'} (the default), \code{'cgm2'} (or \code{'reghdfe'},
+#' \item `cmethod` character. Which clustering method to use. Known 
+#' arguments are `'cgm'` (the default), `'cgm2'` (or `'reghdfe'`,
 #' its alias). These alternate methods will generally 
 #' yield equivalent results, except in the case of multiway clustering with few
 #' clusters along at least one dimension. 
 #' 
-#' \item \code{keepX} logical. To include a copy of the expanded data matrix in
-#' the return value, as needed by \code{\link{bccorr}} and \code{\link{fevcov}}
+#' \item `keepX` logical. To include a copy of the expanded data matrix in
+#' the return value, as needed by [bccorr()] and [fevcov()]
 #' for proper limited mobility bias correction.
 #' 
-#' \item \code{keepCX} logical. Keep a copy of the centred expanded data matrix
-#' in the return value. As list elements \code{cX} for the explanatory
-#' variables, and \code{cY} for the outcome.
+#' \item `keepCX` logical. Keep a copy of the centred expanded data matrix
+#' in the return value. As list elements `cX` for the explanatory
+#' variables, and `cY` for the outcome.
 #'
-#' \item \code{keepModel} logical. Keep a copy of the model frame.
+#' \item `keepModel` logical. Keep a copy of the model frame.
 #' 
-#' \item \code{nostats} logical. Don't include covariance matrices in the
+#' \item `nostats` logical. Don't include covariance matrices in the
 #' output, just the estimated coefficients and various descriptive information.
-#' For IV, \code{nostats} can be a logical vector of length 2, with the last
-#' value being used for the 1st stages.  \item \code{psdef} logical. In case of
+#' For IV, `nostats` can be a logical vector of length 2, with the last
+#' value being used for the 1st stages.  \item `psdef` logical. In case of
 #' multiway clustering, the method of Cameron, Gelbach and Miller may yield a
 #' non-definite variance matrix. Ordinarily this is forced to be semidefinite
-#' by setting negative eigenvalues to zero. Setting \code{psdef=FALSE} will
+#' by setting negative eigenvalues to zero. Setting `psdef=FALSE` will
 #' switch off this adjustment.  Since the variance estimator is asymptotically
 #' correct, this should only have an effect when the clustering factors have
 #' very few levels.
 #' 
-#' \item \code{kclass} character. For use with instrumental variables. Use a
-#' k-class estimator rather than 2SLS/IV. Currently, the values \code{'nagar',
-#' 'b2sls', 'mb2sls', 'liml'} are accepted, where the names are from
+#' \item `kclass` character. For use with instrumental variables. Use a
+#' k-class estimator rather than 2SLS/IV. Currently, the values `'nagar',
+#' 'b2sls', 'mb2sls', 'liml'` are accepted, where the names are from
 #' \cite{Kolesar et al (2014)}, as well as a numeric value for the 'k' in
-#' k-class. With \code{kclass='liml'}, \code{felm} also accepts the argument
-#' \code{fuller=<numeric>}, for using a Fuller adjustment of the
+#' k-class. With `kclass='liml'`, `felm` also accepts the argument
+#' `fuller=<numeric>`, for using a Fuller adjustment of the
 #' liml-estimator.
 #' 
-#' \item \code{Nboot, bootexpr, bootcluster} Since \code{felm} has quite a bit
+#' \item `Nboot, bootexpr, bootcluster` Since `felm` has quite a bit
 #' of overhead in the creation of the model matrix, if one wants confidence
 #' intervals for some function of the estimated parameters, it is possible to
-#' bootstrap internally in \code{felm}.  That is, the model matrix is resampled
-#' \code{Nboot} times and estimated, and the \code{bootexpr} is evaluated
-#' inside an \code{sapply}. The estimated coefficients and the left hand
-#' side(s) are available by name. Any right hand side variable \code{x} is
-#' available by the name \code{var.x}.  The \code{"felm"}-object for each
-#' estimation is available as \code{est}. If a \code{bootcluster} is specified
-#' as a factor, entire levels are resampled. \code{bootcluster} can also be a
+#' bootstrap internally in `felm`.  That is, the model matrix is resampled
+#' `Nboot` times and estimated, and the `bootexpr` is evaluated
+#' inside an `sapply`. The estimated coefficients and the left hand
+#' side(s) are available by name. Any right hand side variable `x` is
+#' available by the name `var.x`.  The `"felm"`-object for each
+#' estimation is available as `est`. If a `bootcluster` is specified
+#' as a factor, entire levels are resampled. `bootcluster` can also be a
 #' function with no arguments, it should return a vector of integers, the rows
 #' to use in the sample. It can also be the string 'model', in which case the
-#' cluster is taken from the model. \code{bootexpr} should be an expression,
-#' e.g. like \code{quote(x/x2 * abs(x3)/mean(y))}.  It could be wise to specify
-#' \code{nostats=TRUE} when bootstrapping, unless the covariance matrices are
+#' cluster is taken from the model. `bootexpr` should be an expression,
+#' e.g. like `quote(x/x2 * abs(x3)/mean(y))`.  It could be wise to specify
+#' `nostats=TRUE` when bootstrapping, unless the covariance matrices are
 #' needed in the bootstrap. If you need the covariance matrices in the full
 #' estimate, but not in the bootstrap, you can specify it in an attribute
-#' \code{"boot"} as \code{nostats=structure(FALSE, boot=TRUE)}.
+#' `"boot"` as `nostats=structure(FALSE, boot=TRUE)`.
 #' 
-#' \item \code{iv, clustervar} deprecated.  These arguments will be removed at
+#' \item `iv, clustervar` deprecated.  These arguments will be removed at
 #' a later time, but are still supported in this field. Users are
-#' \emph{STRONGLY} encouraged to use multipart formulas instead.  In
+#' *STRONGLY* encouraged to use multipart formulas instead.  In
 #' particular, not all functionality is supported with the deprecated syntax;
 #' iv-estimations actually run a lot faster if multipart formulas are used, due
 #' to new algorithms which I didn't bother to shoehorn in place for the
 #' deprecated syntax.
 #' 
 #' }
-#' @return \code{felm} returns an object of \code{class} \code{"felm"}.  It is
-#' quite similar to an \code{"lm"} object, but not entirely compatible.
+#' @return `felm` returns an object of `class` `"felm"`.  It is
+#' quite similar to an `"lm"` object, but not entirely compatible.
 #' 
-#' The generic \code{summary}-method will yield a summary which may be
-#' \code{print}'ed.  The object has some resemblance to an \code{'lm'} object,
-#' and some postprocessing methods designed for \code{lm} may happen to work.
+#' The generic `summary`-method will yield a summary which may be
+#' `print`'ed.  The object has some resemblance to an `'lm'` object,
+#' and some postprocessing methods designed for `lm` may happen to work.
 #' It may however be necessary to coerce the object to succeed with this.
 #' 
-#' The \code{"felm"} object is a list containing the following fields:
+#' The `"felm"` object is a list containing the following fields:
 #' 
 #' \item{coefficients}{a numerical vector. The estimated coefficients.}
 #' \item{N}{an integer. The number of observations} \item{p}{an integer. The
@@ -1052,13 +1052,13 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' endogenous variables are used, not their predictions from the 1st stage.}
 #' 
 #' \item{r.residuals}{a numerical vector. Reduced residuals, i.e. the residuals
-#' resulting from predicting \emph{without} the dummies.}
+#' resulting from predicting *without* the dummies.}
 #' 
 #' \item{iv.residuals}{numerical vector. When using instrumental variables,
 #' residuals from 2. stage, i.e. when predicting with the predicted endogenous
 #' variables from the 1st stage.}
 #' 
-#' \item{weights}{numeric. The square root of the argument \code{weights}.}
+#' \item{weights}{numeric. The square root of the argument `weights`.}
 #' 
 #' \item{cfactor}{factor of length N. The factor describing the connected
 #' components of the two first terms in the second part of the model formula.}
@@ -1068,7 +1068,7 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' \item{fe}{list of factors. A list of the terms in the second part of the
 #' model formula.}
 #' 
-#' \item{stage1}{The '\code{felm}' objects for the IV 1st stage, if used. The
+#' \item{stage1}{The '`felm`' objects for the IV 1st stage, if used. The
 #' 1st stage has multiple left hand sides if there are more than one
 #' instrumented variable.}
 #' 
@@ -1078,33 +1078,33 @@ newols <- function(mm, stage1=NULL, pf=parent.frame(), nostats=FALSE, exactDOF=F
 #' 
 #' \item{X}{matrix. The expanded data matrix, i.e. from the first part of the
 #' formula. To save memory with large datasets, it is only included if
-#' \code{felm(keepX=TRUE)} is specified.  Must be included if
-#' \code{\link{bccorr}} or \code{\link{fevcov}} is to be used for correcting
+#' `felm(keepX=TRUE)` is specified.  Must be included if
+#' [bccorr()] or [fevcov()] is to be used for correcting
 #' limited mobility bias.  }
 #' 
 #' \item{cX, cY}{matrix. The centred expanded data matrix. Only included if
-#' \code{felm(keepCX=TRUE)}.  }
+#' `felm(keepCX=TRUE)`.  }
 #' 
-#' \item{boot}{The result of a \code{replicate} applied to the \code{bootexpr}
+#' \item{boot}{The result of a `replicate` applied to the `bootexpr`
 #' (if used).}
 #' 
 #' @note
-#' Side effect: If \code{data} is an object of class \code{"pdata.frame"} (from
+#' Side effect: If `data` is an object of class `"pdata.frame"` (from
 #' the \pkg{plm} package), the \pkg{plm} namespace is loaded if available, and
-#' \code{data} is coerced to a \code{"data.frame"} with \code{as.data.frame}
+#' `data` is coerced to a `"data.frame"` with `as.data.frame`
 #' which dispatches to a \pkg{plm} method.  This ensures that transformations
-#' like \code{diff} and \code{lag} from \pkg{plm} works as expected, but it
-#' also incurs an additional copy of the \code{data}, and the \pkg{plm}
-#' namespace remains loaded after \code{felm} returns.  When working with
-#' \code{"pdata.frame"}s, this is what is usually wanted anyway.
+#' like `diff` and `lag` from \pkg{plm} works as expected, but it
+#' also incurs an additional copy of the `data`, and the \pkg{plm}
+#' namespace remains loaded after `felm` returns.  When working with
+#' `"pdata.frame"`s, this is what is usually wanted anyway.
 #' 
 #' For technical reasons, when running IV-estimations, the data frame supplied
-#' in the \code{data} argument to \code{felm}, should \emph{not} contain
-#' variables with names ending in \code{'(fit)'}.  Variables with such names
-#' are used internally by \code{felm}, and may then accidentally be looked up
+#' in the `data` argument to `felm`, should *not* contain
+#' variables with names ending in `'(fit)'`.  Variables with such names
+#' are used internally by `felm`, and may then accidentally be looked up
 #' in the data frame instead of the local environment where they are defined.
-#' @seealso \code{\link{getfe}} \code{\link{summary.felm}}
-#' \code{\link{condfstat}} \code{\link{waldtest}}
+#' @seealso [getfe()] [summary.felm()]
+#' [condfstat()] [waldtest()]
 #' @references Cameron, A.C., J.B. Gelbach and D.L. Miller (2011) \cite{Robust
 #' inference with multiway clustering}, Journal of Business & Economic
 #' Statistics 29 (2011), no. 2, 238--249.

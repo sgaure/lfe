@@ -1,13 +1,13 @@
 #' Compute standard errors for fixed effects
 #'
 #' fixedse computes the standard errors for the fixed effects when there is only one.
-#' While \code{\link{getfe}} can provide standard errors, it does so by bootstrapping
+#' While [getfe()] can provide standard errors, it does so by bootstrapping
 #' for general estimable functions. In the special case that there's only a single fixed
 #' effect, and the estimable function is just the levels, this function can be used to
-#' compute the fixed effects without bootstrapping. It requires that \code{\link{felm}}
+#' compute the fixed effects without bootstrapping. It requires that [felm()]
 #' is run with keepX=TRUE.
 #' @name fixedse
-#' @param est 'felm' object. The result of a call to \code{\link{felm}}.
+#' @param est 'felm' object. The result of a call to [felm()].
 #' @param E Matrix. Estimable function. Not used at the moment.
 #' @param lhs character. Name of the left hand side, if more than one.
 #' @return numeric. Vector of standard errors.

@@ -25,8 +25,8 @@
 #' product fairly easy, and this is utilized to estimate the trace of the
 #' matrix.
 #' 
-#' \code{mctrace} is used internally by \code{\link{fevcov}} and
-#' \code{\link{bccorr}}, but has been made public since it might be useful for
+#' `mctrace` is used internally by [fevcov()] and
+#' [bccorr()], but has been made public since it might be useful for
 #' other tasks as well.
 #' 
 #' For any matrix \eqn{A}, the trace equals the sum of the diagonal elements,
@@ -35,38 +35,38 @@
 #' immediately available.  In that case we can use the formula \eqn{tr(A) =
 #' E(x^t A x)}{tr(A) = E(x'Ax)} where \eqn{x} is a random vector with zero
 #' expectation and \eqn{Var(x) = I}. We estimate the expectation with sample
-#' means.  \code{mctrace} draws \eqn{x} in \eqn{\{-1,1\}^N}{{-1,1}}, and
-#' evaluates \code{mat} on these vectors.
+#' means.  `mctrace` draws \eqn{x} in \eqn{\{-1,1\}^N}{{-1,1}}, and
+#' evaluates `mat` on these vectors.
 #' 
-#' If \code{mat} is a function, it must be able to take a matrix of column
+#' If `mat` is a function, it must be able to take a matrix of column
 #' vectors as input.  Since \eqn{x^t A x = (Ax,x)}{x'Ax = (Ax,x)} is evaluated,
 #' where \eqn{(\cdot,\cdot)}{(,)} is the Euclidean inner product, the function
-#' \code{mat} can perform this inner product itself. In that case the function
-#' should have an attribute \code{attr(mat,'IP') <- TRUE} to signal this.
+#' `mat` can perform this inner product itself. In that case the function
+#' should have an attribute `attr(mat,'IP') <- TRUE` to signal this.
 #' 
-#' If \code{mat} is a list of factors, the matrix for which to estimate the
+#' If `mat` is a list of factors, the matrix for which to estimate the
 #' trace, is the projection matrix which projects out the factors. I.e.  how
 #' many dimensions are left when the factors have been projected out.  Thus, it
 #' is possible to estimate the degrees of freedom in an OLS where factors are
 #' projected out.
 #' 
-#' The tolerance \code{tol} is a relative tolerance.  The iteration terminates
+#' The tolerance `tol` is a relative tolerance.  The iteration terminates
 #' when the normalized standard deviation of the sample mean (s.d. divided by
-#' absolute value of the current sample mean) goes below \code{tol}.  Specify a
-#' negative \code{tol} to use the absolute standard deviation.  The tolerance
+#' absolute value of the current sample mean) goes below `tol`.  Specify a
+#' negative `tol` to use the absolute standard deviation.  The tolerance
 #' can also change during the iterations; you can specify
 #' \code{tol=function(curest) {...}} and return a tolerance based on the
 #' current estimate of the trace (i.e. the current sample mean).
 #' 
 #' @param mat square matrix, Matrix, function or list of factors.
-#' @param N integer. if \code{mat} is a function, the size of the matrix is
+#' @param N integer. if `mat` is a function, the size of the matrix is
 #' specified here.
 #' @param tol numeric. Tolerance.
 #' @param maxsamples numeric. Maximum number of samples in the expectation
 #' estimation.
 #' @param trname character. Arbitrary name used in progress reports.
 #' @param init numeric. Initial guess for the trace.
-#' @return An estimate of the trace of the matrix represented by \code{mat} is
+#' @return An estimate of the trace of the matrix represented by `mat` is
 #' returned.
 #' @examples
 #' 

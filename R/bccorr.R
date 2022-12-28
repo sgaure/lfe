@@ -34,11 +34,11 @@ narowsum <- rowsum
 #' and \eqn{F} are matrices with dummy encoded factors, one application of \pkg{lfe} is to
 #' study the correlation \eqn{cor(D\theta, F\psi)}.  However, if we use
 #' estimates for \eqn{\theta} and \eqn{\psi}, the resulting correlation is biased.
-#' The function \code{bccorr} computes a bias corrected correlation
+#' The function `bccorr` computes a bias corrected correlation
 #' as described in \cite{Gaure (2014)}.
 #' @param est an object of class '"felm"', the result of a call to
-#'  \code{\link{felm}(keepX=TRUE)}.
-#' @param alpha a data frame, the result of a call to \code{\link{getfe}}.
+#'  `[felm](keepX=TRUE)`.
+#' @param alpha a data frame, the result of a call to [getfe()].
 #' @param corrfactors integer or character vector of length 2. The factors to
 #'    correlate. The default is fine if there are only two factors in the model.
 #' @param nocovar logical. Assume no other covariates than the two
@@ -48,11 +48,11 @@ narowsum <- rowsum
 #' @param lhs character. Name of left hand side if multiple left hand sides.
 
 #' @return
-#'  \code{bccorr} returns a named integer vector with the following fields:
+#'  `bccorr` returns a named integer vector with the following fields:
 #'
 #'  \item{corr}{the bias corrected correlation.}
 #'  \item{v1}{the bias corrected variance for the first factor specified
-#'  by \code{corrfactors}.}
+#'  by `corrfactors`.}
 #'  \item{v2}{the bias corrected variance for the second factor.}
 #'  \item{cov}{the bias corrected covariance between the two factors.}
 #'  \item{d1}{the bias correction for the first factor.}
@@ -65,31 +65,31 @@ narowsum <- rowsum
 #' @details
 #' The bias expressions from \cite{Andrews et al.} are of the form \eqn{tr(AB^{-1}C)}
 #' where \eqn{A}, \eqn{B}, and \eqn{C} are  matrices too large to be handled
-#' directly. \code{bccorr} estimates the trace by using the formula \eqn{tr(M) = E(x^t M x)}
+#' directly. `bccorr` estimates the trace by using the formula \eqn{tr(M) = E(x^t M x)}
 #' where x is a vector with coordinates drawn uniformly from the set \eqn{\{-1,1\}}.
 #' More specifically, the expectation is estimated by
 #' sample means, i.e. in each sample a vector x is drawn, the
 #' equation \eqn{Bv = Cx} is solved by a conjugate gradient method, and the
 #' real number \eqn{x^t Av} is computed. 
 #' 
-#' There are three bias corrections, for the variances of \eqn{D\theta} (\code{vD}) and
-#' \eqn{F\psi} (\code{vF}), and their covariance (\code{vDF}).The correlation is computed as
-#' \code{rho <- vDF/sqrt(vD*vF)}.  The variances are estimated to a
-#' relative tolerance specified by the argument \code{tol}. The covariance
-#' bias is estimated to an absolute tolerance in the correlation \code{rho}
-#' (conditional on the already bias corrected \code{vD} and \code{vF}) specified by
-#' \code{tol}.  The CG algorithm does not need to be exceedingly precise,
+#' There are three bias corrections, for the variances of \eqn{D\theta} (`vD`) and
+#' \eqn{F\psi} (`vF`), and their covariance (`vDF`).The correlation is computed as
+#' `rho <- vDF/sqrt(vD*vF)`.  The variances are estimated to a
+#' relative tolerance specified by the argument `tol`. The covariance
+#' bias is estimated to an absolute tolerance in the correlation `rho`
+#' (conditional on the already bias corrected `vD` and `vF`) specified by
+#' `tol`.  The CG algorithm does not need to be exceedingly precise,
 #' it is terminated when the solution reaches a precision which is
-#' sufficient for the chosen precision in \code{vD, vF, vDF}.
+#' sufficient for the chosen precision in `vD, vF, vDF`.
 #' 
-#' If \code{est} is the result of a weighted \code{\link{felm}} estimation,
+#' If `est` is the result of a weighted [felm()] estimation,
 #' the variances and correlations are weighted too.
 
 #' @note
 #' Bias correction for IV-estimates are not supported as of now.
 #' 
-#' Note that if \code{est} is the result of a call to \code{\link{felm}}
-#' with \code{keepX=FALSE} (the default), the correlation will be computed
+#' Note that if `est` is the result of a call to [felm()]
+#' with `keepX=FALSE` (the default), the correlation will be computed
 #' as if the covariates X are independent of the two factors. This will be
 #' faster (typically by a factor of approx. 4), and possibly wronger.
 #' 
@@ -101,7 +101,7 @@ narowsum <- rowsum
 #' The algorithm used is not very well suited for small datasets with only
 #' a few thousand levels in the factors.
 
-#' @seealso \code{\link{fevcov}}
+#' @seealso [fevcov()]
 
 #' @examples
 #' x <- rnorm(500)
@@ -622,21 +622,21 @@ varvar <- function(index, fe, X, pointest, resvar, tol=0.01,
 #' With a model like \eqn{y = X\beta + D\theta + F\psi + \epsilon}, where \eqn{D} and
 #' \eqn{F} are matrices with dummy encoded factors, one application of \pkg{lfe} is
 #' to study the variances \eqn{var(D\theta)}, \eqn{var(F\psi)} and covariances
-#' \eqn{cov(D\theta, F\psi)}. The function \code{\link{fevcov}} computes bias corrected
+#' \eqn{cov(D\theta, F\psi)}. The function [fevcov()] computes bias corrected
 #' variances and covariances.  However, these variance estimates are still
-#' random variables for which \code{\link{fevcov}} only estimate the
-#' expectation. The function \code{varvars} estimates the variance of these
+#' random variables for which [fevcov()] only estimate the
+#' expectation. The function `varvars` estimates the variance of these
 #' estimates.
 #' 
 #' This function returns valid results only for normally distributed residuals.
 #' Note that the estimates for the fixed effect variances from
-#' \code{\link{fevcov}} are not normally distributed, but a sum of chi-square
+#' [fevcov()] are not normally distributed, but a sum of chi-square
 #' distributions which depends on the eigenvalues of certain large matrices. We
-#' do not compute that distribution. The variances returned by \code{varvars}
-#' can therefore \emph{not} be used directly to estimate confidence intervals,
+#' do not compute that distribution. The variances returned by `varvars`
+#' can therefore *not* be used directly to estimate confidence intervals,
 #' other than through coarse methods like the Chebyshev inequality. These
 #' estimates only serve as a rough guideline as to how wrong the variance
-#' estimates from \code{\link{fevcov}} might be.
+#' estimates from [fevcov()] might be.
 #' 
 #' Like the fixed effect variances themselves, their variances are also biased
 #' upwards.  Correcting this bias can be costly, and is therefore by default
@@ -646,27 +646,27 @@ varvar <- function(index, fe, X, pointest, resvar, tol=0.01,
 #' large datasets they will be quite small.
 #' 
 #' @param est an object of class '"felm"', the result of a call to
-#' \code{\link{felm}(keepX=TRUE)}.
-#' @param alpha a data frame, the result of a call to \code{\link{getfe}}.
+#' `[felm](keepX=TRUE)`.
+#' @param alpha a data frame, the result of a call to [getfe()].
 #' @param tol numeric. The absolute tolerance for the bias-corrected
 #' correlation.
 #' @param biascorrect logical. Should the estimates be bias corrected?
 #' @param lhs character. Name of left hand side if multiple left hand sides.
-#' @return \code{varvars} returns a vector with a variance estimate for each
+#' @return `varvars` returns a vector with a variance estimate for each
 #' fixed effect variance.  I.e. for the diagonal returned by
-#' \code{\link{fevcov}}.
-#' @note The \code{tol} argument specifies the tolerance as in
-#' \code{\link{fevcov}}.  Note that if \code{est} is the result of a call to
-#' \code{\link{felm}} with \code{keepX=FALSE} (the default), the variances will
+#' [fevcov()].
+#' @note The `tol` argument specifies the tolerance as in
+#' [fevcov()].  Note that if `est` is the result of a call to
+#' [felm()] with `keepX=FALSE` (the default), the variances will
 #' be estimated as if the covariates X are independent of the factors.  There
 #' is currently no function available for estimating the variance of the
-#' covariance estimates from \code{\link{fevcov}}.
+#' covariance estimates from [fevcov()].
 #' 
 #' The cited paper does not contain the expressions for the variances computed
-#' by \code{varvars} (there's a 10 page limit in that journal), though they can
+#' by `varvars` (there's a 10 page limit in that journal), though they can
 #' be derived in the same fashion as in the paper, with the formula for the
 #' variance of a quadratic form.
-#' @seealso \code{\link{bccorr}} \code{\link{fevcov}}
+#' @seealso [bccorr()] [fevcov()]
 #' @references Gaure, S. (2014), \cite{Correlation bias correction in two-way
 #' fixed-effects linear regression}, Stat 3(1):379-390, 2014.
 #' @examples
@@ -744,34 +744,34 @@ varvars <- function(est, alpha=getfe(est), tol=0.01, biascorrect=FALSE, lhs=NULL
 #' of \pkg{lfe} is to study the variances \eqn{var(D\theta)}, \eqn{var(F\psi)}
 #' and covariances \eqn{cov(D\theta, F\psi)}. However, if we use estimates for
 #' \eqn{\theta} and \eqn{\psi}, the resulting variances are biased. The
-#' function \code{fevcov} computes a bias corrected covariance matrix as
+#' function `fevcov` computes a bias corrected covariance matrix as
 #' described in \cite{Gaure (2014)}.
 #' 
-#' The \code{tol} argument specifies the tolerance. The tolerance is relative
+#' The `tol` argument specifies the tolerance. The tolerance is relative
 #' for the variances, i.e. the diagonal of the output.  For the covariances,
 #' the tolerance is relative to the square root of the product of the
 #' variances, i.e. an absolute tolerance for the correlation.  If a numeric of
-#' length 1, \code{tol} specifies the same tolerance for all
-#' variances/covariances.  If it is of length 2, \code{tol[1]} specifies the
-#' variance tolerance, and \code{tol[2]} the covariance tolerance.  \code{tol}
-#' can also be a square matrix of size \code{length(est$fe)}, in which case the
+#' length 1, `tol` specifies the same tolerance for all
+#' variances/covariances.  If it is of length 2, `tol[1]` specifies the
+#' variance tolerance, and `tol[2]` the covariance tolerance.  `tol`
+#' can also be a square matrix of size `length(est$fe)`, in which case the
 #' tolerance for each variance and covariance is specified individually.
 #' 
 #' The function performs no checks for estimability. If the fixed effects are
-#' not estimable, the result of a call to \code{fevcov} is not useable.
+#' not estimable, the result of a call to `fevcov` is not useable.
 #' Moreover, there should be just a single connected component among the fixed
 #' effects.
 #' 
-#' \code{alpha} must contain a full set of coefficients, and contain columns
-#' \code{'fe'} and \code{'effect'} like the default estimable functions from
-#' \code{\link{efactory}}.
+#' `alpha` must contain a full set of coefficients, and contain columns
+#' `'fe'` and `'effect'` like the default estimable functions from
+#' [efactory()].
 #' 
-#' In the case that the \code{\link{felm}}-estimation has weights, it is the
+#' In the case that the [felm()]-estimation has weights, it is the
 #' weighted variances and covariance which are bias corrected.
 #' 
 #' @param est an object of class '"felm"', the result of a call to
-#' \code{\link{felm}(keepX=TRUE)}.
-#' @param alpha a data frame, the result of a call to \code{\link{getfe}}.
+#' `[felm](keepX=TRUE)`.
+#' @param alpha a data frame, the result of a call to [getfe()].
 #' @param tol numeric. The absolute tolerance for the bias-corrected
 #' correlation.
 #' @param robust logical. Should robust (heteroskedastic or cluster) residuals
@@ -779,23 +779,23 @@ varvars <- function(est, alpha=getfe(est), tol=0.01, biascorrect=FALSE, lhs=NULL
 #' @param maxsamples integer. Maximum number of samples for expectation
 #' estimates.
 #' @param lhs character. Name of left hand side if multiple left hand sides.
-#' @return \code{fevcov} returns a square matrix with the bias corrected
-#' covariances. An attribute \code{'bias'} contains the biases.  The bias
+#' @return `fevcov` returns a square matrix with the bias corrected
+#' covariances. An attribute `'bias'` contains the biases.  The bias
 #' corrections have been subtracted from the bias estimates.  I.e. vc = vc' -
 #' b, where vc' is the biased variance and b is the bias.
 #' @note Bias correction for IV-estimates are not supported as of now.
 #' 
-#' Note that if \code{est} is the result of a call to \code{\link{felm}} with
-#' \code{keepX=FALSE} (the default), the biases will be computed as if the
+#' Note that if `est` is the result of a call to [felm()] with
+#' `keepX=FALSE` (the default), the biases will be computed as if the
 #' covariates X are independent of the factors. This will be faster (typically
 #' by a factor of approx. 4), and possibly wronger.  Note also that the
 #' computations performed by this function are non-trivial, they may take quite
 #' some time.  It would be wise to start out with quite liberal tolerances,
 #' e.g. \cite{tol=0.1}, to get an idea of the time requirements.
 #' 
-#' If there are only two fixed effects, \code{fevcov} returns the same
-#' information as \code{\link{bccorr}}, though in a slightly different format.
-#' @seealso \code{\link{varvars}} \code{\link{bccorr}}
+#' If there are only two fixed effects, `fevcov` returns the same
+#' information as [bccorr()], though in a slightly different format.
+#' @seealso [varvars()] [bccorr()]
 #' @references Gaure, S. (2014), \cite{Correlation bias correction in two-way
 #' fixed-effects linear regression}, Stat 3(1):379-390, 2014.
 #' \doi{10.1002/sta4.68}

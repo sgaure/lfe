@@ -9,9 +9,9 @@ condfstat(object, type = "default", quantiles = 0, bN = 100L)
 }
 \arguments{
 \item{object}{object of class \code{"felm"}, a result of a call to
-\code{\link{felm}}.}
+\code{\link[=felm]{felm()}}.}
 
-\item{type}{character. Error structure. Passed to \code{\link{waldtest}}. If
+\item{type}{character. Error structure. Passed to \code{\link[=waldtest]{waldtest()}}. If
 \code{NULL}, both iid and robust Fs are returned.}
 
 \item{quantiles}{numeric. Quantiles for bootstrap.}
@@ -23,7 +23,7 @@ A p x k matrix, where k is the number of endogenous variables. Each
 row are the conditional F statistics on a residual equation as described in
 \cite{Sanderson and Windmeijer (2014)}, for a certain error structure.  The
 default is to use iid, or cluster if a cluster was specified to
-\code{\link{felm}}. The third choice is \code{'robust'}, for heteroskedastic
+\code{\link[=felm]{felm()}}. The third choice is \code{'robust'}, for heteroskedastic
 errors. If \code{type=NULL}, iid and robust Fs are returned, and cluster, if
 that was specified to \code{felm}.
 
@@ -60,7 +60,7 @@ are projected out of the equations before doing the bootstrap.
 }
 \note{
 Please note that \code{condfstat} does not work with the old syntax
-for IV in \code{\link{felm}(...,iv=)}. The new multipart syntax must be
+for IV in \verb{[felm](...,iv=)}. The new multipart syntax must be
 used.
 }
 \examples{
