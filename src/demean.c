@@ -1,5 +1,5 @@
 #include "lfe.h"
-/* Need sprintf */
+/* Need snprintf */
 #include <stdio.h>  
 
 /*
@@ -152,7 +152,7 @@ static int demean(int N, double *vec, double *weights,int *scale,
 	if(t < 0.49) {
 	  char buf[256];
 	  if(nm2 > 1e-15*nm) {
-	    sprintf(buf,"Demeaning of vec %d failed after %d iterations, t=%.1e, nm2=%.1enm\n",
+	    snprintf(buf,sizeof(buf),"Demeaning of vec %d failed after %d iterations, t=%.1e, nm2=%.1enm\n",
 		    vecnum,iter,t,nm2/nm);
 	    pushmsg(buf,lock);
 	    okconv = 0;
@@ -184,7 +184,7 @@ static int demean(int N, double *vec, double *weights,int *scale,
 
     if(!gkacc && c >= 1.0 && iter > 100) {
       char buf[256];
-      sprintf(buf,"Demeaning of vec %d failed after %d iterations, c-1=%.0e, delta=%.1e\n",
+      snprintf(buf,sizeof(buf),"Demeaning of vec %d failed after %d iterations, c-1=%.0e, delta=%.1e\n",
 	      vecnum,iter,c-1.0,delta);
       pushmsg(buf,lock);
       okconv = 0;
@@ -219,7 +219,7 @@ static int demean(int N, double *vec, double *weights,int *scale,
       localtime_r(&arriv,&tmarriv);
 #endif
       strftime(timbuf, sizeof(timbuf), "%c", &tmarriv);
-      sprintf(buf,"...centering vec %d i:%d c:%.1e d:%.1e(t:%.1e) ETA:%s\n",
+      snprintf(buf,sizeof(buf),"...centering vec %d i:%d c:%.1e d:%.1e(t:%.1e) ETA:%s\n",
 	      vecnum,iter,1.0-c,delta,target,timbuf);
       pushmsg(buf,lock);
       lastiter = iter;
@@ -284,8 +284,6 @@ static void *demeanlist_thr(void *varg) {
 #ifndef USEOMP
     char thrname[16];
     char buf[256];
-    //    snprintf(thrname,16, "Ct %d/%d",vecnum+1, arg->K);
-    // cran whines about truncation
     snprintf(buf,256,"Ct %d/%d",vecnum+1, arg->K);
     buf[15] = 0;
     memcpy(thrname,buf,16);
@@ -306,7 +304,7 @@ static void *demeanlist_thr(void *varg) {
     (arg->done)++;
     if(arg->quiet > 0 && now > arg->last + arg->quiet && arg->K > 1) {
       char buf[256];
-      sprintf(buf,"...finished centering %d of %d vectors in %d seconds\n",
+      snprintf(buf,sizeof(buf),"...finished centering %d of %d vectors in %d seconds\n",
 	     arg->done,arg->K,(int)(now-arg->start));
       arg->last = now;
       UNLOCK(arg->lock); 

@@ -1,5 +1,5 @@
 #include "lfe.h"
-/* Need sprintf */
+/* Need snprintf */
 #include <stdio.h>
 
 typedef struct
@@ -200,7 +200,7 @@ static double kaczmarz(FACTOR *factors[], int e, mysize_t N, double *R, double *
     if (c >= 1.0 && iter > 20)
     {
       char buf[256];
-      sprintf(buf, "Kaczmarz failed in iter %d*%d, c=1-%.0e, delta=%.1e, eps=%.1e\n", iter, newN, 1.0 - c, sd, neweps);
+      snprintf(buf, sizeof(buf), "Kaczmarz failed in iter %d*%d, c=1-%.0e, delta=%.1e, eps=%.1e\n", iter, newN, 1.0 - c, sd, neweps);
       pushmsg(buf, lock);
       break;
     }
@@ -239,8 +239,6 @@ static void *kaczmarz_thr(void *varg)
       break;
 #ifdef HAVE_THREADNAME
     char thrname[16];
-    // cran whines about truncation here, that's the &%#@/%! purpose
-    // snprintf(thrname, 16, "Kz %d/%d",vecnum+1, arg->numvec);
     char buf[256];
     snprintf(buf, 256, "Kz %d/%d", vecnum + 1, arg->numvec);
     buf[15] = 0;
