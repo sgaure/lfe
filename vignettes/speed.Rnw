@@ -50,16 +50,16 @@ regression methods, so let's have a look at some examples.
 Our first example has two factors, they are independent of each other, and
 of quite high cardinality
 <<echo=FALSE>>=
-  cores <- as.integer(Sys.getenv('SG_RUN'))
-  if(is.na(cores)) options(lfe.threads=1)
+cores <- as.integer(Sys.getenv("SG_RUN"))
+if (is.na(cores)) options(lfe.threads = 1)
 @ 
 <<>>=
 library(lfe)
 set.seed(42)
 x <- rnorm(100000)
-f1 <- sample(10000,length(x),replace=TRUE)
-f2 <- sample(10000,length(x),replace=TRUE)
-y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+f1 <- sample(10000, length(x), replace = TRUE)
+f2 <- sample(10000, length(x), replace = TRUE)
+y <- x + cos(f1) + log(f2 + 1) + rnorm(length(x), sd = 0.5)
 @ 
 We time the first step:
 <<>>=
@@ -74,8 +74,8 @@ After all, there are 20,000 dummies in this model.
 
 Now we let \code{f2} have fewer levels:
 <<>>=
-f2 <- sample(300,length(x),replace=TRUE)
-y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+f2 <- sample(300, length(x), replace = TRUE)
+y <- x + cos(f1) + log(f2 + 1) + rnorm(length(x), sd = 0.5)
 system.time(est <- felm(y ~ x | f1 + f2))
 system.time(alpha <- getfe(est))
 @ 
@@ -92,8 +92,8 @@ this problem is exactly the same as in the previous example, but
 the factor structure is very different.
 
 <<>>=
-f2 <- (f1 + sample(10,length(x),replace=TRUE)) %% 300
-y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+f2 <- (f1 + sample(10, length(x), replace = TRUE)) %% 300
+y <- x + cos(f1) + log(f2 + 1) + rnorm(length(x), sd = 0.5)
 system.time(est <- felm(y ~ x | f1 + f2))
 system.time(alpha <- getfe(est))
 @ 
@@ -117,11 +117,11 @@ a considerable overlap.
 We reduce this overlap by creating \code{f2} with a little twist, by 
 introducing some unevenly sized ``holes'' by cubing the samples of \code{1:10}.
 <<>>=
-f2 <- (f1 + sample(10,length(x),replace=TRUE)^3) %% 300
-y <- x + cos(f1) + log(f2+1) + rnorm(length(x), sd=0.5)
+f2 <- (f1 + sample(10, length(x), replace = TRUE)^3) %% 300
+y <- x + cos(f1) + log(f2 + 1) + rnorm(length(x), sd = 0.5)
 system.time(est <- felm(y ~ x | f1 + f2))
 system.time(alpha <- getfe(est))
-nlevels(est[['cfactor']])
+nlevels(est[["cfactor"]])
 @ 
 We are now back at approximately the same fast convergence  as before. That is,
 convergence rate is not a simple function of data size, counts of levels and so on, even when we 
@@ -142,16 +142,17 @@ connected the graph is, one such measure is the diameter of the graph, or
 the set of lengths of shortest paths.
 <<tidy=FALSE>>=
 library(igraph)
-mkgraph <- function(f1,f2)
-  graph.edgelist(cbind(paste('f1',f1),paste('f2',f2)), directed=FALSE)
+mkgraph <- function(f1, f2) {
+  graph.edgelist(cbind(paste("f1", f1), paste("f2", f2)), directed = FALSE)
+}
 
-appxdiam <- function(g) max(shortest.paths(g,sample(V(g),10),sample(V(g),10)))
-f2 <- sample(10000,length(x),replace=TRUE)
-appxdiam(mkgraph(f1,f2))
-f2 <- (f1 + sample(5,length(x),replace=TRUE)^3) %% 300
-appxdiam(mkgraph(f1,f2))
-f2 <- (f1 + sample(5,length(x),replace=TRUE)) %% 300
-appxdiam(mkgraph(f1,f2))
+appxdiam <- function(g) max(shortest.paths(g, sample(V(g), 10), sample(V(g), 10)))
+f2 <- sample(10000, length(x), replace = TRUE)
+appxdiam(mkgraph(f1, f2))
+f2 <- (f1 + sample(5, length(x), replace = TRUE)^3) %% 300
+appxdiam(mkgraph(f1, f2))
+f2 <- (f1 + sample(5, length(x), replace = TRUE)) %% 300
+appxdiam(mkgraph(f1, f2))
 @ 
 Loosely speaking, data with ``six degrees of separation'' seems to
 converge faster than less well connected networks.  Informal trials,

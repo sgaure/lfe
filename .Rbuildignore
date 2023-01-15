@@ -3,3 +3,6 @@
 ^cran-comments\.md$
 ^\.github$
 ^README\.Rmd$
+^\.vscode$
+^vscode-install.r$
+^benchmarks$
