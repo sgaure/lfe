@@ -24,8 +24,8 @@ documentation for illustrative purposes.
 }
 \examples{
 
-  fl <- lapply(1:3, function(i) factor(sample(3,10,replace=TRUE)))
-  fl
-  makeDmatrix(fl, weights=seq(0.1,1,0.1))
+fl <- lapply(1:3, function(i) factor(sample(3, 10, replace = TRUE)))
+fl
+makeDmatrix(fl, weights = seq(0.1, 1, 0.1))
 
 }

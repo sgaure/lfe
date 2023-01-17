@@ -84,7 +84,7 @@ as a matrix or a data.frame, a substantial amount of time can be saved in the ce
 \details{
 For each column \code{y} in \code{mtx}, the equivalent of the
 following centering is performed, with \code{cy} as the result.
-\preformatted{  
+\preformatted{
 cy <- y; oldy <- y-1
 while(sqrt(sum((cy-oldy)**2)) >= eps) {
  oldy <- cy
@@ -148,18 +148,18 @@ do \code{bar <- demeanlist(fun(x[v,]),...)}. However, demeanlist allows a constr
 will be modified, quite contrary to the usual semantics of R.
 }
 \examples{
-oldopts <- options('lfe.threads')
-options(lfe.threads=2)
+oldopts <- options("lfe.threads")
+options(lfe.threads = 2)
 ## create a matrix
-mtx <- data.frame(matrix(rnorm(999),ncol=3))
+mtx <- data.frame(matrix(rnorm(999), ncol = 3))
 # a list of factors
-rgb <- c('red','green','blue')
-fl <- replicate(4, factor(sample(rgb,nrow(mtx),replace=TRUE)), simplify=FALSE)
-names(fl) <- paste('g',seq_along(fl),sep='')
+rgb <- c("red", "green", "blue")
+fl <- replicate(4, factor(sample(rgb, nrow(mtx), replace = TRUE)), simplify = FALSE)
+names(fl) <- paste("g", seq_along(fl), sep = "")
 # centre on all means
-mtx0 <- demeanlist(mtx,fl)
-head(data.frame(mtx0,fl))
+mtx0 <- demeanlist(mtx, fl)
+head(data.frame(mtx0, fl))
 # verify that the group means for the columns are zero
-lapply(fl, function(f) apply(mtx0,2,tapply,f,mean))
+lapply(fl, function(f) apply(mtx0, 2, tapply, f, mean))
 options(oldopts)
 }
