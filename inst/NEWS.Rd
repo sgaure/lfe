@@ -1,6 +1,14 @@
 \name{NEWS}
 \title{lfe news}
 
+\section{Changes in version 2.9-0}{
+  \itemize{
+  \item Fix issue #3,  "warning: a function declaration without a prototype is deprecated in all versions of C", fixed by @pachadotdev 
+  \item Internal change in code indentation
+  }
+}
+
+
 \section{Changes in version 2.8-8}{
   \itemize{
   \item Adapt code for changes in R 4.2 USE_FC_LEN_T, fixed by @pachadotdev 
