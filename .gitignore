@@ -20,8 +20,8 @@ config.*
 src/config.h
 src/texput.log
 src/Makevars
-
 ## Comment
 #*.Rproj
 #*.Rbuildignore
-
+.Rhistory
+.vscode

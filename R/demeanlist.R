@@ -8,8 +8,8 @@
 #' one does not need transformations provided by R-formulas but have the covariates present
 #' as a matrix or a data.frame, a substantial amount of time can be saved in the centering.
 #' @export
-#\usage{
-#demeanlist(mtx, fl, icpt=0, eps=getOption('lfe.eps'),
+# \usage{
+# demeanlist(mtx, fl, icpt=0, eps=getOption('lfe.eps'),
 #           threads=getOption('lfe.threads'),
 #           progress=getOption('lfe.pint'),
 #           accel=getOption('lfe.accel'),
@@ -18,7 +18,7 @@
 #           weights=NULL,
 #           scale=TRUE,
 #           .inplace=FALSE)
-#}
+# }
 
 #' @param mtx matrix whose columns form vectors to be group-centred. mtx
 #'  can also be a list of vectors or matrices, such as a data frame.
@@ -37,17 +37,17 @@
 #' but without the extra copy.
 #' @param weights numeric. For weighted demeaning.
 #' @param scale logical. Specify scaling for weighted demeaning.
-#' @param na.rm logical which indicates what should happen when the data 
+#' @param na.rm logical which indicates what should happen when the data
 #' contain `NA`s. If TRUE, rows in the input `mtx` are removed
 #' prior to centering. If FALSE, they are kept, leading to entire groups becoming NA
-#' in the output. 
-#' @param attrs list. List of attributes which should be attached to the output. 
+#' in the output.
+#' @param attrs list. List of attributes which should be attached to the output.
 #' Used internally.
 #'
 #' @details
 #' For each column `y` in `mtx`, the equivalent of the
 #' following centering is performed, with `cy` as the result.
-#' \preformatted{  
+#' \preformatted{
 #' cy <- y; oldy <- y-1
 #' while(sqrt(sum((cy-oldy)**2)) >= eps) {
 #'  oldy <- cy
@@ -79,7 +79,7 @@
 #' the input should be scaled by \eqn{W}, and `scale[2]` specifies
 #' whether the output should be scaled by \eqn{W^{-1}}.  This is just
 #' a convenience to save some memory copies in other functions in the package.
-#' 
+#'
 #' Note that for certain large datasets the overhead in [felm()]
 #' is large compared to the time spent in `demeanlist`. If the data
 #' are present directly without having to use the formula-interface to
@@ -87,7 +87,7 @@
 #' `demeanlist` directly on a matrix or `"data.frame"` and do the
 #' OLS "manually", e.g. with something like
 #' `cx <- demeanlist(x,...); beta <- solve(crossprod(cx), crossprod(cx,y))`
-#' 
+#'
 #' In some applications it is known that a single centering iteration is
 #' sufficient. In particular, if `length(fl)==1` and there is no
 #' interaction attribute `x`.  In this case the centering algorithm is
@@ -97,18 +97,18 @@
 #' the first iteration by adding an attribute `attr(fl, 'oneiter') <-
 #' TRUE`.  Convergence will be reached in the second iteration anyway, but
 #' you save one iteration, i.e. you double the speed.
-#' 
+#'
 #' @return
-#' If `mtx` is a matrix, a matrix of the same shape, possibly with 
+#' If `mtx` is a matrix, a matrix of the same shape, possibly with
 #' column `icpt` deleted.
-#' 
+#'
 #' If `mtx` is a list of vectors and matrices, a list of the same
 #' length is returned, with the same vector and matrix-pattern, but the
-#' matrices have the column `icpt` deleted.  
-#' 
-#' If `mtx` is a `'data.frame'`, a `'data.frame'` 
+#' matrices have the column `icpt` deleted.
+#'
+#' If `mtx` is a `'data.frame'`, a `'data.frame'`
 #' with the same names is returned; the `icpt` argument is ignored.
-#' 
+#'
 #' If `na.rm` is specified, the return value has an attribute `'na.rm'` with a vector of
 #' row numbers which has been removed. In case the input is a matrix or list, the same rows
 #' are removed from all of them. Note that removing NAs incurs a copy of the input, so if
@@ -125,41 +125,40 @@
 #' do `bar <- demeanlist(fun(x[v,]),...)`. However, demeanlist allows a construction like
 #' `bar <- demeanlist(unnamed(tmp),...)` which will use an in place transformation, i.e. tmp
 #' will be modified, quite contrary to the usual semantics of R.
-#' 
+#'
 #' @examples
-#' oldopts <- options('lfe.threads')
-#' options(lfe.threads=2)
+#' oldopts <- options("lfe.threads")
+#' options(lfe.threads = 2)
 #' ## create a matrix
-#' mtx <- data.frame(matrix(rnorm(999),ncol=3))
+#' mtx <- data.frame(matrix(rnorm(999), ncol = 3))
 #' # a list of factors
-#' rgb <- c('red','green','blue')
-#' fl <- replicate(4, factor(sample(rgb,nrow(mtx),replace=TRUE)), simplify=FALSE)
-#' names(fl) <- paste('g',seq_along(fl),sep='')
+#' rgb <- c("red", "green", "blue")
+#' fl <- replicate(4, factor(sample(rgb, nrow(mtx), replace = TRUE)), simplify = FALSE)
+#' names(fl) <- paste("g", seq_along(fl), sep = "")
 #' # centre on all means
-#' mtx0 <- demeanlist(mtx,fl)
-#' head(data.frame(mtx0,fl))
+#' mtx0 <- demeanlist(mtx, fl)
+#' head(data.frame(mtx0, fl))
 #' # verify that the group means for the columns are zero
-#' lapply(fl, function(f) apply(mtx0,2,tapply,f,mean))
+#' lapply(fl, function(f) apply(mtx0, 2, tapply, f, mean))
 #' options(oldopts)
-demeanlist <- function(mtx,fl,icpt=0L,eps=getOption('lfe.eps'),
-                       threads=getOption('lfe.threads'),
-		       progress=getOption('lfe.pint'),
-                       accel=getOption('lfe.accel'),
-                       randfact=TRUE,
-                       means=FALSE,
-                       weights=NULL,
-                       scale=TRUE,
-                       na.rm=FALSE,
-                       attrs=NULL) {
-
-  if(length(fl) == 0) {
-    if(means) {
+demeanlist <- function(mtx, fl, icpt = 0L, eps = getOption("lfe.eps"),
+                       threads = getOption("lfe.threads"),
+                       progress = getOption("lfe.pint"),
+                       accel = getOption("lfe.accel"),
+                       randfact = TRUE,
+                       means = FALSE,
+                       weights = NULL,
+                       scale = TRUE,
+                       na.rm = FALSE,
+                       attrs = NULL) {
+  if (length(fl) == 0) {
+    if (means) {
       foo <- unlist(utils::as.relistable(mtx))
       foo[] <- 0
       return(utils::relist(foo))
     }
     return(eval.parent(substitute(mtx)))
-#    return(mtx)
+    #    return(mtx)
   }
 
   # Here we used to just .Call(C_demeanlist, mtx, fl,...)
@@ -170,69 +169,72 @@ demeanlist <- function(mtx,fl,icpt=0L,eps=getOption('lfe.eps'),
   mf <- match.call()
   ff <- formals(sys.function())
   # This is the argument sent to C_demeanlist, in this order:
-  ff <- ff[match(c("mtx","fl","icpt","eps","threads","progress","accel","means","weights","scale","attrs"),
-             names(ff), 0L)]
+  ff <- ff[match(
+    c("mtx", "fl", "icpt", "eps", "threads", "progress", "accel", "means", "weights", "scale", "attrs"),
+    names(ff), 0L
+  )]
   m <- names(ff)[names(ff) %in% names(mf)]
   ff[m] <- mf[m]
   # make a new environment to store our reordered fl, enclosed by our caller's frame
   # This is just to avoid clutter in case of error messages
-  env <- new.env(parent=parent.frame())
-  assign('C_demeanlist',C_demeanlist,envir=env)
-  assign('unnamed',unnamed,envir=env)
-  assign('.fl',eval.parent(ff[['fl']]), envir=env)
+  env <- new.env(parent = parent.frame())
+  assign("C_demeanlist", C_demeanlist, envir = env)
+  assign("unnamed", unnamed, envir = env)
+  assign(".fl", eval.parent(ff[["fl"]]), envir = env)
   .fl <- NULL # avoid check warning
-  ff[['fl']] <- quote(.fl)
-  if(randfact && length(get('.fl',env)) > 2) {
+  ff[["fl"]] <- quote(.fl)
+  if (randfact && length(get(".fl", env)) > 2) {
     # This is delayed for the bizarre reason that before we rewrote this code
     # mtx was forced before reordering of fl, so we just keep it that way to avoid
     # changing the test output.
-    delayedAssign('..fl',.fl[order(runif(length(.fl)))],env,env)
-    ff[['fl']] <- quote(..fl)
+    delayedAssign("..fl", .fl[order(runif(length(.fl)))], env, env)
+    ff[["fl"]] <- quote(..fl)
   }
 
   # Then some NA-handling, at the request of David Hugh-Jones, June 11, 2018
   badrows <- NULL
   delist <- FALSE
   isDT <- FALSE
-  if(isTRUE(na.rm)) {
+  if (isTRUE(na.rm)) {
     # we need to touch and copy the mtx and fl
     # mtx is either a vector, a matrix or a list (data.frame/data.table) of such
-    mtx <- eval.parent(ff[['mtx']])
-    if(!is.list(mtx)) {mtx <- list(mtx); delist <- TRUE}
+    mtx <- eval.parent(ff[["mtx"]])
+    if (!is.list(mtx)) {
+      mtx <- list(mtx)
+      delist <- TRUE
+    }
     # find bad rows in any of the elements of mtx
     badrows <- NULL
-    for(i in seq_along(mtx)) {
+    for (i in seq_along(mtx)) {
       object <- mtx[[i]]
       d <- dim(object)
-      if (length(d) > 2L)  next
+      if (length(d) > 2L) next
       bad <- seq_along(object)[is.na(object)]
       if (length(bad) == 0L) next
       if (length(d)) {
-        bad <- unique(((bad - 1)%%d[1L]) + 1L)
-      } 
-      badrows <- union(badrows,bad)
+        bad <- unique(((bad - 1) %% d[1L]) + 1L)
+      }
+      badrows <- union(badrows, bad)
     }
-    if(length(badrows) > 0) {
+    if (length(badrows) > 0) {
       isDF <- is.data.frame(mtx)
-      newmtx <- lapply(mtx,function(m) if(length(dim(m)) > 1) m[-badrows,,drop=FALSE] else m[-badrows])
+      newmtx <- lapply(mtx, function(m) if (length(dim(m)) > 1) m[-badrows, , drop = FALSE] else m[-badrows])
       rm(mtx)
-      if(isDF) newmtx <- as.data.frame(newmtx)
-      if(delist) newmtx <- newmtx[[1]]
-      fl <- eval(ff[['fl']],env)
+      if (isDF) newmtx <- as.data.frame(newmtx)
+      if (delist) newmtx <- newmtx[[1]]
+      fl <- eval(ff[["fl"]], env)
       N <- length(fl[[1]])
       newfl <- lapply(fl, function(f) factor(f[-badrows]))
-      assign('.mtx',newmtx,envir=env)
-      assign('.fl',newfl,envir=env)
-      ff[['fl']] <- quote(.fl)
+      assign(".mtx", newmtx, envir = env)
+      assign(".fl", newfl, envir = env)
+      ff[["fl"]] <- quote(.fl)
       rm(newfl)
-      ff[['attrs']] <- c(ff[['attrs']],list(na.rm=sort(badrows)))
-      ff[['mtx']] <- quote(unnamed(.mtx))
+      ff[["attrs"]] <- c(ff[["attrs"]], list(na.rm = sort(badrows)))
+      ff[["mtx"]] <- quote(unnamed(.mtx))
     } else {
-      assign('.mtx',mtx,envir=env)
-      ff[['mtx']] <- quote(.mtx)
+      assign(".mtx", mtx, envir = env)
+      ff[["mtx"]] <- quote(.mtx)
     }
-
   }
   eval(as.call(c(list(quote(.Call), quote(C_demeanlist)), ff)), env)
 }
-

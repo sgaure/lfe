@@ -194,7 +194,7 @@ SEXP MY_dsyrk(SEXP inbeta, SEXP inC, SEXP inalpha, SEXP inA)
 SEXP MY_address(SEXP x)
 {
   char chr[30];
-  sprintf(chr, "adr=%p, named=%d", (void *)x, NAMED(x));
+  snprintf(chr, sizeof(chr), "adr=%p, named=%d", (void *)x, NAMED(x));
   return (mkString(chr));
 }
 

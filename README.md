@@ -4,56 +4,65 @@
 # lfe
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/MatthieuStigler/lfe/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MatthieuStigler/lfe/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of lfe is to …
+The goal of lfe is to speed up the estimation of linear models with
+large fixed effects. It includes support for instrumental variables,
+conditional F statistics for weak instruments, robust and multi-way
+clustered standard errors, as well as limited mobility bias correction.
+See Gaure (2013) <doi:10.1016/j.csda.2013.03.024> and Gaure 2014
+<doi:10.1002/sta4.68>.
 
 ## Installation
 
 You can install the development version of lfe like so:
 
 ``` r
-remotes::install_github("pachadotdev/lfe")
+remotes::install_github("MatthieuStigler/lfe")
+```
+
+## Example
+
+This is a basic example which shows you the speed improvement over base
+R for fixed effects estimation.
+
+``` r
+library(lfe) # fixed effects estimation
+library(tradepolicy) # intl trade data
+library(dplyr) # data cleaning/transforming
+
+training_data <- agtpa_applications %>% 
+  mutate(
+    log_trade = log(trade),
+    log_dist = log(dist),
+    exp_year = paste(exporter, year, sep = "_"),
+    imp_year = paste(importer, year, sep = "_")
+  ) %>% 
+  filter(trade > 0, exporter != importer, year %in% seq(1986, 2006, 4)) %>% 
+  select(year, log_trade, log_dist, cntg, lang, clny, rta, exp_year, imp_year)
+
+# note the difference with the | operator to indicate the FEs
+# this is just an example, here I am not estimating a PPML model or anything
+# in the state of the art
+fml1 <- 0 + log_trade ~ 
+  log_dist + cntg + lang + clny + rta + exp_year + imp_year # base
+
+fml2 <- log_trade ~ 
+  log_dist + cntg + lang + clny + rta | exp_year + imp_year # lfe
+
+lm(fml1, data = training_data)
+
+felm(fml2, data = training_data)
 ```
 
 ## Testing
 
 For a complete test with `devtools::check()`, you need to run
-`sudo apt-get devtools` or similar before.
+`sudo apt-get devtools` or similar before. The package is written in C,
+in the future I shall try to rewrite it in C++ to ease long term
+maintenance.
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(lfe)
-#> Loading required package: Matrix
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+The package also needs additional testing. At the present time,the tests
+it cover around 30% of the written lines.

@@ -1,25 +1,25 @@
 # return a data-frame with the group fixed effects, including zeros for references
 
 #' Retrieve the group fixed effects
-#' 
+#'
 #' Compute the group fixed effects, i.e. the dummy parameters, which were swept
 #' out during an estimation with [felm()].
-#' 
+#'
 #' For the case with two factors (the terms in the second part of the formula
 #' supplied to [felm()]), one reference in each connected component
 #' is adequate when interpreting the results.
-#' 
+#'
 #' For three or more factors, no such easy method is known; for the
 #' `"cholesky"` method- reference levels are found by analyzing the
 #' pivoted Cholesky-decomposition of a slightly perturbed system.  The
 #' `"kaczmarz"` method provides no rank-deficiency analysis, it is assumed
 #' that the factors beyond the two first contribute nothing to the
 #' rank-deficiency, so one reference in each is used.
-#' 
+#'
 #' If there are more than two factors, only the first two will be used to
 #' report connected components.  In this case, it is not known which graph
 #' theoretic concept may be used to analyze the rank-deficiency.
-#' 
+#'
 #' The standard errors returned by the Kaczmarz-method are bootstrapped,
 #' keeping the other coefficients (from [felm()]) constant, i.e. they
 #' are from the variance when resampling the residuals.  If `robust=TRUE`,
@@ -27,7 +27,7 @@
 #' and `cluster=TRUE`, clustered standard errors with the cluster
 #' specified to `felm()` are estimated. If `cluster` is a factor, it
 #' is used for the cluster definition.
-#' 
+#'
 #' @param obj object of class `"felm"`, usually, a result of a call to
 #' [felm()]
 #' @param references a vector of strings.  If there are more than two factors
@@ -47,13 +47,13 @@
 #' from the kaczmarz-method.  The second variable indicates whether the
 #' function must return a named vector (if this is FALSE, one may skip the
 #' names, saving memory allocations and time).
-#' 
+#'
 #' If a string is specified, it is fed to the [efactory()]-function.
 #' The default function is one which picks one reference in each component.
-#' 
+#'
 #' Can be set to `ef="ln"` to yield the minimal-norm solution from the
 #' kaczmarz-method.
-#' 
+#'
 #' It can also be set to `ef="zm"` to get zero means (and intercept) in
 #' one of the factors, and a reference in the other.
 #' @param bN integer.  The number of bootstrap runs when standard errors are
@@ -65,109 +65,115 @@
 #' @return The function `getfe` computes and returns a data frame
 #' containing the group fixed effects.  It has the columns
 #' `c('effect','se','obs','comp','fe','idx')`
-#' 
+#'
 #' \itemize{ \item `effect` is the estimated effect.  \item `se` is
 #' the standard error.  \item `obs` is the number of observations of this
 #' level.  \item `comp` is the graph-theoretic component number, useful
 #' for interpreting the effects.  \item `fe` is the name of factor.  \item
 #' `idx` is the level of the factor. }
-#' 
+#'
 #' With the Kaczmarz-method it's possible to specify a different estimable
 #' function.
 #' @keywords regression models
 #' @examples
-#' 
-#' oldopts <- options('lfe.threads')
-#' options(lfe.threads=2)
+#'
+#' oldopts <- options("lfe.threads")
+#' options(lfe.threads = 2)
 #' ## create covariates
 #' x <- rnorm(4000)
 #' x2 <- rnorm(length(x))
-#' 
+#'
 #' ## create individual and firm
-#' id <- factor(sample(500,length(x),replace=TRUE))
-#' firm <- factor(sample(300,length(x),replace=TRUE))
-#' 
+#' id <- factor(sample(500, length(x), replace = TRUE))
+#' firm <- factor(sample(300, length(x), replace = TRUE))
+#'
 #' ## effects
 #' id.eff <- rlnorm(nlevels(id))
 #' firm.eff <- rexp(nlevels(firm))
-#' 
+#'
 #' ## left hand side
-#' y <- x + 0.25*x2 + id.eff[id] + firm.eff[firm] + rnorm(length(x))
-#' 
+#' y <- x + 0.25 * x2 + id.eff[id] + firm.eff[firm] + rnorm(length(x))
+#'
 #' ## estimate and print result
-#' est <- felm(y ~ x+x2 | id + firm)
+#' est <- felm(y ~ x + x2 | id + firm)
 #' summary(est)
 #' ## extract the group effects
-#' alpha <- getfe(est,se=TRUE)
-#' 
+#' alpha <- getfe(est, se = TRUE)
+#'
 #' ## find some estimable functions, with standard errors, we don't get
 #' ## names so we must precompute some numerical indices in ef
-#' idx <- match(c('id.5','id.6','firm.11','firm.12'),rownames(alpha))
-#' alpha[idx,]
-#' ef <- function(v,addnames) {
-#'   w <- c(v[idx[[2]]]-v[idx[[1]]],v[idx[[4]]]+v[idx[[1]]],
-#'          v[idx[[4]]]-v[idx[[3]]])
-#'   if(addnames) names(w) <-c('id6-id5','f12+id5','f12-f11')
+#' idx <- match(c("id.5", "id.6", "firm.11", "firm.12"), rownames(alpha))
+#' alpha[idx, ]
+#' ef <- function(v, addnames) {
+#'   w <- c(
+#'     v[idx[[2]]] - v[idx[[1]]], v[idx[[4]]] + v[idx[[1]]],
+#'     v[idx[[4]]] - v[idx[[3]]]
+#'   )
+#'   if (addnames) names(w) <- c("id6-id5", "f12+id5", "f12-f11")
 #'   w
 #' }
-#' getfe(est,ef=ef,se=TRUE)
+#' getfe(est, ef = ef, se = TRUE)
 #' options(oldopts)
 #' \dontrun{
-#' summary(lm(y ~ x+x2+id+firm-1))
+#' summary(lm(y ~ x + x2 + id + firm - 1))
 #' }
-#' 
+#'
 #' @export getfe
-getfe <- function(obj,references=NULL,se=FALSE,method='kaczmarz',ef='ref',bN=100, robust=FALSE, cluster=obj[['clustervar']], lhs=NULL) {
-
-  if(length(obj$fe) == 0) return(NULL)
-  if(!is.null(obj$numctrl) && obj$numctrl > 0)
-      stop("Can't retrieve fixed effects when estimating with control variables")
-  if(method == 'kaczmarz' || method == 'cg') {
-    if(!is.null(references))
-       warning('use estimable function (ef) instead of references in the Kaczmarz method')
-    if(is.null(ef)) ef <- 'ln'
-    if(!is.character(ef) && !is.function(ef))
-      stop('ef must be a function when using the Kaczmarz method')
-    if(method == 'cg') {
+getfe <- function(obj, references = NULL, se = FALSE, method = "kaczmarz", ef = "ref", bN = 100, robust = FALSE, cluster = obj[["clustervar"]], lhs = NULL) {
+  if (length(obj$fe) == 0) {
+    return(NULL)
+  }
+  if (!is.null(obj$numctrl) && obj$numctrl > 0) {
+    stop("Can't retrieve fixed effects when estimating with control variables")
+  }
+  if (method == "kaczmarz" || method == "cg") {
+    if (!is.null(references)) {
+      warning("use estimable function (ef) instead of references in the Kaczmarz method")
+    }
+    if (is.null(ef)) ef <- "ln"
+    if (!is.character(ef) && !is.function(ef)) {
+      stop("ef must be a function when using the Kaczmarz method")
+    }
+    if (method == "cg") {
       oldopt <- options("lfe.usecg")
-      options(lfe.usecg=TRUE)
+      options(lfe.usecg = TRUE)
       on.exit(options(oldopt))
     }
-    return(getfe.kaczmarz(obj,se,ef=ef,bN=bN, robust=robust, cluster=cluster, lhs=lhs))
+    return(getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster, lhs = lhs))
   }
-  if(method != 'cholesky') stop('method must be either kaczmarz, cg, or cholesky')
+  if (method != "cholesky") stop("method must be either kaczmarz, cg, or cholesky")
 
-  .Deprecated('',msg="Cholesky method is deprecated. Please consider using either 'kaczmarz' or 'cg'")
-  attr(se,'sefactor') <- obj$sefactor
-  attr(obj$fe,'references') <- references
+  .Deprecated("", msg = "Cholesky method is deprecated. Please consider using either 'kaczmarz' or 'cg'")
+  attr(se, "sefactor") <- obj$sefactor
+  attr(obj$fe, "references") <- references
   R <- obj$r.residuals
   # then the remaining.  This is usually sufficient.
   # we could also partition differently, just do the 'comp' adjustment accordingly
   # components
   ddlist <- makeddlist(obj$fe)
   gc()
-  orignm <- attr(ddlist,'nm')
+  orignm <- attr(ddlist, "nm")
   comp <- 1
   res <- data.frame()
-  for(dd in ddlist) {
-#  res <- foreach(dd=ddlist,.combine=rbind,.init=data.frame()) %dopar% {
-    dummies <- attr(dd,'dummies')
-    keep <- attr(dd,'keep')
-    comp <- attr(dd,'comp')
-#    cat(date(),'comp dd',comp,'size',length(keep),'\n')
+  for (dd in ddlist) {
+    #  res <- foreach(dd=ddlist,.combine=rbind,.init=data.frame()) %dopar% {
+    dummies <- attr(dd, "dummies")
+    keep <- attr(dd, "keep")
+    comp <- attr(dd, "comp")
+    #    cat(date(),'comp dd',comp,'size',length(keep),'\n')
     Rhs <- as.vector(dummies %*% R[keep])
     names(Rhs) <- colnames(dd)
-    alpha <- findfe(dd,Rhs,se)
-    alpha[,'comp'] <- comp
-    res <- rbind(res,alpha)
-#    alpha
+    alpha <- findfe(dd, Rhs, se)
+    alpha[, "comp"] <- comp
+    res <- rbind(res, alpha)
+    #    alpha
   }
-  res <- res[orignm,]
-  res[,'comp'] <- factor(res[,'comp'])    
-# now, add factors telling which fe-group we're in
-# the rownames are of the form <fe>.<idx>
-  fefact <- strsplit(rownames(res),'.',fixed=TRUE)
-  res[,'fe'] <- factor(unlist(lapply(fefact,function(l) l[[1]])))
-  res[,'idx'] <- factor(unlist(lapply(fefact,function(l) paste(l[-1],collapse='.'))))
+  res <- res[orignm, ]
+  res[, "comp"] <- factor(res[, "comp"])
+  # now, add factors telling which fe-group we're in
+  # the rownames are of the form <fe>.<idx>
+  fefact <- strsplit(rownames(res), ".", fixed = TRUE)
+  res[, "fe"] <- factor(unlist(lapply(fefact, function(l) l[[1]])))
+  res[, "idx"] <- factor(unlist(lapply(fefact, function(l) paste(l[-1], collapse = "."))))
   return(res)
 }

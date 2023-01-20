@@ -89,24 +89,24 @@ In the case with two factors, identification
 is well-known. \code{getfe} will partition the dataset into connected components, and
 introduce a reference level in each component:
 <<echo=FALSE>>=
-  cores <- as.integer(Sys.getenv('SG_RUN'))
-  if(is.na(cores)) options(lfe.threads=1)
+cores <- as.integer(Sys.getenv("SG_RUN"))
+if (is.na(cores)) options(lfe.threads = 1)
 @ 
 <<>>=
 library(lfe)
 set.seed(42)
 x1 <- rnorm(20)
-f1 <- sample(8,length(x1),replace=TRUE)/10
-f2 <- sample(8,length(x1),replace=TRUE)/10
-e1 <- sin(f1) + 0.02*f2^2 + rnorm(length(x1))
-y <-  2.5*x1 + (e1-mean(e1))
+f1 <- sample(8, length(x1), replace = TRUE) / 10
+f2 <- sample(8, length(x1), replace = TRUE) / 10
+e1 <- sin(f1) + 0.02 * f2^2 + rnorm(length(x1))
+y <- 2.5 * x1 + (e1 - mean(e1))
 summary(est <- felm(y ~ x1 | f1 + f2))
 @ 
 
 We examine the estimable function produced by \code{efactory}.
 <<>>=
 ef <- efactory(est)
-is.estimable(ef,est$fe)
+is.estimable(ef, est$fe)
 getfe(est)
 @ 
 
@@ -116,7 +116,7 @@ the second one with \code{f1=0.1}, \code{f1=0.3}, \code{f1=0.5}, and
 A reference is introduced in each of the components, i.e. \code{f2.0.2=0} and \code{f2.0.5=0}.
 If we look at the dataset, the component structure becomes clearer:
 <<>>=
-data.frame(f1,f2,comp=est$cfactor)
+data.frame(f1, f2, comp = est$cfactor)
 @ 
 
 Observations 1, 10, 12, 17, and 20 belong to component 2; no other
@@ -126,7 +126,8 @@ compared to other coefficients.  \code{lm} is silent about this
 component structure, hence coefficients are hard to interpret. Though,
 predictive properties and residuals are the same:
 <<>>=
-f1 <- factor(f1); f2 <- factor(f2)
+f1 <- factor(f1)
+f2 <- factor(f2)
 summary(lm(y ~ x1 + f1 + f2))
 @ 
 \section{Identification with three or more factors}
@@ -239,11 +240,11 @@ So, let's look at an example of how an estimable function may be made:
 <<>>=
 library(lfe)
 x1 <- rnorm(100)
-f1 <- sample(7,100,replace=TRUE)
-f2 <- sample(8,100,replace=TRUE)/8
-f3 <- sample(10,100,replace=TRUE)/10
-e1 <- sin(f1) + 0.02*f2^2  + 0.17*f3^3 + rnorm(100)
-y <-  2.5*x1 + (e1-mean(e1))
+f1 <- sample(7, 100, replace = TRUE)
+f2 <- sample(8, 100, replace = TRUE) / 8
+f3 <- sample(10, 100, replace = TRUE) / 10
+e1 <- sin(f1) + 0.02 * f2^2 + 0.17 * f3^3 + rnorm(100)
+y <- 2.5 * x1 + (e1 - mean(e1))
 summary(est <- felm(y ~ x1 | f1 + f2 + f3))
 @ 
 
@@ -258,21 +259,23 @@ the resulting vector.  The coefficients is ordered the same way as the levels in
 We should pick a single reference in factors \code{f2,f3}, subtract these, and add the sum
 to the first factor:
 <<>>=
-ef <- function(gamma,addnames) {
+ef <- function(gamma, addnames) {
   ref2 <- gamma[[8]]
   ref3 <- gamma[[16]]
-  gamma[1:7] <- gamma[1:7]+ref2+ref3
-  gamma[8:15] <- gamma[8:15]-ref2
-  gamma[16:25] <- gamma[16:25]-ref3
-  if(addnames) {
-    names(gamma) <- c(paste('f1',1:7,sep='.'),
-                          paste('f2',1:8,sep='.'),
-                          paste('f3',1:10,sep='.'))
+  gamma[1:7] <- gamma[1:7] + ref2 + ref3
+  gamma[8:15] <- gamma[8:15] - ref2
+  gamma[16:25] <- gamma[16:25] - ref3
+  if (addnames) {
+    names(gamma) <- c(
+      paste("f1", 1:7, sep = "."),
+      paste("f2", 1:8, sep = "."),
+      paste("f3", 1:10, sep = ".")
+    )
   }
   gamma
 }
-is.estimable(ef,fe=est$fe)
-getfe(est,ef=ef)
+is.estimable(ef, fe = est$fe)
+getfe(est, ef = ef)
 @ 
 
 We may compare this to the default estimable function, which picks a reference in each connected
@@ -294,26 +297,30 @@ Here is the above example, but we create an intercept instead, and don't report 
 it closely resembles the output from \code{lm}
 
 <<>>=
-f1 <- factor(f1); f2 <- factor(f2); f3 <- factor(f3)
-ef <- function(gamma,addnames) {
+f1 <- factor(f1)
+f2 <- factor(f2)
+f3 <- factor(f3)
+ef <- function(gamma, addnames) {
   ref1 <- gamma[[1]]
   ref2 <- gamma[[8]]
   ref3 <- gamma[[16]]
   # put the intercept in the first coordinate
-  gamma[[1]] <- ref1+ref2+ref3
-  gamma[2:7] <- gamma[2:7]-ref1
-  gamma[8:14] <- gamma[9:15]-ref2
-  gamma[15:23] <- gamma[17:25]-ref3
+  gamma[[1]] <- ref1 + ref2 + ref3
+  gamma[2:7] <- gamma[2:7] - ref1
+  gamma[8:14] <- gamma[9:15] - ref2
+  gamma[15:23] <- gamma[17:25] - ref3
   length(gamma) <- 23
-  if(addnames) {
-    names(gamma) <- c('(Intercept)',paste('f1',levels(f1)[2:7],sep=''),
-                          paste('f2',levels(f2)[2:8],sep=''),
-                          paste('f3',levels(f3)[2:10],sep=''))
+  if (addnames) {
+    names(gamma) <- c(
+      "(Intercept)", paste("f1", levels(f1)[2:7], sep = ""),
+      paste("f2", levels(f2)[2:8], sep = ""),
+      paste("f3", levels(f3)[2:10], sep = "")
+    )
   }
   gamma
 }
-getfe(est,ef=ef,bN=1000,se=TRUE)
-#compare with lm
+getfe(est, ef = ef, bN = 1000, se = TRUE)
+# compare with lm
 summary(lm(y ~ x1 + f1 + f2 + f3))
 @ 
 
@@ -330,11 +337,11 @@ does not endorse using this kind of model for the kind of data you find below.
 <<>>=
 set.seed(55)
 x1 <- rnorm(25)
-f1 <- sample(9,length(x1),replace=TRUE)
-f2 <- sample(8,length(x1),replace=TRUE)
-f3 <- sample(8,length(x1),replace=TRUE)
-e1 <- sin(f1) + 0.02*f2^2  + 0.17*f3^3 + rnorm(length(x1))
-y <-  2.5*x1 + (e1-mean(e1))
+f1 <- sample(9, length(x1), replace = TRUE)
+f2 <- sample(8, length(x1), replace = TRUE)
+f3 <- sample(8, length(x1), replace = TRUE)
+e1 <- sin(f1) + 0.02 * f2^2 + 0.17 * f3^3 + rnorm(length(x1))
+y <- 2.5 * x1 + (e1 - mean(e1))
 summary(est <- felm(y ~ x1 | f1 + f2 + f3))
 @ 
 
@@ -343,7 +350,7 @@ from \code{getfe} are not useable.  \code{getfe} yields a warning in
 this case.
 <<>>=
 ef <- efactory(est)
-is.estimable(ef,est$fe)
+is.estimable(ef, est$fe)
 @ 
 
 Indeed, the rank-deficiency is larger than expected. There are more spurious relations between
@@ -352,15 +359,17 @@ In this low-dimensional example we
 may find the matrix \(D\) of equation~\eqref{alphaeq}, and its (column) rank deficiency
 is larger than 2.
 <<>>=
-f1 <- factor(f1); f2 <- factor(f2); f3 <- factor(f3)
-D <- makeDmatrix(list(f1,f2,f3))
+f1 <- factor(f1)
+f2 <- factor(f2)
+f3 <- factor(f3)
+D <- makeDmatrix(list(f1, f2, f3))
 dim(D)
 ncol(D) - as.integer(rankMatrix(D))
 @ 
 Alternatively we can use an internal function
 in lfe for finding the rank deficiency directly.
 <<>>=
-lfe:::rankDefic(list(f1,f2,f3))
+lfe:::rankDefic(list(f1, f2, f3))
 @ 
 
 This rank-deficiency also has an impact on the standard errors
@@ -373,7 +382,7 @@ above mentioned rank-computation procedure can be activated by specifying
 time-consuming if the factors have many levels. Computing the rank
 does not in itself help us find estimable functions for \code{getfe}.
 <<>>=
-summary(est <- felm(y ~ x1 | f1 + f2 + f3, exactDOF=TRUE))
+summary(est <- felm(y ~ x1 | f1 + f2 + f3, exactDOF = TRUE))
 @ 
 
 We can get an idea what happens if we keep the dummies for \code{f3}. In this case, with
@@ -382,7 +391,7 @@ for all the multicollinearities among the factors \code{f1} and \code{f2} just a
 but this is not sufficient. The interpretation of the
 resulting coefficients is not straightforward.
 <<>>=
-summary(est <- felm(y ~ x1 +f3 | f1 + f2, exactDOF=TRUE))
+summary(est <- felm(y ~ x1 + f3 | f1 + f2, exactDOF = TRUE))
 getfe(est)
 @ 
 
@@ -392,10 +401,9 @@ there are 2 connected components (the factor \code{f2} gets its own \code{comp}-
 but this is not a graph theoretic component number, it merely indicates that there is
 a separate reference among these).
 <<>>=
-summary(est <- felm(y ~ x1 | f1 + f3 + f2, exactDOF=TRUE))
-is.estimable(efactory(est),est$fe)
+summary(est <- felm(y ~ x1 | f1 + f3 + f2, exactDOF = TRUE))
+is.estimable(efactory(est), est$fe)
 getfe(est)
-
 @ 
 
 Below is the same estimation in \code{lm}. We see that the coefficient
@@ -406,7 +414,7 @@ are not comparable.
 But of course, if we compare in the same component, e.g. \code{f16-f17} or take
 a combination which actually occurs in the dataset, it is unique (estimable):
 <<>>=
-data.frame(f1,f2,f3)[1,]
+data.frame(f1, f2, f3)[1, ]
 @ 
 I.e.\ if we add the coefficients \code{f1.2 + f2.6 + f3.3}
 and include the intercept for \code{lm}, we will get the same number
@@ -437,8 +445,8 @@ observations will yield a dataset which results in unbiased
 coefficients.  This partitioning can be done by the
 \code{compfactor} function with argument \code{WW=TRUE}:
 <<>>=
-fe <- list(f1,f2,f3)
-wwcomp <- compfactor(fe, WW=TRUE)
+fe <- list(f1, f2, f3)
+wwcomp <- compfactor(fe, WW = TRUE)
 @ 
 It has more levels than the rank deficiency
 <<>>=
@@ -450,9 +458,9 @@ a component of the previously considered components,
 no matter which two factors we consider.
 For the case of two factors, the concepts coincide.
 <<>>=
-nlevels(interaction(compfactor(fe),wwcomp))
+nlevels(interaction(compfactor(fe), wwcomp))
 # pick the largest component:
-wwdata <- data.frame(y, x1, f1, f2, f3)[wwcomp==1, ]
+wwdata <- data.frame(y, x1, f1, f2, f3)[wwcomp == 1, ]
 print(wwdata)
 @ 
 That is, we can start in one of the observations and travel through all of them
@@ -479,14 +487,15 @@ Here is a larger example:
 <<>>=
 set.seed(135)
 x <- rnorm(10000)
-f1 <- sample(1000,length(x),replace=TRUE)
-f2 <- (f1 + sample(18,length(x), replace=TRUE)) %% 500
-f3 <- (f2 + sample(9,length(x),replace=TRUE)) %% 500
-y <- x + 1e-4*f1 + sin(f2^2) +
-  cos(f3)^3 + 0.5*rnorm(length(x))
-dataset <- data.frame(y,x,f1,f2,f3)
+f1 <- sample(1000, length(x), replace = TRUE)
+f2 <- (f1 + sample(18, length(x), replace = TRUE)) %% 500
+f3 <- (f2 + sample(9, length(x), replace = TRUE)) %% 500
+y <- x + 1e-4 * f1 + sin(f2^2) +
+  cos(f3)^3 + 0.5 * rnorm(length(x))
+dataset <- data.frame(y, x, f1, f2, f3)
 summary(est <- felm(y ~ x | f1 + f2 + f3,
-             data=dataset, exactDOF=TRUE))
+  data = dataset, exactDOF = TRUE
+))
 @ 
 
 We count the number of connected components in \code{f1,f2}, and see
@@ -503,12 +512,13 @@ lfe:::rankDefic(est$fe)
 
 Then we analyse the largest WW-component 
 <<>>=
-wwcomp <- compfactor(est$fe,WW=TRUE)
+wwcomp <- compfactor(est$fe, WW = TRUE)
 nlevels(wwcomp)
 wwset <- wwcomp == 1
 sum(wwset)
 summary(wwest <- felm(y ~ x | f1 + f2 + f3,
-             data=dataset, subset=wwset, exactDOF=TRUE))
+  data = dataset, subset = wwset, exactDOF = TRUE
+))
 @ 
 We see that we get the same coefficient for \code{x} in this case.
 This is not surprising, there is no obvious reason to believe that our
@@ -526,14 +536,14 @@ nrow(wwalpha <- getfe(wwest))
 We may compare effects which are common to the two methods:
 <<>>=
 head(wwalpha)
-alpha[c(35,38,40:43),]
+alpha[c(35, 38, 40:43), ]
 @ 
 but there is no obvious relation between e.g. \code{f1.35 - f1.36}, they are very different
 in the two estimations. The coefficients are from different datasets, and the
 standard errors are large  (\(\approx 0.7\)) with this few observations for each factor level.
 The number of identified coefficients for each factor varies (these figures contain the two references):
 <<>>=
-table(wwalpha[,'fe'])
+table(wwalpha[, "fe"])
 @ 
 \iffalse
 \bibliographystyle{amsplain}

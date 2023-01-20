@@ -308,40 +308,40 @@ d <- data.frame(
   x1 = rnorm(n),
   x2 = rnorm(n),
   # Individuals and firms
-  id = factor(sample(20, n, replace=TRUE)),
-  firm = factor(sample(13, n, replace=TRUE)),
+  id = factor(sample(20, n, replace = TRUE)),
+  firm = factor(sample(13, n, replace = TRUE)),
   # Noise
   u = rnorm(n)
-  )
-  
+)
+
 # Effects for individuals and firms
 id.eff <- rnorm(nlevels(d$id))
 firm.eff <- rnorm(nlevels(d$firm))
 
 # Left hand side
-d$y <- d$x1 + 0.5*d$x2 + id.eff[d$id] + firm.eff[d$firm] + d$u
+d$y <- d$x1 + 0.5 * d$x2 + id.eff[d$id] + firm.eff[d$firm] + d$u
 
 ## Estimate the model and print the results
 est <- felm(y ~ x1 + x2 | id + firm, data = d)
 summary(est)
 # Compare with lm
-summary(lm(y ~ x1 + x2 + id + firm- 1, data = d))
+summary(lm(y ~ x1 + x2 + id + firm - 1, data = d))
 
 ## Example with 'reverse causation' (IV regression)
 
 # Q and W are instrumented by x3 and the factor x4.
 d$x3 <- rnorm(n)
-d$x4 <- sample(12, n, replace=TRUE)
-d$Q <- 0.3*d$x3 + d$x1 + 0.2*d$x2 + id.eff[d$id] + 0.3*log(d$x4) - 0.3*d$y + 
-  rnorm(n, sd=0.3)
-d$W <- 0.7*d$x3 - 2*d$x1 + 0.1*d$x2 - 0.7*id.eff[d$id] + 0.8*cos(d$x4) - 
-  0.2*d$y + rnorm(n, sd=0.6)
+d$x4 <- sample(12, n, replace = TRUE)
+d$Q <- 0.3 * d$x3 + d$x1 + 0.2 * d$x2 + id.eff[d$id] + 0.3 * log(d$x4) - 0.3 * d$y +
+  rnorm(n, sd = 0.3)
+d$W <- 0.7 * d$x3 - 2 * d$x1 + 0.1 * d$x2 - 0.7 * id.eff[d$id] + 0.8 * cos(d$x4) -
+  0.2 * d$y + rnorm(n, sd = 0.6)
 
 # Add them to the outcome variable
 d$y <- d$y + d$Q + d$W
 
 ## Estimate the IV model and report robust SEs
-ivest <- felm(y ~ x1 + x2 | id + firm | (Q|W ~ x3 + factor(x4)), data = d)
+ivest <- felm(y ~ x1 + x2 | id + firm | (Q | W ~ x3 + factor(x4)), data = d)
 summary(ivest, robust = TRUE)
 condfstat(ivest)
 # Compare with the not instrumented fit:
@@ -350,18 +350,19 @@ summary(felm(y ~ x1 + x2 + Q + W | id + firm, data = d))
 ## Example with multiway clustering
 
 # Create a large cluster group (500 clusters) and a small one (20 clusters)
-d$cl1 <- factor(sample(rep(1:500, length.out=n)))
-d$cl2 <- factor(sample(rep(1:20, length.out=n)))
-# Function for adding clustered noise to our outcome variable 
+d$cl1 <- factor(sample(rep(1:500, length.out = n)))
+d$cl2 <- factor(sample(rep(1:20, length.out = n)))
+# Function for adding clustered noise to our outcome variable
 cl_noise <- function(cl) {
- obs_per_cluster <- n/nlevels(cl)
- unlist(replicate(nlevels(cl), 
-                  rnorm(obs_per_cluster, mean=rnorm(1), sd=runif(1)), 
-                  simplify=FALSE))
+  obs_per_cluster <- n / nlevels(cl)
+  unlist(replicate(nlevels(cl),
+    rnorm(obs_per_cluster, mean = rnorm(1), sd = runif(1)),
+    simplify = FALSE
+  ))
 }
 
 # New outcome variable
-d$y_cl <- d$x1 + 0.5*d$x2 + id.eff[d$id] + firm.eff[d$firm] + 
+d$y_cl <- d$x1 + 0.5 * d$x2 + id.eff[d$id] + firm.eff[d$firm] +
   cl_noise(d$cl1) + cl_noise(d$cl2)
 
 ## Estimate and print the model with cluster-robust SEs (default)
@@ -371,8 +372,10 @@ summary(est_cl)
 # Print ordinary standard errors:
 summary(est_cl, robust = FALSE)
 # Match cluster-robust SEs from Stata's reghdfe package:
-summary(felm(y_cl ~ x1 + x2 | id + firm | 0 | cl1 + cl2, data = d, 
-             cmethod = "reghdfe"))
+summary(felm(y_cl ~ x1 + x2 | id + firm | 0 | cl1 + cl2,
+  data = d,
+  cmethod = "reghdfe"
+))
 
 ## Restore default options
 options(oldopts)
