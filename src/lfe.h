@@ -112,8 +112,8 @@ typedef struct
 
 /* Routines used in more than one source file */
 FACTOR **makefactors(SEXP flist, int allowmissing, double *weights);
-int checkInterrupt();
-void initmsg();
+extern int checkInterrupt(void);
+extern void initmsg(void);
 void pushmsg(char *s, LOCK_T lock);
 void printmsg(LOCK_T lock);
 
