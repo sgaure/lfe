@@ -228,7 +228,7 @@ static void chkIntFn(void *dummy)
 /* this will call the above in a top-level context so it won't
    longjmp-out of context */
 
-int checkInterrupt()
+extern int checkInterrupt(void)
 {
   return (R_ToplevelExec(chkIntFn, NULL) == 0);
 }
@@ -241,7 +241,7 @@ int checkInterrupt()
 static char *msgstack[MSGLIM];
 static int msgptr;
 
-void initmsg()
+extern void initmsg(void)
 {
   msgptr = 0;
 }
