@@ -786,7 +786,7 @@ newols <- function(mm, stage1 = NULL, pf = parent.frame(), nostats = FALSE, exac
             z$df <- min(min_clust - 1, z$df)
             z$df.residual <- z$df
           }
-          .Call(C_dsyrk, 1.0, meat, adj, Crowsum(xz, ia))
+          .Call(C_dsyrk, 1.0, meat, adj, crowsum(xz, ia))
         }
 
         cvcv <- .Call(C_sandwich, 1.0, inv, meat)

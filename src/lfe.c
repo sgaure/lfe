@@ -23,7 +23,7 @@ static R_CallMethodDef callMethods[] = {
     {"address", (DL_FUNC)&MY_address, 1},
     //  {"named", (DL_FUNC) &MY_named, 2},
     {"inplace", (DL_FUNC)&inplace, 1},
-    {"rowsum", (DL_FUNC)&Crowsum, 3},
+    {"rowsum", (DL_FUNC)&crowsum, 3},
     //  {"ppf", (DL_FUNC) &MY_ppf, 2},
     //  {"threads", (DL_FUNC) &MY_threads, 1},
     {NULL, NULL, 0}};

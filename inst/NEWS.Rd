@@ -1,6 +1,12 @@
 \name{NEWS}
 \title{lfe news}
 
+\section{Changes in version 3.0.0.9000}{
+  \itemize{
+  \item Rename Crowsum to crowsum @pachadotdev 
+  }
+}
+
 \section{Changes in version 2.9-0}{
   \itemize{
   \item Fix issue #3,  "warning: a function declaration without a prototype is deprecated in all versions of C", fixed by @pachadotdev 

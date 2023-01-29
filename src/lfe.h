@@ -133,6 +133,6 @@ SEXP MY_sandwich(SEXP inalpha, SEXP inbread, SEXP inmeat);
 SEXP MY_address(SEXP x);
 // SEXP MY_named(SEXP x, SEXP n);
 SEXP inplace(SEXP x);
-SEXP Crowsum(SEXP Rmat, SEXP Rfactor, SEXP Rmean);
+SEXP crowsum(SEXP Rmat, SEXP Rfactor, SEXP Rmean);
 
 // SEXP MY_ppf(SEXP flist, SEXP Rtype);

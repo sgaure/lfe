@@ -2,7 +2,7 @@
 // #ifdef _OPENMP
 // #include <omp.h>
 // #endif
-SEXP Crowsum(SEXP Rmat, SEXP Rfactor, SEXP Rmean)
+SEXP crowsum(SEXP Rmat, SEXP Rfactor, SEXP Rmean)
 {
   if (!IS_NUMERIC(Rmat))
     error("Only numeric matrices accepted");

@@ -13,7 +13,7 @@ scalecols <- function(obj, vec) {
   .Call(C_scalecols, obj, vec)
 }
 
-Crowsum <- function(x, f, mean = FALSE) .Call(C_rowsum, x, f, mean)
+crowsum <- function(x, f, mean = FALSE) .Call(C_rowsum, x, f, mean)
 
 orthonormalize <- function(V) {
   structure(V %*% solve(chol(crossprod(V))), ortho = TRUE)

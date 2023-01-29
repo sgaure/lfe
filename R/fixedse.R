@@ -56,7 +56,7 @@ fixedse <- function(est, lhs = NULL, E) {
   } else {
     sqrt(s2 / as.vector(table(f)) + colSums(tcrossprod(
       chol(vcov(est, lhs = lhs)),
-      Crowsum(est$X, f, mean = TRUE)
+      crowsum(est$X, f, mean = TRUE)
     )^2))
   }
 }
