@@ -1,6 +1,6 @@
 Package: lfe
 Version: 2.9-0
-Date: 2022-12-20
+Date: 2023-02-13
 Title: Linear Group Fixed Effects
 Authors@R: c(person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut"),
            comment=c(ORCID="https://orcid.org/0000-0001-7251-8747")),
