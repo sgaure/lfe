@@ -2,112 +2,109 @@
 #' @inheritParams felm
 #' @param offset EXPLAIN
 #' @param tol EXPLAIN
+#' @importFrom Formula Formula
+#' @importFrom Matrix Diagonal
 #' @export fepois
-fepois <- function(y, x, fe, data,
+fepois <- function(formula, data,
                          offset = NULL,
                          subset = NULL,
                          robust = TRUE,
                          cluster = NULL,
                          pseudo_r2 = TRUE,
                          tol = 1e-10) {
-  if (!is.null(subset)) data <- data[subset, ]
+  if (!is.null(subset)) { data <- data[subset, ] }
+  
+  if (is.character(formula)) { formula <- as.formula(formula) }
+  if (is.character(cluster)) { cluster <- as.formula(paste0("~", cluster)) }
+  
+  formula <- Formula(formula)
   
   offset2 <- offset
   if (is.null(offset)) offset <- rep(0, nrow(data))
   
-  trade <- data[[y]]
+  vardep <- all.vars(formula(formula, lhs = 1, rhs = 0))
+  vardep <- data[[vardep]]
   
-  if (min(trade) < 0) {
+  if (min(vardep) < 0) {
     stop("y should be greater or equals to zero.")
   }
   
-  fe2 <- colnames(data)[colnames(data) %in% fe]
-  for (f in fe2) {
-    # TODO: Found if() conditions comparing class() to string:
-    # File ‘lfe/R/feglm.R’: if (class(data[, f]) != "factor") ...
-    # Use inherits() (or maybe is()) instead.
-    if (class(data[, f]) != "factor") {
+  fe <- all.vars(formula(formula, lhs = 0, rhs = 2))
+  
+  for (f in fe) {
+    if (!is(data[, f], "factor")) {
       data[, f] <- as.factor(data[, f])
     }
   }
   
-  max_trade <- max(trade)
-  trade <- trade / max_trade
+  max_vardep <- max(vardep)
+  vardep <- vardep / max_vardep
   
-  mu <- (trade + 0.5) / 2
+  mu <- (vardep + 0.5) / 2
   eta <- log(mu) - offset
-  z <- eta + (trade - mu) / mu
+  z <- eta + (vardep - mu) / mu
   
   # Formula
+
+  varind <- all.vars(formula(formula, lhs = 0, rhs = 1))
   
-  if (!is.null(x)) {
-    xvars <- paste0(x, collapse = " + ")
-  }
-  
-  f <- paste0(
-    "z ~ ", ifelse(is.null(x), " -1 ", xvars), " | ",
+  formula <- as.formula(paste0(
+    "z ~ ", ifelse(is.null(varind), " -1 ", varind), " | ",
     paste0(fe, collapse = " + ")
-  )
-  f <- as.formula(f)
+  ))
   
   dif <- 1
   rss1 <- 1
   while (abs(dif) > tol) {
-    reg <- lfe::felm(f,
-                     data = data,
-                     weights = mu
-    )
+    reg <- felm(formula = formula, data = data, weights = mu)
     
     eta <- z - reg$residuals + offset
     mu <- exp(eta)
-    z <- (eta - offset) + (trade - mu) / mu
+    z <- (eta - offset) + (vardep - mu) / mu
     
-    res <- trade - mu
+    res <- vardep - mu
     rss2 <- sum(res^2)
     dif <- rss2 - rss1
     rss1 <- rss2
-    dev <- 2 * max_trade * sum(trade[trade > 0] * log(trade[trade > 0] / mu[trade > 0]))
+    dev <- 2 * max_vardep * sum(vardep[vardep > 0] * log(vardep[vardep > 0] / mu[vardep > 0]))
   }
   
-  z <- z + log(max_trade)
-  reg <- lfe::felm(f,
-                   data = data,
-                   weights = mu
-  )
+  z <- z + log(max_vardep)
+  reg <- felm(formula = formula, data = data, weights = mu)
   
-  if (!is.null(x)) {
-    z <- data.frame(id = 1:nrow(data))
-    for (i in x) {
+  if (!is.null(varind)) {
+    z <- data.frame(id = seq_len(nrow(data)))
+    for (i in varind) {
       fe_tmp <- paste0(fe, collapse = " + ")
-      f <- as.formula(paste0(
+      formula_tmp <- as.formula(paste0(
         i, " ~ -1 ",
         ifelse(!is.null(offset2), " + offset ", ""),
         "| ", fe_tmp, " | 0 | 0"
       ))
-      fit.tmp <- lfe::felm(f, data = data, weights = mu)
+      fit.tmp <- felm(formula = formula_tmp, data = data, weights = mu)
       z[[i]] <- fit.tmp$residuals
     }
     z <- z[, -1]
     z <- as.matrix(z)
     
     n <- reg$N
-    k <- length(x)
-    W1 <- Matrix::Diagonal(mu, n = n)
+    k <- length(varind)
+    W1 <- Diagonal(mu, n = n)
     bread <- solve(t(z) %*% W1 %*% z)
     
     cluster_name <- cluster
     
-    res <- trade - mu
+    res <- vardep - mu
     if (robust) {
       if (is.null(cluster)) {
         W2 <- Diagonal((res^2), n = n)
         meat <- t(z) %*% W2 %*% z
       } else {
-        cluster <- data[[cluster]]
+        cluster <- data[[all.vars(formula(cluster, lhs = 1, rhs = 0))]]
         m <- length(unique(cluster))
         dfc <- (m / (m - 1)) * ((n - 1) / (n - k))
         
-        meat <- matrix(0, nrow = length(x), ncol = length(x))
+        meat <- matrix(0, nrow = length(varind), ncol = length(varind))
         
         for (i in unique(cluster)) {
           z_tmp <- as.matrix(z[cluster == i, , drop = FALSE])
@@ -148,7 +145,7 @@ fepois <- function(y, x, fe, data,
   len_fe <- length(fe)
   
   for (i in seq_len(len_fe)) {
-    fe_tmp <- lfe::getfe(reg)
+    fe_tmp <- getfe(reg)
     fe_tmp <- fe_tmp[fe_tmp$fe == fe[i], c("idx", "effect")]
     
     colnames(fe_tmp) <- c(fe[i], paste0("fe_", fe[i]))
@@ -157,13 +154,11 @@ fepois <- function(y, x, fe, data,
   x_fe[, seq_len(len_fe)] <- sapply(x_fe[, seq_len(len_fe)], as.character)
   reg$fixed.effects <- x_fe
   
-  # use drop = F to ensure the data frame is not converted to vector
-  # https://stackoverflow.com/q/75639224/3720258
   x_fe <- x_fe[, !names(x_fe) %in% fe, drop = FALSE]
   x_fe <- apply(x_fe, 1, sum)
   
-  if (!is.null(x)) {
-    x_var <- as.matrix(data[, x])
+  if (!is.null(varind)) {
+    x_var <- as.matrix(data[, varind])
     beta <- as.matrix(reg$coefficients)
     x_beta <- exp(x_var %*% reg$coefficients + offset + x_fe)
   } else {
@@ -173,7 +168,7 @@ fepois <- function(y, x, fe, data,
   reg$fitted.values <- x_beta
   
   if (isTRUE(pseudo_r2)) {
-    reg$pseudo_rsq <- cor(data[[y]], x_beta)^2
+    reg$pseudo_rsq <- cor(data[, vardep, drop = TRUE], x_beta[, "z", drop = T])^2
   }
   
   class(reg) <- "gravity.ppml"
