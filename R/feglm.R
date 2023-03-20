@@ -1,9 +1,15 @@
 #' @title Fixed-Effects Poisson Pseudo Maximum Likelihood (PPML)
 #' @inheritParams felm
-#' @param offset EXPLAIN
-#' @param tol EXPLAIN
+#' @param robust logical value to return a robust standard error computation.
+#' @param cluster optional variable to group by and compute sandwich-type
+#' robust standard errors. Should be a formula of the form `~ x_j` or
+#' an object that be coerced to a formula.
+#' @param pseudo_rq logical value to return a correlation based metric
+#' equivalent to a pseudo-R2.
+#' @param tol tolerance value for GLM convergence criteria.
 #' @importFrom Formula Formula
 #' @importFrom Matrix Diagonal
+#' @seealso felm
 #' @export fepois
 fepois <- function(formula, data,
                          offset = NULL,
@@ -16,11 +22,17 @@ fepois <- function(formula, data,
   
   if (is.character(formula)) { formula <- as.formula(formula) }
   if (is.character(cluster)) { cluster <- as.formula(paste0("~", cluster)) }
+  if (is.character(offset)) { offset <- as.formula(paste0("~", offset)) }
   
   formula <- Formula(formula)
   
   offset2 <- offset
-  if (is.null(offset)) offset <- rep(0, nrow(data))
+  
+  if (is.null(offset)) {
+    offset <- rep(0, nrow(data))
+  } else {
+    offset <- data[[all.vars(formula(offset, lhs = 1, rhs = 0))]]
+  }
   
   vardep <- all.vars(formula(formula, lhs = 1, rhs = 0))
   vardep <- data[[vardep]]
@@ -55,6 +67,7 @@ fepois <- function(formula, data,
   
   dif <- 1
   rss1 <- 1
+  
   while (abs(dif) > tol) {
     reg <- felm(formula = formula, data = data, weights = mu)
     
@@ -79,7 +92,7 @@ fepois <- function(formula, data,
       formula_tmp <- as.formula(paste0(
         i, " ~ -1 ",
         ifelse(!is.null(offset2), " + offset ", ""),
-        "| ", fe_tmp, " | 0 | 0"
+        "| ", fe_tmp
       ))
       fit.tmp <- felm(formula = formula_tmp, data = data, weights = mu)
       z[[i]] <- fit.tmp$residuals
@@ -92,9 +105,8 @@ fepois <- function(formula, data,
     W1 <- Diagonal(mu, n = n)
     bread <- solve(t(z) %*% W1 %*% z)
     
-    cluster_name <- cluster
-    
     res <- vardep - mu
+    
     if (robust) {
       if (is.null(cluster)) {
         W2 <- Diagonal((res^2), n = n)
@@ -171,72 +183,65 @@ fepois <- function(formula, data,
     reg$pseudo_rsq <- cor(data[, vardep, drop = TRUE], x_beta[, "z", drop = T])^2
   }
   
-  class(reg) <- "gravity.ppml"
+  class(reg) <- "fepois"
   return(reg)
 }
 
-# summary.gravity.ppml <- function(object) {
-#   class(object) <- "summary.gravity.ppml"
-#   object
-# }
-# 
-# print.summary.gravity.ppml <- function(object) {
-#   cat("Coefficients: \n")
-#   results <- data.frame(
-#     Estimate = object$coefficients,
-#     `Std. Error` = object$se,
-#     `t value` = object$tval,
-#     `Pr(>|t|)` = object$pval
-#   )
-#   results <- as.matrix(results)
-#   colnames(results) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
-#   printCoefmat(results, digits = 4)
-# }
-# 
-# predict.gravity.ppml <- function(object, newdata = NULL, offset = NULL) {
-#   if (is.null(offset)) offset <- rep(0, nrow(newdata))
-#   
-#   fe <- names(object$fe)
-#   x_fe <- newdata[, fe]
-#   x_fe$order <- 1:nrow(x_fe)
-#   len_fe <- length(fe)
-#   
-#   for (i in 1:len_fe) {
-#     fe_tmp <- getfe(object)
-#     fe_tmp <- fe_tmp[fe_tmp$fe == fe[i], c("idx", "effect")]
-#     
-#     colnames(fe_tmp) <- c(
-#       fe[i],
-#       paste0("fe_", fe[i])
-#     )
-#     
-#     x_fe <- merge(x_fe,
-#                              fe_tmp,
-#                              by = fe[i],
-#                              all.x = TRUE
-#     )
-#   }
-#   
-#   x_fe <- x_fe[
-#     order(x_fe$order),
-#     -(len_fe + 1)
-#   ]
-#   
-#   x_fe[, 1:len_fe] <- sapply(x_fe[, 1:len_fe], as.character)
-#   object$fixed.effects <- x_fe
-#   
-#   x_fe <- x_fe[, !names(x_fe) %in% fe]
-#   x_fe <- apply(x_fe, 1, sum)
-#   
-#   x <- rownames(object$beta)
-#   
-#   if (!is.null(x)) {
-#     x_var <- as.matrix(newdata[, x])
-#     beta <- as.matrix(object$coefficients)
-#     x_beta <- exp(x_var %*% object$coefficients + offset + x_fe)
-#   } else {
-#     x_beta <- exp(offset + x_fe)
-#   }
-#   
-#   x_beta
-# }
+#' @exportS3Method
+summary.fepois <- function(object) {
+  class(object) <- "summary.fepois"
+  return(object)
+}
+
+#' @exportS3Method
+print.summary.fepois <- function(object) {
+  cat("Coefficients: \n")
+  results <- data.frame(
+    Estimate = object$coefficients,
+    `Std. Error` = object$se,
+    `t value` = object$tval,
+    `Pr(>|t|)` = object$pval
+  )
+  results <- as.matrix(results)
+  colnames(results) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+  return(printCoefmat(results, digits = 4))
+}
+
+#' @exportS3Method
+predict.fepois <- function(object, newdata = NULL, offset = NULL) {
+  if (is.null(offset)) offset <- rep(0, nrow(newdata))
+
+  fe <- names(object$fe)
+  x_fe <- newdata[, fe]
+  x_fe$order <- 1:nrow(x_fe)
+  len_fe <- length(fe)
+
+  for (i in 1:len_fe) {
+    fe_tmp <- getfe(object)
+    fe_tmp <- fe_tmp[fe_tmp$fe == fe[i], c("idx", "effect")]
+
+    colnames(fe_tmp) <- c(fe[i], paste0("fe_", fe[i]))
+
+    x_fe <- merge(x_fe, fe_tmp, by = fe[i], all.x = TRUE)
+  }
+
+  x_fe <- x_fe[order(x_fe$order), -(len_fe + 1)]
+
+  x_fe[, 1:len_fe] <- sapply(x_fe[, 1:len_fe], as.character)
+  object$fixed.effects <- x_fe
+
+  x_fe <- x_fe[, !names(x_fe) %in% fe]
+  x_fe <- apply(x_fe, 1, sum)
+
+  x <- rownames(object$beta)
+
+  if (!is.null(x)) {
+    x_var <- as.matrix(newdata[, x])
+    beta <- as.matrix(object$coefficients)
+    x_beta <- exp(x_var %*% object$coefficients + offset + x_fe)
+  } else {
+    x_beta <- exp(offset + x_fe)
+  }
+
+  x_beta
+}
