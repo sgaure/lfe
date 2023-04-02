@@ -1,14 +1,19 @@
 #' @title Fixed-Effects Poisson Pseudo Maximum Likelihood (PPML)
 #' @inheritParams felm
+#' @param offset this can be used to specify an \emph{a priori} known component
+#'  to be included in the linear predictor during fitting. This should be
+#'  \code{NULL} or a numeric vector or matrix of extents matching those of the
+#'  response. One or more \code{\link{offset}} terms can be included in the
+#'  formula instead or as well, and if more than one are specified their sum is
+#'  used. See \code{\link{model.offset}}.
 #' @param robust logical value to return a robust standard error computation.
 #' @param cluster optional variable to group by and compute sandwich-type
-#' robust standard errors. Should be a formula of the form `~ x_j` or
+#' robust standard errors. Should be a formula of the form `~x_j` or
 #' an object that be coerced to a formula.
-#' @param pseudo_rq logical value to return a correlation based metric
-#' equivalent to a pseudo-R2.
 #' @param tol tolerance value for GLM convergence criteria.
 #' @importFrom Formula Formula
 #' @importFrom Matrix Diagonal
+#' @importFrom methods is
 #' @seealso felm
 #' @export fepois
 fepois <- function(formula, data,
@@ -16,7 +21,6 @@ fepois <- function(formula, data,
                          subset = NULL,
                          robust = TRUE,
                          cluster = NULL,
-                         # pseudo_r2 = FALSE,
                          tol = 1e-10) {
   if (!is.null(subset)) { data <- data[subset, ] }
   
@@ -36,7 +40,7 @@ fepois <- function(formula, data,
   
   vardep <- all.vars(formula(formula, lhs = 1, rhs = 0))
   vardep2 <- vardep # for pseudo rsq later
-  vardep <- data[[vardep]]
+  vardep <- data[, vardep, drop = TRUE]
   
   if (min(vardep) < 0) {
     stop("y should be greater or equals to zero.")
@@ -50,7 +54,7 @@ fepois <- function(formula, data,
     }
   }
   
-  max_vardep <- max(vardep)
+  max_vardep <- max(vardep, na.rm = TRUE)
   vardep <- vardep / max_vardep
   
   mu <- (vardep + 0.5) / 2
@@ -176,13 +180,6 @@ fepois <- function(formula, data,
     reg$fitted.values <- exp(offset + x_fe)
   }
   
-  # if (isTRUE(pseudo_r2)) {
-  #   #  http://personal.lse.ac.uk/tenreyro/r2.do
-  #   print(head(data[, vardep2, drop = TRUE]))
-  #   print(head(reg$fitted.values[, "z", drop = TRUE]))
-  #   reg$pseudo_rsq <- (cor(data[, vardep2, drop = TRUE], reg$fitted.values[, "z", drop = TRUE], method = "kendall"))^2
-  # }
-  
   class(reg) <- "fepois"
   return(reg)
 }
@@ -208,7 +205,9 @@ print.summary.fepois <- function(object) {
 }
 
 #' @exportS3Method
-predict.fepois <- function(object, newdata = NULL, offset = NULL) {
+predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link") {
+  stopifnot(any(type %in% c("link", "response")))
+  
   if (is.null(offset)) offset <- rep(0, nrow(newdata))
 
   fe <- names(object$fe)
@@ -235,13 +234,20 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL) {
 
   x <- rownames(object$beta)
 
+  # return x_beta
   if (!is.null(x)) {
-    x_var <- as.matrix(newdata[, x])
-    beta <- as.matrix(object$coefficients)
-    x_beta <- exp(x_var %*% object$coefficients + offset + x_fe)
+    if (type == "link") {
+      return(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe) 
+    }
+    if (type == "response") {
+      return(exp(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe))
+    }
   } else {
-    x_beta <- exp(offset + x_fe)
+    if (type == "link") {
+      return(offset + x_fe)
+    }
+    if (type == "response") {
+      return(exp(offset + x_fe)) 
+    }
   }
-
-  x_beta
 }

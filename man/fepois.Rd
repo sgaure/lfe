@@ -11,7 +11,6 @@ fepois(
   subset = NULL,
   robust = TRUE,
   cluster = NULL,
-  pseudo_r2 = TRUE,
   tol = 1e-10
 )
 }
@@ -22,19 +21,23 @@ that class): a symbolic description of the model to be fitted. Similarly to
 
 \item{data}{a data frame containing the variables of the model.}
 
+\item{offset}{this can be used to specify an \emph{a priori} known component
+to be included in the linear predictor during fitting. This should be
+\code{NULL} or a numeric vector or matrix of extents matching those of the
+response. One or more \code{\link{offset}} terms can be included in the
+formula instead or as well, and if more than one are specified their sum is
+used. See \code{\link{model.offset}}.}
+
 \item{subset}{an optional vector specifying a subset of observations to be
 used in the fitting process.}
 
 \item{robust}{logical value to return a robust standard error computation.}
 
 \item{cluster}{optional variable to group by and compute sandwich-type
-robust standard errors. Should be a formula of the form \code{~ x_j} or
+robust standard errors. Should be a formula of the form \code{~x_j} or
 an object that be coerced to a formula.}
 
 \item{tol}{tolerance value for GLM convergence criteria.}
-
-\item{pseudo_rq}{logical value to return a correlation based metric
-equivalent to a pseudo-R2.}
 }
 \description{
 Fixed-Effects Poisson Pseudo Maximum Likelihood (PPML)
