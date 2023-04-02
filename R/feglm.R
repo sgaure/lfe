@@ -16,7 +16,7 @@ fepois <- function(formula, data,
                          subset = NULL,
                          robust = TRUE,
                          cluster = NULL,
-                         pseudo_r2 = TRUE,
+                         # pseudo_r2 = FALSE,
                          tol = 1e-10) {
   if (!is.null(subset)) { data <- data[subset, ] }
   
@@ -35,6 +35,7 @@ fepois <- function(formula, data,
   }
   
   vardep <- all.vars(formula(formula, lhs = 1, rhs = 0))
+  vardep2 <- vardep # for pseudo rsq later
   vardep <- data[[vardep]]
   
   if (min(vardep) < 0) {
@@ -61,7 +62,7 @@ fepois <- function(formula, data,
   varind <- all.vars(formula(formula, lhs = 0, rhs = 1))
   
   formula <- as.formula(paste0(
-    "z ~ ", ifelse(is.null(varind), " -1 ", varind), " | ",
+    "z ~ ", ifelse(is.null(varind), " -1 ", paste0(varind, collapse = " + ")), " | ",
     paste0(fe, collapse = " + ")
   ))
   
@@ -170,18 +171,17 @@ fepois <- function(formula, data,
   x_fe <- apply(x_fe, 1, sum)
   
   if (!is.null(varind)) {
-    x_var <- as.matrix(data[, varind])
-    beta <- as.matrix(reg$coefficients)
-    x_beta <- exp(x_var %*% reg$coefficients + offset + x_fe)
+    reg$fitted.values <- exp(as.matrix(data[, varind]) %*% reg$coefficients + offset + x_fe)
   } else {
-    x_beta <- exp(offset + x_fe)
+    reg$fitted.values <- exp(offset + x_fe)
   }
   
-  reg$fitted.values <- x_beta
-  
-  if (isTRUE(pseudo_r2)) {
-    reg$pseudo_rsq <- cor(data[, vardep, drop = TRUE], x_beta[, "z", drop = T])^2
-  }
+  # if (isTRUE(pseudo_r2)) {
+  #   #  http://personal.lse.ac.uk/tenreyro/r2.do
+  #   print(head(data[, vardep2, drop = TRUE]))
+  #   print(head(reg$fitted.values[, "z", drop = TRUE]))
+  #   reg$pseudo_rsq <- (cor(data[, vardep2, drop = TRUE], reg$fitted.values[, "z", drop = TRUE], method = "kendall"))^2
+  # }
   
   class(reg) <- "fepois"
   return(reg)
