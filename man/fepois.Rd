@@ -2,7 +2,7 @@
 % Please edit documentation in R/feglm.R
 \name{fepois}
 \alias{fepois}
-\title{Fixed-Effects Poisson Regression}
+\title{Fit a Poisson model with multiple group fixed effects}
 \usage{
 fepois(
   formula,
@@ -40,7 +40,7 @@ an object that be coerced to a formula.}
 \item{tol}{tolerance value for GLM convergence criteria.}
 }
 \description{
-Fixed-Effects Poisson Regression
+Fit a Poisson model with multiple group fixed effects
 }
 \seealso{
 felm

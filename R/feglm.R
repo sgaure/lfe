@@ -1,4 +1,4 @@
-#' @title Fixed-Effects Poisson Regression
+#' @title Fit a Poisson model with multiple group fixed effects
 #' @inheritParams felm
 #' @param offset this can be used to specify an \emph{a priori} known component
 #'  to be included in the linear predictor during fitting. This should be
