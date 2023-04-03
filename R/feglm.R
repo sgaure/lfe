@@ -39,7 +39,7 @@ fepois <- function(formula, data,
   }
   
   vardep <- all.vars(formula(formula, lhs = 1, rhs = 0))
-  vardep2 <- vardep # for pseudo rsq later
+  vardep2 <- vardep # for fitted.values rsq later
   vardep <- data[, vardep, drop = TRUE]
   
   if (min(vardep) < 0) {
@@ -159,6 +159,7 @@ fepois <- function(formula, data,
   # use drop = F to ensure the data frame is not converted to vector
   # https://stackoverflow.com/q/75639224/3720258
   x_fe <- data[, fe, drop = FALSE]
+  x_fe$order <- 1:nrow(x_fe)
   len_fe <- length(fe)
   
   for (i in seq_len(len_fe)) {
@@ -168,6 +169,7 @@ fepois <- function(formula, data,
     colnames(fe_tmp) <- c(fe[i], paste0("fe_", fe[i]))
     x_fe <- merge(x_fe, fe_tmp, by = fe[i], all.x = TRUE)
   }
+  x_fe <- x_fe[order(x_fe$order), -(len_fe + 1)]
   x_fe[, seq_len(len_fe)] <- sapply(x_fe[, seq_len(len_fe)], as.character)
   reg$fixed.effects <- x_fe
   
@@ -175,9 +177,11 @@ fepois <- function(formula, data,
   x_fe <- apply(x_fe, 1, sum)
   
   if (!is.null(varind)) {
-    reg$fitted.values <- exp(as.matrix(data[, varind]) %*% reg$coefficients + offset + x_fe)
+    print(head(offset))
+    print(head(x_fe))
+    reg$fitted.values <- as.numeric(exp(as.matrix(data[, rownames(reg$coefficients)]) %*% reg$coefficients + offset + x_fe))
   } else {
-    reg$fitted.values <- exp(offset + x_fe)
+    reg$fitted.values <- as.numeric(exp(offset + x_fe))
   }
   
   class(reg) <- "fepois"
@@ -211,7 +215,7 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link")
   if (is.null(offset)) offset <- rep(0, nrow(newdata))
 
   fe <- names(object$fe)
-  x_fe <- newdata[, fe]
+  x_fe <- newdata[, fe, drop = FALSE]
   x_fe$order <- 1:nrow(x_fe)
   len_fe <- length(fe)
 
@@ -226,10 +230,10 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link")
 
   x_fe <- x_fe[order(x_fe$order), -(len_fe + 1)]
 
-  x_fe[, 1:len_fe] <- sapply(x_fe[, 1:len_fe], as.character)
+  x_fe[, seq_len(len_fe)] <- sapply(x_fe[, 1:len_fe], as.character)
   object$fixed.effects <- x_fe
 
-  x_fe <- x_fe[, !names(x_fe) %in% fe]
+  x_fe <- x_fe[, !names(x_fe) %in% fe, drop = FALSE]
   x_fe <- apply(x_fe, 1, sum)
 
   x <- rownames(object$beta)
@@ -237,17 +241,17 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link")
   # return x_beta
   if (!is.null(x)) {
     if (type == "link") {
-      return(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe) 
+      return(as.numeric(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe))
     }
     if (type == "response") {
-      return(exp(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe))
+      return(as.numeric(exp(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe)))
     }
   } else {
     if (type == "link") {
-      return(offset + x_fe)
+      return(as.numeric(offset + x_fe))
     }
     if (type == "response") {
-      return(exp(offset + x_fe)) 
+      return(as.numeric(exp(offset + x_fe)))
     }
   }
 }
