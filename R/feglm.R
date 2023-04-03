@@ -177,8 +177,6 @@ fepois <- function(formula, data,
   x_fe <- apply(x_fe, 1, sum)
   
   if (!is.null(varind)) {
-    print(head(offset))
-    print(head(x_fe))
     reg$fitted.values <- as.numeric(exp(as.matrix(data[, rownames(reg$coefficients)]) %*% reg$coefficients + offset + x_fe))
   } else {
     reg$fitted.values <- as.numeric(exp(offset + x_fe))
