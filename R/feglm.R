@@ -39,8 +39,7 @@ fepois <- function(formula, data,
   }
   
   vardep <- all.vars(formula(formula, lhs = 1, rhs = 0))
-  vardep2 <- vardep # for fitted.values rsq later
-  vardep <- data[, vardep]
+  vardep <- data[, vardep, drop = TRUE]
   
   if (min(vardep) < 0) {
     stop("y should be greater or equals to zero.")
@@ -50,7 +49,7 @@ fepois <- function(formula, data,
   
   for (f in fe) {
     if (!is(data[, f], "factor")) {
-      data[, f] <- as.factor(data[, f])
+      data[, f] <- as.factor(data[, f, drop = TRUE])
     }
   }
   
@@ -156,7 +155,7 @@ fepois <- function(formula, data,
     }
   }
   
-  x_fe <- data[, fe]
+  x_fe <- data[, fe, drop = FALSE]
   x_fe$order <- 1:nrow(x_fe)
   len_fe <- length(fe)
   
@@ -171,7 +170,7 @@ fepois <- function(formula, data,
   x_fe[, seq_len(len_fe)] <- sapply(x_fe[, seq_len(len_fe)], as.character)
   reg$fixed.effects <- x_fe
   
-  x_fe <- x_fe[, !names(x_fe) %in% fe]
+  x_fe <- x_fe[, !names(x_fe) %in% fe, drop = FALSE]
   x_fe <- apply(x_fe, 1, sum)
   
   if (!is.null(varind)) {
@@ -211,7 +210,7 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link",
   if (is.null(offset)) offset <- rep(0, nrow(newdata))
 
   fe <- names(object$fe)
-  x_fe <- newdata[, fe]
+  x_fe <- newdata[, fe, drop = FALSE]
   x_fe$order <- 1:nrow(x_fe)
   len_fe <- length(fe)
 
@@ -229,7 +228,7 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link",
   x_fe[, seq_len(len_fe)] <- sapply(x_fe[, 1:len_fe], as.character)
   object$fixed.effects <- x_fe
 
-  x_fe <- x_fe[, !names(x_fe) %in% fe]
+  x_fe <- x_fe[, !names(x_fe) %in% fe, drop = FALSE]
   x_fe <- apply(x_fe, 1, sum)
 
   x <- rownames(object$beta)
