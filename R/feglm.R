@@ -40,7 +40,7 @@ fepois <- function(formula, data,
   
   vardep <- all.vars(formula(formula, lhs = 1, rhs = 0))
   vardep2 <- vardep # for fitted.values rsq later
-  vardep <- data[, vardep, drop = TRUE]
+  vardep <- data[, vardep]
   
   if (min(vardep) < 0) {
     stop("y should be greater or equals to zero.")
@@ -124,7 +124,7 @@ fepois <- function(formula, data,
         meat <- matrix(0, nrow = length(varind), ncol = length(varind))
         
         for (i in unique(cluster)) {
-          z_tmp <- as.matrix(z[cluster == i, , drop = FALSE])
+          z_tmp <- as.matrix(z[cluster == i,])
           res_tmp <- res[cluster == i]
           W2_tmp <- res_tmp %*% t(res_tmp)
           meat <- meat + (t(z_tmp) %*% W2_tmp %*% z_tmp)
@@ -156,9 +156,7 @@ fepois <- function(formula, data,
     }
   }
   
-  # use drop = F to ensure the data frame is not converted to vector
-  # https://stackoverflow.com/q/75639224/3720258
-  x_fe <- data[, fe, drop = FALSE]
+  x_fe <- data[, fe]
   x_fe$order <- 1:nrow(x_fe)
   len_fe <- length(fe)
   
@@ -173,7 +171,7 @@ fepois <- function(formula, data,
   x_fe[, seq_len(len_fe)] <- sapply(x_fe[, seq_len(len_fe)], as.character)
   reg$fixed.effects <- x_fe
   
-  x_fe <- x_fe[, !names(x_fe) %in% fe, drop = FALSE]
+  x_fe <- x_fe[, !names(x_fe) %in% fe]
   x_fe <- apply(x_fe, 1, sum)
   
   if (!is.null(varind)) {
@@ -187,19 +185,19 @@ fepois <- function(formula, data,
 }
 
 #' @exportS3Method
-summary.fepois <- function(object) {
+summary.fepois <- function(object, ...) {
   class(object) <- "summary.fepois"
   return(object)
 }
 
 #' @exportS3Method
-print.summary.fepois <- function(object) {
+print.summary.fepois <- function(x, ...) {
   cat("Coefficients: \n")
   results <- data.frame(
-    Estimate = object$coefficients,
-    `Std. Error` = object$se,
-    `t value` = object$tval,
-    `Pr(>|t|)` = object$pval
+    Estimate = x$coefficients,
+    `Std. Error` = x$se,
+    `t value` = x$tval,
+    `Pr(>|t|)` = x$pval
   )
   results <- as.matrix(results)
   colnames(results) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
@@ -207,13 +205,13 @@ print.summary.fepois <- function(object) {
 }
 
 #' @exportS3Method
-predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link") {
+predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link", ...) {
   stopifnot(any(type %in% c("link", "response")))
   
   if (is.null(offset)) offset <- rep(0, nrow(newdata))
 
   fe <- names(object$fe)
-  x_fe <- newdata[, fe, drop = FALSE]
+  x_fe <- newdata[, fe]
   x_fe$order <- 1:nrow(x_fe)
   len_fe <- length(fe)
 
@@ -231,7 +229,7 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link")
   x_fe[, seq_len(len_fe)] <- sapply(x_fe[, 1:len_fe], as.character)
   object$fixed.effects <- x_fe
 
-  x_fe <- x_fe[, !names(x_fe) %in% fe, drop = FALSE]
+  x_fe <- x_fe[, !names(x_fe) %in% fe]
   x_fe <- apply(x_fe, 1, sum)
 
   x <- rownames(object$beta)
