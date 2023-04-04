@@ -179,6 +179,8 @@ fepois <- function(formula, data,
     reg$fitted.values <- as.numeric(exp(offset + x_fe))
   }
   
+  names(reg$fitted.values) <- rownames(data)
+  
   class(reg) <- "fepois"
   return(reg)
 }
@@ -235,18 +237,19 @@ predict.fepois <- function(object, newdata = NULL, offset = NULL, type = "link",
 
   # return x_beta
   if (!is.null(x)) {
-    if (type == "link") {
-      return(as.numeric(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe))
-    }
-    if (type == "response") {
-      return(as.numeric(exp(as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe)))
-    }
+    out <- as.matrix(newdata[, x]) %*% object$coefficients + offset + x_fe
   } else {
-    if (type == "link") {
-      return(as.numeric(offset + x_fe))
-    }
-    if (type == "response") {
-      return(as.numeric(exp(offset + x_fe)))
-    }
+    out <- offset + x_fe
   }
+  
+  if (type == "link") {
+    out <- as.numeric(out)
+  }
+  if (type == "response") {
+    out <- as.numeric(exp(out))
+  }
+  
+  names(out) <- rownames(newdata)
+  
+  return(out)
 }
