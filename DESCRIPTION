@@ -1,6 +1,6 @@
 Package: lfe
-Version: 2.9-0
-Date: 2023-02-13
+Version: 2.9-1
+Date: 2023-04-03
 Title: Linear Group Fixed Effects
 Authors@R: c(person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut"),
            comment=c(ORCID="https://orcid.org/0000-0001-7251-8747")),
@@ -10,6 +10,9 @@ Authors@R: c(person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c(
             role = "ctb",
             email = "mavargas11@uc.cl",
             comment = c(ORCID = "0000-0003-1017-7574")),
+    person(given = "Paulo",
+            family = "Alcazar",
+            role = "ctb"),
 	   person("Karl", "Dunkle Werner", role="ctb"),
 	   person("Matthieu","Stigler", email = "Matthieu.Stigler@gmail.com", role= c("ctb", "cre"),
 	          comment =c(ORCID="0000-0002-6802-4290")),
@@ -41,5 +44,5 @@ Classification/MSC: 62J05, 65F10, 65F50
 URL: https://github.com/MatthieuStigler/lfe
 BugReports: https://github.com/MatthieuStigler/lfe/issues
 Encoding: UTF-8
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
