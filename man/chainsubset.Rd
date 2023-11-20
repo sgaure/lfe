@@ -33,18 +33,17 @@ find the ones with \code{x > mean(y)}.  The last \code{mean(y)} is now condition
 \note{
 Some trickery is done to make this work directly in the subset argument of functions like
 \code{felm()} and \code{lm()}. It might possibly fail with an error message in some situations.
-If this happens, it should be done in two steps: \code{ss <- eval(chainsubset(...),data); 
-lm(...,data=data, subset=ss)}. In particular, the arguments are taken literally, 
-constructions like \code{function(...) {chainsubset(...)}} or \code{a <- quote(x < y); chainsubset(a)} do
+If this happens, it should be done in two steps: \verb{ss <- eval(chainsubset(...),data); lm(...,data=data, subset=ss)}. In particular, the arguments are taken literally,
+constructions like \code{function(...) {chainsubset(...)}} or \verb{a <- quote(x < y); chainsubset(a)} do
 not work, but \code{do.call(chainsubset,list(a))} does.
 }
 \examples{
 set.seed(48)
 N <- 10000
-dat <- data.frame(y=rnorm(N), x=rnorm(N))
+dat <- data.frame(y = rnorm(N), x = rnorm(N))
 # It's not the same as and'ing the conditions:
-felm(y ~ x,data=dat,subset=chainsubset(x < mean(y), y < 2*mean(x)))
-felm(y ~ x,data=dat,subset=chainsubset(y < 2*mean(x), x < mean(y)))
-felm(y ~ x,data=dat,subset=(x < mean(y)) & (y < 2*mean(x)))
-lm(y ~ x, data=dat, subset=chainsubset(x < mean(y), x > mean(y)))
+felm(y ~ x, data = dat, subset = chainsubset(x < mean(y), y < 2 * mean(x)))
+felm(y ~ x, data = dat, subset = chainsubset(y < 2 * mean(x), x < mean(y)))
+felm(y ~ x, data = dat, subset = (x < mean(y)) & (y < 2 * mean(x)))
+lm(y ~ x, data = dat, subset = chainsubset(x < mean(y), x > mean(y)))
 }

@@ -9,9 +9,9 @@ condfstat(object, type = "default", quantiles = 0, bN = 100L)
 }
 \arguments{
 \item{object}{object of class \code{"felm"}, a result of a call to
-\code{\link{felm}}.}
+\code{\link[=felm]{felm()}}.}
 
-\item{type}{character. Error structure. Passed to \code{\link{waldtest}}. If
+\item{type}{character. Error structure. Passed to \code{\link[=waldtest]{waldtest()}}. If
 \code{NULL}, both iid and robust Fs are returned.}
 
 \item{quantiles}{numeric. Quantiles for bootstrap.}
@@ -23,7 +23,7 @@ A p x k matrix, where k is the number of endogenous variables. Each
 row are the conditional F statistics on a residual equation as described in
 \cite{Sanderson and Windmeijer (2014)}, for a certain error structure.  The
 default is to use iid, or cluster if a cluster was specified to
-\code{\link{felm}}. The third choice is \code{'robust'}, for heteroskedastic
+\code{\link[=felm]{felm()}}. The third choice is \code{'robust'}, for heteroskedastic
 errors. If \code{type=NULL}, iid and robust Fs are returned, and cluster, if
 that was specified to \code{felm}.
 
@@ -60,7 +60,7 @@ are projected out of the equations before doing the bootstrap.
 }
 \note{
 Please note that \code{condfstat} does not work with the old syntax
-for IV in \code{\link{felm}(...,iv=)}. The new multipart syntax must be
+for IV in \verb{[felm](...,iv=)}. The new multipart syntax must be
 used.
 }
 \examples{
@@ -70,33 +70,33 @@ z2 <- rnorm(length(z1))
 u <- rnorm(length(z1))
 # make x1, x2 correlated with errors u
 
-x1 <- z1 + z2 + 0.2*u + rnorm(length(z1))
-x2 <- z1 + 0.94*z2 - 0.3*u + rnorm(length(z1))
+x1 <- z1 + z2 + 0.2 * u + rnorm(length(z1))
+x2 <- z1 + 0.94 * z2 - 0.3 * u + rnorm(length(z1))
 y <- x1 + x2 + u
 est <- felm(y ~ 1 | 0 | (x1 | x2 ~ z1 + z2))
 summary(est)
 \dontrun{
-summary(est$stage1, lhs='x1')
-summary(est$stage1, lhs='x2')
+summary(est$stage1, lhs = "x1")
+summary(est$stage1, lhs = "x2")
 }
 
 # the joint significance of the instruments in both the first stages are ok:
-t(sapply(est$stage1$lhs, function(lh) waldtest(est$stage1, ~z1|z2, lhs=lh)))
-# everything above looks fine, t-tests for instruments, 
+t(sapply(est$stage1$lhs, function(lh) waldtest(est$stage1, ~ z1 | z2, lhs = lh)))
+# everything above looks fine, t-tests for instruments,
 # as well as F-tests for excluded instruments in the 1st stages.
 # The conditional F-test reveals that the instruments are jointly weak
 # (it's close to being only one instrument, z1+z2, for both x1 and x2)
-condfstat(est, quantiles=c(0.05, 0.95))
+condfstat(est, quantiles = c(0.05, 0.95))
 
 }
 \references{
 Sanderson, E. and F. Windmeijer (2014) \cite{A weak instrument
 F-test in linear IV models with multiple endogenous variables}, Journal of
 Econometrics, 2015.
-\url{http://www.sciencedirect.com/science/article/pii/S0304407615001736}
+\url{https://www.sciencedirect.com/science/article/pii/S0304407615001736}
 
 Stock, J.H. and M. Yogo (2004) \cite{Testing for weak instruments in linear
-IV regression}, \url{http://ssrn.com/abstract=1734933} in
+IV regression}, \url{https://www.ssrn.com/abstract=1734933} in
 \cite{Identification and inference for econometric models: Essays in honor
 of Thomas Rothenberg}, 2005.
 }

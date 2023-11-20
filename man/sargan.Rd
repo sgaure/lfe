@@ -7,11 +7,11 @@
 sargan(object, ..., lhs = object$lhs[1])
 }
 \arguments{
-\item{object}{and object type '"felm"', the return value from \code{\link{felm}}.}
+\item{object}{and object type '"felm"', the return value from \code{\link[=felm]{felm()}}.}
 
 \item{...}{Not used at the moment.}
 
-\item{lhs}{in case of multiple left hand sides, specify the name of the left 
+\item{lhs}{in case of multiple left hand sides, specify the name of the left
 hand side for which you want to compute Sargan's S.}
 }
 \value{

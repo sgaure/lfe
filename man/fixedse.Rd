@@ -7,7 +7,7 @@
 fixedse(est, lhs = NULL, E)
 }
 \arguments{
-\item{est}{'felm' object. The result of a call to \code{\link{felm}}.}
+\item{est}{'felm' object. The result of a call to \code{\link[=felm]{felm()}}.}
 
 \item{lhs}{character. Name of the left hand side, if more than one.}
 
@@ -18,20 +18,20 @@ numeric. Vector of standard errors.
 }
 \description{
 fixedse computes the standard errors for the fixed effects when there is only one.
-While \code{\link{getfe}} can provide standard errors, it does so by bootstrapping
+While \code{\link[=getfe]{getfe()}} can provide standard errors, it does so by bootstrapping
 for general estimable functions. In the special case that there's only a single fixed
 effect, and the estimable function is just the levels, this function can be used to
-compute the fixed effects without bootstrapping. It requires that \code{\link{felm}}
+compute the fixed effects without bootstrapping. It requires that \code{\link[=felm]{felm()}}
 is run with keepX=TRUE.
 }
 \examples{
 x <- rnorm(1000)
-f <- factor(sample(5,1000,replace=TRUE))
+f <- factor(sample(5, 1000, replace = TRUE))
 y <- x + (1:5)[f] + rnorm(1000)
-est <- felm(y ~ x | f, keepX=TRUE)
-#both bootstrap and computed se:
-cbind(getfe(est,ef=efactory(est,'ref'),se=TRUE), fse=fixedse(est))
-#compare with lm:
-summary(lm(y ~x+f-1))
+est <- felm(y ~ x | f, keepX = TRUE)
+# both bootstrap and computed se:
+cbind(getfe(est, ef = efactory(est, "ref"), se = TRUE), fse = fixedse(est))
+# compare with lm:
+summary(lm(y ~ x + f - 1))
 }
 \keyword{internal}

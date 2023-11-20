@@ -16,9 +16,9 @@ fevcov(
 }
 \arguments{
 \item{est}{an object of class '"felm"', the result of a call to
-\code{\link{felm}(keepX=TRUE)}.}
+\verb{[felm](keepX=TRUE)}.}
 
-\item{alpha}{a data frame, the result of a call to \code{\link{getfe}}.}
+\item{alpha}{a data frame, the result of a call to \code{\link[=getfe]{getfe()}}.}
 
 \item{tol}{numeric. The absolute tolerance for the bias-corrected
 correlation.}
@@ -64,15 +64,15 @@ effects.
 
 \code{alpha} must contain a full set of coefficients, and contain columns
 \code{'fe'} and \code{'effect'} like the default estimable functions from
-\code{\link{efactory}}.
+\code{\link[=efactory]{efactory()}}.
 
-In the case that the \code{\link{felm}}-estimation has weights, it is the
+In the case that the \code{\link[=felm]{felm()}}-estimation has weights, it is the
 weighted variances and covariance which are bias corrected.
 }
 \note{
 Bias correction for IV-estimates are not supported as of now.
 
-Note that if \code{est} is the result of a call to \code{\link{felm}} with
+Note that if \code{est} is the result of a call to \code{\link[=felm]{felm()}} with
 \code{keepX=FALSE} (the default), the biases will be computed as if the
 covariates X are independent of the factors. This will be faster (typically
 by a factor of approx. 4), and possibly wronger.  Note also that the
@@ -81,7 +81,7 @@ some time.  It would be wise to start out with quite liberal tolerances,
 e.g. \cite{tol=0.1}, to get an idea of the time requirements.
 
 If there are only two fixed effects, \code{fevcov} returns the same
-information as \code{\link{bccorr}}, though in a slightly different format.
+information as \code{\link[=bccorr]{bccorr()}}, though in a slightly different format.
 }
 \examples{
 
@@ -89,39 +89,39 @@ x <- rnorm(5000)
 x2 <- rnorm(length(x))
 
 ## create individual and firm
-id <- factor(sample(40,length(x),replace=TRUE))
-firm <- factor(sample(30,length(x),replace=TRUE,prob=c(2,rep(1,29))))
-foo <- factor(sample(20,length(x),replace=TRUE))
+id <- factor(sample(40, length(x), replace = TRUE))
+firm <- factor(sample(30, length(x), replace = TRUE, prob = c(2, rep(1, 29))))
+foo <- factor(sample(20, length(x), replace = TRUE))
 ## effects
 id.eff <- rnorm(nlevels(id))
 firm.eff <- runif(nlevels(firm))
-foo.eff <- rchisq(nlevels(foo),df=1)
+foo.eff <- rchisq(nlevels(foo), df = 1)
 ## left hand side
 id.m <- id.eff[id]
 firm.m <- firm.eff[firm]
 foo.m <- foo.eff[foo]
 # normalize them
-id.m <- id.m/sd(id.m)
-firm.m <- firm.m/sd(firm.m)
-foo.m <- foo.m/sd(foo.m)
-y <- x + 0.25*x2 + id.m + firm.m + foo.m + rnorm(length(x),sd=2)
-z <- x + 0.5*x2 + 0.7*id.m + 0.5*firm.m + 0.3*foo.m + rnorm(length(x),sd=2)
+id.m <- id.m / sd(id.m)
+firm.m <- firm.m / sd(firm.m)
+foo.m <- foo.m / sd(foo.m)
+y <- x + 0.25 * x2 + id.m + firm.m + foo.m + rnorm(length(x), sd = 2)
+z <- x + 0.5 * x2 + 0.7 * id.m + 0.5 * firm.m + 0.3 * foo.m + rnorm(length(x), sd = 2)
 # make a data frame
-fr <- data.frame(y,z,x,x2,id,firm,foo)
+fr <- data.frame(y, z, x, x2, id, firm, foo)
 ## estimate and print result
-est <- felm(y|z ~ x+x2|id+firm+foo, data=fr, keepX=TRUE)
+est <- felm(y | z ~ x + x2 | id + firm + foo, data = fr, keepX = TRUE)
 # find bias corrections, there's little bias in this example
-print(yv <- fevcov(est, lhs='y'))
+print(yv <- fevcov(est, lhs = "y"))
 ## Here's how to compute the unbiased correlation matrix:
 cm <- cov2cor(yv)
-structure(cm,bias=NULL)
+structure(cm, bias = NULL)
 
 }
 \references{
 Gaure, S. (2014), \cite{Correlation bias correction in two-way
 fixed-effects linear regression}, Stat 3(1):379-390, 2014.
-\url{http://dx.doi.org/10.1002/sta4.68}
+\doi{10.1002/sta4.68}
 }
 \seealso{
-\code{\link{varvars}} \code{\link{bccorr}}
+\code{\link[=varvars]{varvars()}} \code{\link[=bccorr]{bccorr()}}
 }

@@ -1,12 +1,13 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_PREREQ([2.67])
-AC_INIT([lfe])
+AC_PREREQ([2.71])
+AC_INIT
+AC_CONFIG_SRCDIR([lfe])
 AC_CONFIG_SRCDIR([src/lfe.c])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build/autoconf])
 AC_CONFIG_FILES([src/Makevars])
-m4_include([tools/ax_pthread.m4])
+AC_CONFIG_MACRO_DIRS([tools])
 dnl AC_LANG(C)
 AC_ARG_ENABLE([threads],
         [AS_HELP_STRING([--disable-threads],[do not use threads])],
@@ -55,8 +56,7 @@ AC_MSG_CHECKING(for timed semaphore wait)
 # we may use these when checking for semaphores
 LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
 CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-AC_TRY_RUN(dnl
-[#include <semaphore.h>
+AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <semaphore.h>
  #include <stdlib.h>
  #include <stdio.h>
  #include <errno.h>
@@ -76,11 +76,9 @@ AC_TRY_RUN(dnl
     }
     exit(0);
   }
-],
-AC_MSG_RESULT(yes)
-AC_DEFINE([HAVE_SEM], [1], [timed sem wait]),
-AC_MSG_RESULT(no)
-)
+]])],[AC_MSG_RESULT(yes)
+AC_DEFINE(HAVE_SEM, 1, timed sem wait)],[AC_MSG_RESULT(no)
+],[])
 
 # check for capability of setting thread name
 AC_SEARCH_LIBS([pthread_setname_np], [], AC_DEFINE([HAVE_THREADNAME],1, [chg thread name]), [], [$PTHREAD_CFLAGS])

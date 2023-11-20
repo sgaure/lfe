@@ -17,14 +17,14 @@ btrap(
 )
 }
 \arguments{
-\item{alpha}{data frame returned from \code{\link{getfe}}}
+\item{alpha}{data frame returned from \code{\link[=getfe]{getfe()}}}
 
 \item{obj}{object of class \code{"felm"}, usually, a result of a call to
-\code{\link{felm}}}
+\code{\link[=felm]{felm()}}}
 
 \item{N}{integer.  The number of bootstrap iterations}
 
-\item{ef}{function.  An estimable function such as in \code{\link{getfe}}.
+\item{ef}{function.  An estimable function such as in \code{\link[=getfe]{getfe()}}.
 The default is to use the one used on \code{alpha}}
 
 \item{eps}{double. Tolerance for centering, as in getfe}
@@ -44,11 +44,11 @@ errors filled in.
 }
 \description{
 Bootstrap standard errors for the group fixed effects which were swept out
-during an estimation with \code{\link{felm}}.
+during an estimation with \code{\link[=felm]{felm()}}.
 }
 \details{
 The bootstrapping is done in parallel if \code{threads > 1}.
-\code{\link{btrap}} is run automatically from \code{\link{getfe}} if
+\code{\link[=btrap]{btrap()}} is run automatically from \code{\link[=getfe]{getfe()}} if
 \code{se=TRUE} is specified.  To save some overhead, the individual
 iterations are grouped together, the memory available for this grouping is
 fetched with \code{getOption('lfe.bootmem')}, which is initialized upon
@@ -57,49 +57,50 @@ loading of \pkg{lfe} to \code{options(lfe.bootmem=500)} (MB).
 If \code{robust=TRUE}, heteroskedastic robust standard errors are estimated.
 If \code{robust=FALSE} and \code{cluster=TRUE}, clustered standard errors
 with the cluster specified to \code{felm()} are estimated. If \code{cluster}
-is a factor, it is used for the cluster definition.  \code{cluster may} also
+is a factor, it is used for the cluster definition.  \verb{cluster may} also
 be a list of factors.
 }
 \examples{
 
-oldopts <- options(lfe.threads=2)
+oldopts <- options("lfe.threads")
+options(lfe.threads = 2)
 ## create covariates
 x <- rnorm(3000)
 x2 <- rnorm(length(x))
 
 ## create individual and firm
-id <- factor(sample(700,length(x),replace=TRUE))
-firm <- factor(sample(300,length(x),replace=TRUE))
+id <- factor(sample(700, length(x), replace = TRUE))
+firm <- factor(sample(300, length(x), replace = TRUE))
 
 ## effects
 id.eff <- rlnorm(nlevels(id))
 firm.eff <- rexp(nlevels(firm))
 
 ## left hand side
-y <- x + 0.25*x2 + id.eff[id] + firm.eff[firm] + rnorm(length(x))
+y <- x + 0.25 * x2 + id.eff[id] + firm.eff[firm] + rnorm(length(x))
 
 ## estimate and print result
-est <- felm(y ~ x+x2 | id + firm)
+est <- felm(y ~ x + x2 | id + firm)
 summary(est)
 ## extract the group effects
 alpha <- getfe(est)
 head(alpha)
 ## bootstrap standard errors
-head(btrap(alpha,est))
+head(btrap(alpha, est))
 
 ## bootstrap some differences
-ef <- function(v,addnames) {
-  w <- c(v[2]-v[1],v[3]-v[2],v[3]-v[1])
-  if(addnames) {
-     names(w) <-c('id2-id1','id3-id2','id3-id1')
-     attr(w,'extra') <- list(note=c('line1','line2','line3'))
+ef <- function(v, addnames) {
+  w <- c(v[2] - v[1], v[3] - v[2], v[3] - v[1])
+  if (addnames) {
+    names(w) <- c("id2-id1", "id3-id2", "id3-id1")
+    attr(w, "extra") <- list(note = c("line1", "line2", "line3"))
   }
   w
 }
 # check that it's estimable
-is.estimable(ef,est$fe)
+is.estimable(ef, est$fe)
 
-head(btrap(alpha,est,ef=ef))
+head(btrap(alpha, est, ef = ef))
 options(oldopts)
 
 }

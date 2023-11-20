@@ -16,7 +16,7 @@ waldtest(
 }
 \arguments{
 \item{object}{object of class \code{"felm"}, a result of a call to
-\code{\link{felm}}.}
+\code{\link[=felm]{felm()}}.}
 
 \item{R}{matrix, character, formula, function, integer or logical.
 Specification of which exclusions to test.}
@@ -65,31 +65,31 @@ If \code{R} is a function (of the coefficients), an approximate Wald test
 against H0: \code{R(beta) == 0}, using the Delta-method, is computed.
 
 In case of an IV-estimation, the names for the endogenous variables in
-\code{coef(object)} are of the type \code{"`Q(fit)`"} which is a bit dull to
+\code{coef(object)} are of the type \verb{"}Q(fit)\verb{"} which is a bit dull to
 type; if all the endogenous variables are to be tested they can be specified
 as \code{"endovars"}. It is also possible to specify an endogenous variable
 simply as \code{"Q"}, and \code{waldtest} will add the other syntactic sugar
-to obtain \code{"`Q(fit)`"}.
+to obtain \verb{"}Q(fit)\verb{"}.
 
 The \code{type} argument works as follows. If \code{type=='default'} it is
 assumed that the residuals are i.i.d., unless a cluster structure was
-specified to \code{\link{felm}}. If \code{type=='robust'}, a heteroscedastic
+specified to \code{\link[=felm]{felm()}}. If \code{type=='robust'}, a heteroscedastic
 structure is assumed, even if a cluster structure was specified in
-\code{\link{felm}}.
+\code{\link[=felm]{felm()}}.
 }
 \examples{
 
 x <- rnorm(10000)
 x2 <- rnorm(length(x))
-y <- x - 0.2*x2 + rnorm(length(x))
-#Also works for lm
-summary(est <- lm(y ~ x + x2  ))
+y <- x - 0.2 * x2 + rnorm(length(x))
+# Also works for lm
+summary(est <- lm(y ~ x + x2))
 # We do not reject the true values
-waldtest(est, ~ x-1|x2+0.2|`(Intercept)`)
+waldtest(est, ~ x - 1 | x2 + 0.2 | `(Intercept)`)
 # The Delta-method coincides when the function is linear:
 waldtest(est, function(x) x - c(0, 1, -0.2))
 
 }
 \seealso{
-\code{\link{nlexpect}}
+\code{\link[=nlexpect]{nlexpect()}}
 }

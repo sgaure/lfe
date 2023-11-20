@@ -21,7 +21,7 @@ nlexpect(
 }
 \arguments{
 \item{est}{object of class \code{"felm"} or \code{"lm"}, a result of a call to
-\code{\link{felm}} or \code{lm}.}
+\code{\link[=felm]{felm()}} or \code{lm}.}
 
 \item{fun}{function of coefficients to be integrated. Can also be a
 \code{quote}d expression.}
@@ -46,7 +46,7 @@ package \pkg{R2Cuba} disappeared.}
 
 \item{max.eval}{integer. Maximum number of integral evaluations.}
 
-\item{method}{character. A method specification usable by \code{cubature::cubintegrate}. 
+\item{method}{character. A method specification usable by \code{cubature::cubintegrate}.
 The documentation there says that \code{"pcubature"} is good for smooth integrands of low dimensions.}
 
 \item{vectorize}{logical or numeric. Use vectorized function evaluation from package
@@ -77,7 +77,7 @@ The list of coefficients used by \code{fun} must be specified in
 
 If the function is simple, it can be specified as a quoted expression like
 \code{quote(a*b+log(abs(d)))}. In this case, if \code{coefs} is not
-specified, it will be set to the list of all the variables occuring in the
+specified, it will be set to the list of all the variables occurring in the
 expression which are also names of coefficients.
 
 \code{fun} may return a vector of values, in which case a vector of
@@ -87,15 +87,14 @@ quite compute intensive 4-dimensional integral will be computed, compared to
 two cheap 2-dimensional integrals if you do them separately. There is nothing to gain
 from using vector-valued functions compared to multiple calls to \code{nlexpect()}.
 
-You may of course also integrate inequalites like \code{quote(abs(x1-0.2) >
-0.2)} to simulate the probability from t-tests or Wald-tests. See the
+You may of course also integrate inequalities like \code{quote(abs(x1-0.2) > 0.2)} to simulate the probability from t-tests or Wald-tests. See the
 examples.
 
 The function you provide will get an argument \code{...} if it does not have
 one already.  It will also be passed an argument \code{.z} which contains
 the actual coefficients in normalized coordinates, i.e. if \code{ch} is the
 Cholesky decomposition of the covariance matrix, and \code{pt} are the point
-estimates, the coefficients will be \code{pt + ch \%*\% .z}. The first argument
+estimates, the coefficients will be \verb{pt + ch \\\%*\\\% .z}. The first argument
 is a vector with names corresponding to the coefficients.
 
 If you specify \code{vectorized=TRUE}, your function will be passed a list with vectors
@@ -116,60 +115,60 @@ routine \code{cubature::cubintegrate} and the function to be integrated.
 }
 \note{
 An alternative to this method is to use the \code{bootexpr} argument
-with \code{\link{felm}}, to do a Monte Carlo integration.
+with \code{\link[=felm]{felm()}}, to do a Monte Carlo integration.
 }
 \examples{
 
 N <- 100
 x1 <- rnorm(N)
 # make some correlation
-x2 <- 0.1*rnorm(N) + 0.1*x1
-y <- 0.1*x1 + x2 + rnorm(N)
+x2 <- 0.1 * rnorm(N) + 0.1 * x1
+y <- 0.1 * x1 + x2 + rnorm(N)
 summary(est <- felm(y ~ x1 + x2))
-pt1 <- coef(est)['x1']
-pt2 <- coef(est)['x2']
+pt1 <- coef(est)["x1"]
+pt2 <- coef(est)["x2"]
 # expected values of coefficients, should match the summary
 # and variance, i.e. square of standard errors in the summary
-nlexpect(est, quote(c(x1=x1,x2=x2,var=c((x1-pt1)^2,(x2-pt2)^2))))
+nlexpect(est, quote(c(x1 = x1, x2 = x2, var = c((x1 - pt1)^2, (x2 - pt2)^2))))
 \donttest{
 # the covariance matrix:
-nlexpect(est, tcrossprod(as.matrix(c(x1-pt1,x2-pt2))))
+nlexpect(est, tcrossprod(as.matrix(c(x1 - pt1, x2 - pt2))))
 }
-#Wald test of single variable
-waldtest(est, ~x1)['p.F']
+# Wald test of single variable
+waldtest(est, ~x1)["p.F"]
 # the same with nlexpect, i.e. probability for observing abs(x1)>abs(pt1) conditional
 # on E(x1) = 0.
-nlexpect(est, (x1-pt1)^2 > pt1^2, tol=1e-7, vectorize=TRUE)
+nlexpect(est, (x1 - pt1)^2 > pt1^2, tol = 1e-7, vectorize = TRUE)
 # which is the same as
-2*nlexpect(est, x1*sign(pt1) < 0)
+2 * nlexpect(est, x1 * sign(pt1) < 0)
 
 # Here's a multivalued, vectorized example
-nlexpect(est, rbind(a=x1*x2 < pt1, b=x1*x2 > 0), vectorize=TRUE, method='divonne')
+nlexpect(est, rbind(a = x1 * x2 < pt1, b = x1 * x2 > 0), vectorize = TRUE, method = "divonne")
 \donttest{
 
 # Non-linear test:
 
 # A simple one, what's the probability that product x1*x2 is between 0 and |E(x1)|?
-nlexpect(est, x1*x2 > 0 & x1*x2 < abs(pt1), vectorize=TRUE, method='divonne')
+nlexpect(est, x1 * x2 > 0 & x1 * x2 < abs(pt1), vectorize = TRUE, method = "divonne")
 # Then a more complicated one with the expected value of a polynomal in the coefficients
-f <- function(x) c(poly=x[['x1']]*(6*x[['x1']]-x[['x2']]^2))
+f <- function(x) c(poly = x[["x1"]] * (6 * x[["x1"]] - x[["x2"]]^2))
 # This is the linearized test:
-waldtest(est, f)['p.F']
+waldtest(est, f)["p.F"]
 # In general, for a function f, the non-linear Wald test is something like
 # the following:
 # expected value of function
-Ef <- nlexpect(est, f, coefs=c('x1','x2'))
+Ef <- nlexpect(est, f, coefs = c("x1", "x2"))
 # point value of function
-Pf <- f(c(pt1,pt2))
+Pf <- f(c(pt1, pt2))
 # similar to a Wald test, but non-linear:
-nlexpect(est, function(x) (f(x)-Ef)^2 > Pf^2, c('x1','x2'), vectorize=TRUE)
+nlexpect(est, function(x) (f(x) - Ef)^2 > Pf^2, c("x1", "x2"), vectorize = TRUE)
 # one-sided
-nlexpect(est, function(x) f(x)-Ef > abs(Pf), c('x1','x2'), vectorize=TRUE)
+nlexpect(est, function(x) f(x) - Ef > abs(Pf), c("x1", "x2"), vectorize = TRUE)
 # other sided
-nlexpect(est, function(x) f(x)-Ef < -abs(Pf), c('x1','x2'), vectorize=TRUE)
+nlexpect(est, function(x) f(x) - Ef < -abs(Pf), c("x1", "x2"), vectorize = TRUE)
 }
 
 }
 \seealso{
-\code{\link{waldtest}}
+\code{\link[=waldtest]{waldtest()}}
 }

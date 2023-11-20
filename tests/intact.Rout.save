@@ -29,10 +29,26 @@ Loading required package: Matrix
 > model_1<-felm(y~x|group:time_id,data=data)
 > model_2<-felm(y~x|time_id+group:time_id,data=data)
 > model_3<-felm(y~x|group:time_id+ time_id+group,data=data)
+> model_4<-felm(y~x|group*time_id,data=data)
 > 
 > lm_1 <- lm(y ~ x + group:time_id, data=data)
 > lm_2 <- lm(y ~ x + time_id + group:time_id, data=data)
 > lm_3 <- lm(y ~ x + group:time_id + time_id + group,data=data)
+> lm_4 <- lm(y ~ x + group*time_id,data=data)
+> 
+> all.equal(coef(lm_1)["x"], coef(model_1))
+[1] TRUE
+> all.equal(coef(lm_2)["x"], coef(model_2))
+[1] TRUE
+> all.equal(coef(lm_3)["x"], coef(model_3))
+[1] TRUE
+> all.equal(coef(lm_4)["x"], coef(model_4))
+[1] TRUE
+> 
+> all.equal(coef(model_1), coef(model_2))
+[1] TRUE
+> all.equal(coef(model_3), coef(model_4))
+[1] TRUE
 > 
 > message('felm 1'); print(model_1)
 felm 1
@@ -122,73 +138,99 @@ groupM:time_id5  groupP:time_id5  groupQ:time_id5
 > data[,'time+id'] <- data[,'time_id']
 > m <- felm(y~x|`time+id`+group + group:`time+id`,data=data)
 > print(getfe(model_3))
-                     effect  obs comp            fe idx
-time_id.1          0.002756 1992    1       time_id   1
-time_id.2          0.077290 2019    1       time_id   2
-time_id.3         -0.000015 1989    1       time_id   3
-time_id.4          0.020740 1951    1       time_id   4
-time_id.5          0.000000 2049    1       time_id   5
-group.A           -0.030310 1723    1         group   A
-group.B           -0.028356 1656    1         group   B
-group.C            0.040655 1682    1         group   C
-group.M            0.060665 1637    1         group   M
-group.P           -0.003153 1653    1         group   P
-group.Q           -0.065258 1649    1         group   Q
-time_id:group.2.B -0.022482  345    2 time_id:group 2.B
-time_id:group.3.B  0.054948  312    2 time_id:group 3.B
-time_id:group.4.B -0.029601  302    2 time_id:group 4.B
-time_id:group.5.B  0.072463  358    2 time_id:group 5.B
-time_id:group.2.C -0.171957  326    2 time_id:group 2.C
-time_id:group.3.C  0.021812  341    2 time_id:group 3.C
-time_id:group.4.C -0.104882  330    2 time_id:group 4.C
-time_id:group.5.C -0.124556  369    2 time_id:group 5.C
-time_id:group.2.M -0.131648  325    2 time_id:group 2.M
-time_id:group.3.M -0.078893  318    2 time_id:group 3.M
-time_id:group.4.M -0.019070  336    2 time_id:group 4.M
-time_id:group.5.M -0.106255  327    2 time_id:group 5.M
-time_id:group.2.P -0.008226  366    2 time_id:group 2.P
-time_id:group.3.P -0.006247  328    2 time_id:group 3.P
-time_id:group.4.P -0.008782  321    2 time_id:group 4.P
-time_id:group.5.P  0.063116  308    2 time_id:group 5.P
-time_id:group.2.Q  0.011091  309    2 time_id:group 2.Q
-time_id:group.3.Q  0.077831  346    2 time_id:group 3.Q
-time_id:group.4.Q  0.108417  339    2 time_id:group 4.Q
-time_id:group.5.Q -0.053901  316    2 time_id:group 5.Q
-time_id:group.1+A  0.000000 3378    2 time_id:group 1+A
+Warning in is.estimable(ef, obj$fe) :
+  non-estimable function, largest error 0.7 in coordinate 39 ("time_id:group.3.Q")
+Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
+  Supplied function seems non-estimable
+                    effect  obs comp            fe idx
+time_id.1          0.02367 1992    1       time_id   1
+time_id.2          0.04138 2019    1       time_id   2
+time_id.3          0.03121 1989    1       time_id   3
+time_id.4          0.03138 1951    1       time_id   4
+time_id.5          0.00000 2049    1       time_id   5
+group.A           -0.03031 1723    1         group   A
+group.B           -0.01613 1656    1         group   B
+group.C           -0.03444 1682    1         group   C
+group.M           -0.01048 1637    1         group   M
+group.P           -0.00104 1653    1         group   P
+group.Q           -0.03553 1649    1         group   Q
+time_id:group.1.A -0.02091  337    2 time_id:group 1.A
+time_id:group.2.A  0.03591  348    2 time_id:group 2.A
+time_id:group.3.A -0.03123  344    2 time_id:group 3.A
+time_id:group.4.A -0.01064  323    2 time_id:group 4.A
+time_id:group.5.A  0.00000  371    2 time_id:group 5.A
+time_id:group.1.B -0.03314  339    2 time_id:group 1.B
+time_id:group.2.B  0.00120  345    2 time_id:group 2.B
+time_id:group.3.B  0.01149  312    2 time_id:group 3.B
+time_id:group.4.B -0.05247  302    2 time_id:group 4.B
+time_id:group.5.B  0.06023  358    2 time_id:group 5.B
+time_id:group.1.C  0.05418  316    2 time_id:group 1.C
+time_id:group.2.C -0.06095  326    2 time_id:group 2.C
+time_id:group.3.C  0.06567  341    2 time_id:group 3.C
+time_id:group.4.C -0.04043  330    2 time_id:group 4.C
+time_id:group.5.C -0.04946  369    2 time_id:group 5.C
+time_id:group.1.M  0.05023  331    2 time_id:group 1.M
+time_id:group.2.M -0.02460  325    2 time_id:group 2.M
+time_id:group.3.M -0.03898  318    2 time_id:group 3.M
+time_id:group.4.M  0.04143  336    2 time_id:group 4.M
+time_id:group.5.M -0.03511  327    2 time_id:group 5.M
+time_id:group.1.P -0.02303  330    2 time_id:group 1.P
+time_id:group.2.P  0.02557  366    2 time_id:group 2.P
+time_id:group.3.P -0.03959  328    2 time_id:group 3.P
+time_id:group.4.P -0.02154  321    2 time_id:group 4.P
+time_id:group.5.P  0.06100  308    2 time_id:group 5.P
+time_id:group.1.Q -0.05064  339    2 time_id:group 1.Q
+time_id:group.2.Q  0.01727  309    2 time_id:group 2.Q
+time_id:group.3.Q  0.01687  346    2 time_id:group 3.Q
+time_id:group.4.Q  0.06805  339    2 time_id:group 4.Q
+time_id:group.5.Q -0.08363  316    2 time_id:group 5.Q
 > print(getfe(m))
-                       effect  obs comp              fe idx
-`time+id`.1          0.002756 1992    1       `time+id`   1
-`time+id`.2          0.077290 2019    1       `time+id`   2
-`time+id`.3         -0.000015 1989    1       `time+id`   3
-`time+id`.4          0.020740 1951    1       `time+id`   4
-`time+id`.5          0.000000 2049    1       `time+id`   5
-group.A             -0.030310 1723    1           group   A
-group.B             -0.028356 1656    1           group   B
-group.C              0.040655 1682    1           group   C
-group.M              0.060665 1637    1           group   M
-group.P             -0.003153 1653    1           group   P
-group.Q             -0.065258 1649    1           group   Q
-`time+id`:group.2.B -0.022482  345    2 `time+id`:group 2.B
-`time+id`:group.3.B  0.054948  312    2 `time+id`:group 3.B
-`time+id`:group.4.B -0.029601  302    2 `time+id`:group 4.B
-`time+id`:group.5.B  0.072463  358    2 `time+id`:group 5.B
-`time+id`:group.2.C -0.171957  326    2 `time+id`:group 2.C
-`time+id`:group.3.C  0.021812  341    2 `time+id`:group 3.C
-`time+id`:group.4.C -0.104882  330    2 `time+id`:group 4.C
-`time+id`:group.5.C -0.124556  369    2 `time+id`:group 5.C
-`time+id`:group.2.M -0.131648  325    2 `time+id`:group 2.M
-`time+id`:group.3.M -0.078893  318    2 `time+id`:group 3.M
-`time+id`:group.4.M -0.019070  336    2 `time+id`:group 4.M
-`time+id`:group.5.M -0.106255  327    2 `time+id`:group 5.M
-`time+id`:group.2.P -0.008226  366    2 `time+id`:group 2.P
-`time+id`:group.3.P -0.006247  328    2 `time+id`:group 3.P
-`time+id`:group.4.P -0.008782  321    2 `time+id`:group 4.P
-`time+id`:group.5.P  0.063116  308    2 `time+id`:group 5.P
-`time+id`:group.2.Q  0.011091  309    2 `time+id`:group 2.Q
-`time+id`:group.3.Q  0.077831  346    2 `time+id`:group 3.Q
-`time+id`:group.4.Q  0.108417  339    2 `time+id`:group 4.Q
-`time+id`:group.5.Q -0.053901  316    2 `time+id`:group 5.Q
-`time+id`:group.1+A  0.000000 3378    2 `time+id`:group 1+A
+Warning in is.estimable(ef, obj$fe) :
+  non-estimable function, largest error 0.4 in coordinate 30 ("`time+id`:group.4.M")
+Warning in getfe.kaczmarz(obj, se, ef = ef, bN = bN, robust = robust, cluster = cluster,  :
+  Supplied function seems non-estimable
+                      effect  obs comp              fe idx
+`time+id`.1          0.02367 1992    1       `time+id`   1
+`time+id`.2          0.04138 2019    1       `time+id`   2
+`time+id`.3          0.03121 1989    1       `time+id`   3
+`time+id`.4          0.03138 1951    1       `time+id`   4
+`time+id`.5          0.00000 2049    1       `time+id`   5
+group.A             -0.03031 1723    1           group   A
+group.B             -0.01613 1656    1           group   B
+group.C             -0.03444 1682    1           group   C
+group.M             -0.01048 1637    1           group   M
+group.P             -0.00104 1653    1           group   P
+group.Q             -0.03553 1649    1           group   Q
+`time+id`:group.1.A -0.02091  337    2 `time+id`:group 1.A
+`time+id`:group.2.A  0.03591  348    2 `time+id`:group 2.A
+`time+id`:group.3.A -0.03123  344    2 `time+id`:group 3.A
+`time+id`:group.4.A -0.01064  323    2 `time+id`:group 4.A
+`time+id`:group.5.A  0.00000  371    2 `time+id`:group 5.A
+`time+id`:group.1.B -0.03314  339    2 `time+id`:group 1.B
+`time+id`:group.2.B  0.00120  345    2 `time+id`:group 2.B
+`time+id`:group.3.B  0.01149  312    2 `time+id`:group 3.B
+`time+id`:group.4.B -0.05247  302    2 `time+id`:group 4.B
+`time+id`:group.5.B  0.06023  358    2 `time+id`:group 5.B
+`time+id`:group.1.C  0.05418  316    2 `time+id`:group 1.C
+`time+id`:group.2.C -0.06095  326    2 `time+id`:group 2.C
+`time+id`:group.3.C  0.06567  341    2 `time+id`:group 3.C
+`time+id`:group.4.C -0.04043  330    2 `time+id`:group 4.C
+`time+id`:group.5.C -0.04946  369    2 `time+id`:group 5.C
+`time+id`:group.1.M  0.05023  331    2 `time+id`:group 1.M
+`time+id`:group.2.M -0.02460  325    2 `time+id`:group 2.M
+`time+id`:group.3.M -0.03898  318    2 `time+id`:group 3.M
+`time+id`:group.4.M  0.04143  336    2 `time+id`:group 4.M
+`time+id`:group.5.M -0.03511  327    2 `time+id`:group 5.M
+`time+id`:group.1.P -0.02303  330    2 `time+id`:group 1.P
+`time+id`:group.2.P  0.02557  366    2 `time+id`:group 2.P
+`time+id`:group.3.P -0.03959  328    2 `time+id`:group 3.P
+`time+id`:group.4.P -0.02154  321    2 `time+id`:group 4.P
+`time+id`:group.5.P  0.06100  308    2 `time+id`:group 5.P
+`time+id`:group.1.Q -0.05064  339    2 `time+id`:group 1.Q
+`time+id`:group.2.Q  0.01727  309    2 `time+id`:group 2.Q
+`time+id`:group.3.Q  0.01687  346    2 `time+id`:group 3.Q
+`time+id`:group.4.Q  0.06805  339    2 `time+id`:group 4.Q
+`time+id`:group.5.Q -0.08363  316    2 `time+id`:group 5.Q
 > 
 > proc.time()
    user  system elapsed 

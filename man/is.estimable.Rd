@@ -33,11 +33,11 @@ the Kaczmarz method.}
 Returns a logical.
 }
 \description{
-Verify that a function you have written for \code{\link{getfe}} is indeed
+Verify that a function you have written for \code{\link[=getfe]{getfe()}} is indeed
 estimable.
 }
 \details{
-When writing custom estimable functions for \code{\link{getfe}}, the
+When writing custom estimable functions for \code{\link[=getfe]{getfe()}}, the
 function \code{is.estimable} can be used to test it for estimability.
 \code{is.estimable()} solves the sparse residual system with the Kaczmarz
 method, using two different initial values. Then \code{ef()} is applied to
@@ -51,31 +51,32 @@ estimable, whereas the others are not.
 }
 \examples{
 
-oldopts <- options(lfe.threads=1)
+oldopts <- options("lfe.threads")
+options(lfe.threads = 2)
 ## create individual and firm
-id <- factor(sample(5000,50000,replace=TRUE))
-firm <- factor(sample(3000,50000,replace=TRUE))
+id <- factor(sample(5000, 50000, replace = TRUE))
+firm <- factor(sample(3000, 50000, replace = TRUE))
 
 ## create some estimable functions. It's faster to
 ## use numerical indices in ef rather than strings, and the input v
 ## to ef has no names, we have to add them when requested
-ef <- function(v,addnames) {
-  w <- c(v[6]-v[5],v[7000]+v[5],v[7000]-v[6000])
-  if(addnames) names(w) <-c('id6-id5','f2k+id5','f2k-f1k')
+ef <- function(v, addnames) {
+  w <- c(v[6] - v[5], v[7000] + v[5], v[7000] - v[6000])
+  if (addnames) names(w) <- c("id6-id5", "f2k+id5", "f2k-f1k")
   w
 }
-is.estimable(ef,list(id=id,firm=firm))
+is.estimable(ef, list(id = id, firm = firm))
 
 ## Then make an error; in the last coordinate, sum two firms
-ef <- function(v,addnames) {
-  w <- c(v[6]-v[5],v[7000]+v[5],v[7000]+v[6000])
-  if(addnames) names(w) <-c('id6-id5','f2k+id5','f2k-f1k')
+ef <- function(v, addnames) {
+  w <- c(v[6] - v[5], v[7000] + v[5], v[7000] + v[6000])
+  if (addnames) names(w) <- c("id6-id5", "f2k+id5", "f2k-f1k")
   w
 }
-is.estimable(ef, list(id=id,firm=firm), keepdiff=TRUE)
+is.estimable(ef, list(id = id, firm = firm), keepdiff = TRUE)
 options(oldopts)
 
 }
 \seealso{
-\code{\link{getfe}}
+\code{\link[=getfe]{getfe()}}
 }

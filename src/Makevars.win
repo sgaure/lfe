@@ -1,5 +1,3 @@
 PKG_LIBS=$(BLAS_LIBS) $(FLIBS)
 PKG_CFLAGS=$(C_VISIBILITY)
-OBJECTS=lfe.o demean.o factor.o kaczmarz.o utils.o Crowsum.o
-
-
+OBJECTS=lfe.o demean.o factor.o kaczmarz.o utils.o crowsum.o

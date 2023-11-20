@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^cran-comments\.md$
+^\.github$
+^README\.Rmd$
+^\.vscode$
+^vscode-install.r$
+^benchmarks$
+^CRAN-SUBMISSION$
+^LICENSE\.md$
+^dev$

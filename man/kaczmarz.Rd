@@ -39,38 +39,38 @@ Uses the Kaczmarz method to solve a system of the type Dx = R, where D is
 the matrix of dummies created from a list of factors.
 }
 \note{
-This function is used by \code{\link{getfe}}, it's quite specialized,
+This function is used by \code{\link[=getfe]{getfe()}}, it's quite specialized,
 but it might be useful for other purposes too.
 
 In case of convergence problems, setting \code{options(lfe.usecg=TRUE)} will
 cause the kaczmarz() function to dispatch to the more general conjugate
-gradient method of \code{\link{cgsolve}}.  This may or may not be faster.
+gradient method of \code{\link[=cgsolve]{cgsolve()}}.  This may or may not be faster.
 }
 \examples{
 
 ## create factors
-  f1 <- factor(sample(24000,100000,replace=TRUE))
-  f2 <- factor(sample(20000,length(f1),replace=TRUE))
-  f3 <- factor(sample(10000,length(f1),replace=TRUE))
-  f4 <- factor(sample(8000,length(f1),replace=TRUE))
+f1 <- factor(sample(24000, 100000, replace = TRUE))
+f2 <- factor(sample(20000, length(f1), replace = TRUE))
+f3 <- factor(sample(10000, length(f1), replace = TRUE))
+f4 <- factor(sample(8000, length(f1), replace = TRUE))
 ## the matrix of dummies
-  D <- makeDmatrix(list(f1,f2,f3,f4))
-  dim(D)
+D <- makeDmatrix(list(f1, f2, f3, f4))
+dim(D)
 ## an x
-  truex <- runif(ncol(D))
+truex <- runif(ncol(D))
 ## and the right hand side
-  R <- as.vector(D \%*\% truex)
+R <- as.vector(D \%*\% truex)
 ## solve it
-  sol <- kaczmarz(list(f1,f2,f3,f4),R)
+sol <- kaczmarz(list(f1, f2, f3, f4), R)
 ## verify that the solution solves the system Dx = R
-  sqrt(sum((D \%*\% sol - R)^2))
+sqrt(sum((D \%*\% sol - R)^2))
 ## but the solution is not equal to the true x, because the system is
 ## underdetermined
-  sqrt(sum((sol - truex)^2))
+sqrt(sum((sol - truex)^2))
 ## moreover, the solution from kaczmarz has smaller norm
-  sqrt(sum(sol^2)) < sqrt(sum(truex^2))
+sqrt(sum(sol^2)) < sqrt(sum(truex^2))
 
 }
 \seealso{
-\code{\link{cgsolve}}
+\code{\link[=cgsolve]{cgsolve()}}
 }

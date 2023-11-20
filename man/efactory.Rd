@@ -8,14 +8,14 @@ efactory(obj, opt = "ref", ...)
 }
 \arguments{
 \item{obj}{object of class \code{"felm"}, usually, a result of a call to
-\code{\link{felm}}.}
+\code{\link[=felm]{felm()}}.}
 
 \item{opt}{character.  Which type of estimable function.}
 
 \item{...}{various.}
 }
 \value{
-A function of two parameters \code{function(v,addnames)}.  An
+A function of two parameters \verb{function(v,addnames)}.  An
 estimable function (i.e. the result is the vector of some length \code{N})
 of the input vector \code{v}. When \code{addnames==TRUE} the returned vector
 should have names, and optionally an attribute \code{"extra"} which is a
@@ -28,7 +28,7 @@ Creates an estimable function for a factor-structure.
 \details{
 There are several possibilities for the input parameter \code{opt}.
 \itemize{ \item \code{"ref"} yields an estimable function which is similar
-to the default one in \code{\link{lm}}, one reference is forced to \code{0}
+to the default one in \code{\link[=lm]{lm()}}, one reference is forced to \code{0}
 in each connected component.  \item \code{"zm"} Similar to \code{"ref"}, but
 the factor which does not contain a reference is made to have zero mean, and
 an intercept is added.  \item \code{"zm2"} Similar to \code{"zm"}, but both
@@ -61,19 +61,20 @@ I.e. if the model is \code{y ~ ... |id + firm}, we have
 }
 \examples{
 
-oldopts <- options(lfe.threads=1)
-id <- factor(sample(5000,50000,replace=TRUE))
-firm <- factor(sample(3000,50000,replace=TRUE))
-fl <- list(id=id,firm=firm)
-obj <- list(fe=fl,cfactor=compfactor(fl))
+oldopts <- options("lfe.threads")
+options(lfe.threads = 2)
+id <- factor(sample(5000, 50000, replace = TRUE))
+firm <- factor(sample(3000, 50000, replace = TRUE))
+fl <- list(id = id, firm = firm)
+obj <- list(fe = fl, cfactor = compfactor(fl))
 ## the trivial least-norm  transformtion, which by the way is non-estimable
-print(ef <- efactory(obj,'ln'))
-is.estimable(ef,fl)
+print(ef <- efactory(obj, "ln"))
+is.estimable(ef, fl)
 ## then the default
-print(ef <- efactory(obj,'ref'))
-is.estimable(ef,fl)
+print(ef <- efactory(obj, "ref"))
+is.estimable(ef, fl)
 # get the names of the coefficients, i.e. the nm-variable in the function
-head(evalq(nm,environment(ef)))
+head(evalq(nm, environment(ef)))
 options(oldopts)
 
 }

@@ -31,6 +31,7 @@ ideff <- alpha[paste('id',id,sep='.'),'effect']
 firmeff <- alpha[paste('firm',firm,sep='.'),'effect']
 
 ## verify that id and firm coefficients are 1
-cat('accuracy:',sprintf('%.8e',coef(lm(y ~ x + x2 + x3 + x4 + x5 + x6 + ideff + firmeff-1))[7:8],'\n'))
+co <- coef(lm(y ~ x + x2 + x3 + x4 + x5 + x6 + ideff + firmeff-1))[7:8]
+cat('accuracy:', formatC(co, digits=8, format="f"),'\n')
 
 

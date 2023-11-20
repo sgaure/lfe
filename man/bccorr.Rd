@@ -16,9 +16,9 @@ bccorr(
 }
 \arguments{
 \item{est}{an object of class '"felm"', the result of a call to
-\code{\link{felm}(keepX=TRUE)}.}
+\verb{[felm](keepX=TRUE)}.}
 
-\item{alpha}{a data frame, the result of a call to \code{\link{getfe}}.}
+\item{alpha}{a data frame, the result of a call to \code{\link[=getfe]{getfe()}}.}
 
 \item{corrfactors}{integer or character vector of length 2. The factors to
 correlate. The default is fine if there are only two factors in the model.}
@@ -35,17 +35,17 @@ factors are present, or that they are uncorrelated with them.}
 \value{
 \code{bccorr} returns a named integer vector with the following fields:
 
- \item{corr}{the bias corrected correlation.}
- \item{v1}{the bias corrected variance for the first factor specified
- by \code{corrfactors}.}
- \item{v2}{the bias corrected variance for the second factor.}
- \item{cov}{the bias corrected covariance between the two factors.}
- \item{d1}{the bias correction for the first factor.}
- \item{d2}{the bias correction for the second factor.}
- \item{d12}{the bias correction for covariance.}
+\item{corr}{the bias corrected correlation.}
+\item{v1}{the bias corrected variance for the first factor specified
+by \code{corrfactors}.}
+\item{v2}{the bias corrected variance for the second factor.}
+\item{cov}{the bias corrected covariance between the two factors.}
+\item{d1}{the bias correction for the first factor.}
+\item{d2}{the bias correction for the second factor.}
+\item{d12}{the bias correction for covariance.}
 
- The bias corrections have been subtracted from the bias estimates.
- E.g. v2 = v2' - d2, where v2' is the biased variance.
+The bias corrections have been subtracted from the bias estimates.
+E.g. v2 = v2' - d2, where v2' is the biased variance.
 }
 \description{
 With a model like \eqn{y = X\beta + D\theta + F\psi + \epsilon}, where \eqn{D}
@@ -63,7 +63,7 @@ where x is a vector with coordinates drawn uniformly from the set \eqn{\{-1,1\}}
 More specifically, the expectation is estimated by
 sample means, i.e. in each sample a vector x is drawn, the
 equation \eqn{Bv = Cx} is solved by a conjugate gradient method, and the
-real number \eqn{x^t Av} is computed. 
+real number \eqn{x^t Av} is computed.
 
 There are three bias corrections, for the variances of \eqn{D\theta} (\code{vD}) and
 \eqn{F\psi} (\code{vF}), and their covariance (\code{vDF}).The correlation is computed as
@@ -71,17 +71,17 @@ There are three bias corrections, for the variances of \eqn{D\theta} (\code{vD})
 relative tolerance specified by the argument \code{tol}. The covariance
 bias is estimated to an absolute tolerance in the correlation \code{rho}
 (conditional on the already bias corrected \code{vD} and \code{vF}) specified by
-\code{tol}.  The CG algortithm does not need to be exceedingly precise,
+\code{tol}.  The CG algorithm does not need to be exceedingly precise,
 it is terminated when the solution reaches a precision which is
-sufficient for the chosen precision in \code{vD, vF, vDF}.
+sufficient for the chosen precision in \verb{vD, vF, vDF}.
 
-If \code{est} is the result of a weighted \code{\link{felm}} estimation,
+If \code{est} is the result of a weighted \code{\link[=felm]{felm()}} estimation,
 the variances and correlations are weighted too.
 }
 \note{
 Bias correction for IV-estimates are not supported as of now.
 
-Note that if \code{est} is the result of a call to \code{\link{felm}}
+Note that if \code{est} is the result of a call to \code{\link[=felm]{felm()}}
 with \code{keepX=FALSE} (the default), the correlation will be computed
 as if the covariates X are independent of the two factors. This will be
 faster (typically by a factor of approx. 4), and possibly wronger.
@@ -99,28 +99,28 @@ x <- rnorm(500)
 x2 <- rnorm(length(x))
 
 ## create individual and firm
-id <- factor(sample(40,length(x),replace=TRUE))
-firm <- factor(sample(30,length(x),replace=TRUE,prob=c(2,rep(1,29))))
-foo <- factor(sample(20,length(x),replace=TRUE))
+id <- factor(sample(40, length(x), replace = TRUE))
+firm <- factor(sample(30, length(x), replace = TRUE, prob = c(2, rep(1, 29))))
+foo <- factor(sample(20, length(x), replace = TRUE))
 ## effects
 id.eff <- rnorm(nlevels(id))
 firm.eff <- rnorm(nlevels(firm))
 foo.eff <- rnorm(nlevels(foo))
 ## left hand side
-y <- x + 0.25*x2 + id.eff[id] + firm.eff[firm] + foo.eff[foo] + rnorm(length(x))
+y <- x + 0.25 * x2 + id.eff[id] + firm.eff[firm] + foo.eff[foo] + rnorm(length(x))
 
 # make a data frame
-fr <- data.frame(y,x,x2,id,firm,foo)
+fr <- data.frame(y, x, x2, id, firm, foo)
 ## estimate and print result
-est <- felm(y ~ x+x2|id+firm+foo, data=fr, keepX=TRUE)
+est <- felm(y ~ x + x2 | id + firm + foo, data = fr, keepX = TRUE)
 # find bias corrections
 bccorr(est)
 }
 \references{
 Gaure, S. (2014), \cite{Correlation bias correction in two-way
- fixed-effects linear regression}, Stat 3(1):379:390, 2014.
+fixed-effects linear regression}, Stat 3(1):379:390, 2014.
 }
 \seealso{
-\code{\link{fevcov}}
+\code{\link[=fevcov]{fevcov()}}
 }
 \concept{Limited Mobility Bias}

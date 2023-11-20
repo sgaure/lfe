@@ -1,12 +1,21 @@
 Package: lfe
-Version: 2.8-4
-Date: 2019-12-12
+Version: 2.9-1
+Date: 2023-04-03
 Title: Linear Group Fixed Effects
-Authors@R: c(person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut","cre"),
+Authors@R: c(person("Simen", "Gaure", email="Simen.Gaure@frisch.uio.no", role=c("aut"),
            comment=c(ORCID="https://orcid.org/0000-0001-7251-8747")),
 	   person("Grant","McDermott", email="grantmcd@uoregon.edu", role="ctb"),
+	   person(given = "Mauricio",
+            family = "Vargas",
+            role = "ctb",
+            email = "mavargas11@uc.cl",
+            comment = c(ORCID = "0000-0003-1017-7574")),
+    person(given = "Paulo",
+            family = "Alcazar",
+            role = "ctb"),
 	   person("Karl", "Dunkle Werner", role="ctb"),
-	   person("Matthieu","Stigler",role="ctb"),
+	   person("Matthieu","Stigler", email = "Matthieu.Stigler@gmail.com", role= c("ctb", "cre"),
+	          comment =c(ORCID="0000-0002-6802-4290")),
 	   person("Daniel","Lüdecke",email="mail@danielluedecke.de",role="ctb"))
 Copyright: 2011-2019, Simen Gaure
 Depends: R (>= 2.15.2), Matrix (>= 1.1-2)
@@ -25,13 +34,15 @@ VignetteBuilder: knitr
 ByteCompile: yes
 Description: Transforms away factors with many levels prior to doing an OLS.
   Useful for estimating linear models with multiple group fixed effects, and for
-  estimating linear models which uses factors with many levels as pure control variables.
+  estimating linear models which uses factors with many levels as pure control variables. See Gaure (2013) <doi:10.1016/j.csda.2013.03.024>
   Includes support for instrumental variables, conditional F statistics for weak instruments,
-  robust and multi-way clustered standard errors, as well as limited mobility bias correction.
+  robust and multi-way clustered standard errors, as well as limited mobility bias correction (Gaure 2014 <doi:10.1002/sta4.68>). 
+  WARNING: This package is NOT under active development anymore, no further improvements are to be expected, and the package is at risk of being removed from CRAN.
 License: Artistic-2.0
 Classification/JEL: C13, C23, C60
 Classification/MSC: 62J05, 65F10, 65F50
-URL: https://github.com/sgaure/lfe
-BugReports: https://github.com/sgaure/lfe/issues
+URL: https://github.com/MatthieuStigler/lfe
+BugReports: https://github.com/MatthieuStigler/lfe/issues
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.3
+Roxygen: list(markdown = TRUE)
